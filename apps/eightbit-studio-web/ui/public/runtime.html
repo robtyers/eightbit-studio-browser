@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+  <title>Dragon 32 emulator</title>
+  <link rel="stylesheet" href="runtime.css" />
+</head>
+<body>
+  <canvas id="screen" tabindex="0" aria-label="Dragon 32 screen; focus for keyboard input"></canvas>
+  <div class="controls">
+    <button id="audio" disabled>Enable sound</button>
+    <button data-scan="43" disabled aria-label="Up">↑</button><button data-scan="44" disabled aria-label="Down">↓</button>
+    <button data-scan="45" disabled aria-label="Left">←</button><button data-scan="46" disabled aria-label="Right">→</button>
+    <button data-scan="47" disabled>Space</button><button data-scan="50" disabled>Interrupt (Break)</button>
+    <label>Type into the game <input id="keys" disabled autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="128" /></label><button id="type" disabled>Send + Enter</button>
+    <span id="status" role="status">Starting…</span>
+  </div>
+  <p class="control-hint">Tap the screen to use a hardware keyboard, or enter text above and choose Send + Enter. Use Enable sound to turn on audio.</p>
+  <script src="runtime.js"></script>
+</body>
+</html>

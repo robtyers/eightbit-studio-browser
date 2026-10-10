@@ -1,0 +1,32 @@
+{
+  "name": "@eightbitstudio/workbench",
+  "private": true,
+  "version": "0.5.2",
+  "author": "Rob Tyers",
+  "eightbitStudioProjectDate": "1 September 2026",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "typescript": "7.0.2"
+  },
+  "exports": {
+    "./styles.css": "./src/styles.css",
+    "./components/WorkbenchPanelTabs": "./src/components/WorkbenchPanelTabs.tsx",
+    "./components/EditorToolbar": "./src/components/EditorToolbar.tsx",
+    "./components/WorkbenchShell": "./src/components/WorkbenchShell.tsx",
+    "./components/Icons": "./src/components/Icons.tsx",
+    "./components/WorkbenchResizeHandle": "./src/components/WorkbenchResizeHandle.tsx",
+    "./services/editorCommands": "./src/services/editorCommands.ts",
+    "./macos.css": "./src/macos.css",
+    "./components/EditorTabs": "./src/components/EditorTabs.tsx",
+    "./components/WelcomeView": "./src/components/WelcomeView.tsx",
+    "./components/ProcessorLogo": "./src/components/ProcessorLogo.tsx"
+  }
+}

@@ -1,0 +1,84 @@
+--- a/scripts/genie.lua
++++ b/scripts/genie.lua
+@@ -1094,7 +1094,7 @@
+ 	buildoptions {
+ 		"-std=gnu89",
+ 		"-Wno-implicit-function-declaration",
+-		"-s USE_SDL_TTF=3",
++		"-s USE_SDL_TTF=2",
+ 		"-Wno-experimental",  -- sdl3 experimental for emcc
+ 	}
+ 	buildoptions_cpp {
+@@ -1107,11 +1107,11 @@
+ 	}
+ 	linkoptions {
+ 		"-Wl,--start-group",
+-		"-s USE_SDL=3",
+-		"-s USE_SDL_TTF=3",
++		"-s USE_SDL=2",
++		"-s USE_SDL_TTF=2",
+ 		"-s DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=\"['\\$$ERRNO_CODES']\"",
+-		"-s EXPORTED_FUNCTIONS=\"['_main', '_malloc', '__ZN15running_machine30emscripten_get_running_machineEv', '__ZN15running_machine17emscripten_get_uiEv', '__ZN15running_machine20emscripten_get_soundEv', '__ZN15mame_ui_manager12set_show_fpsEb', '__ZNK15mame_ui_manager8show_fpsEv', '__ZN13sound_manager4muteEbh', '__ZN15running_machine15emscripten_saveEPKc', '__ZN15running_machine15emscripten_loadEPKc', '__ZN15running_machine21emscripten_hard_resetEv', '__ZN15running_machine21emscripten_soft_resetEv', '__ZN15running_machine15emscripten_exitEv']\"",
+-		"-s EXPORTED_RUNTIME_METHODS=\"['cwrap']\"",
++		"-s EXPORTED_FUNCTIONS=\"['_main', '_malloc', '_eightbit_key', '_eightbit_ready', '__ZN15running_machine30emscripten_get_running_machineEv', '__ZN15running_machine17emscripten_get_uiEv', '__ZN15running_machine20emscripten_get_soundEv', '__ZN15mame_ui_manager12set_show_fpsEb', '__ZNK15mame_ui_manager8show_fpsEv', '__ZN13sound_manager4muteEbh', '__ZN15running_machine15emscripten_saveEPKc', '__ZN15running_machine15emscripten_loadEPKc', '__ZN15running_machine21emscripten_hard_resetEv', '__ZN15running_machine21emscripten_soft_resetEv', '__ZN15running_machine15emscripten_exitEv']\"",
++		"-s EXPORTED_RUNTIME_METHODS=\"['cwrap','FS','callMain']\"",
+ 		"-s ERROR_ON_UNDEFINED_SYMBOLS=0",
+ 		"-s STACK_SIZE=5MB",
+ 		"-s MAX_WEBGL_VERSION=2",
+@@ -1161,6 +1161,8 @@
+ 	else
+ 		linkoptions {
+ 			"-s ALLOW_MEMORY_GROWTH=1",
++			"-s MAXIMUM_MEMORY=268435456",
++			"-s GROWABLE_ARRAYBUFFERS=0",
+ 			"-s INITIAL_MEMORY=24MB",
+ 		}
+ 	end
+--- a/src/emu/machine.cpp
++++ b/src/emu/machine.cpp
+@@ -1468,3 +1468,19 @@
+ }
+ 
+ #endif /* defined(__EMSCRIPTEN__) */
++
++#ifdef __EMSCRIPTEN__
++extern "C" int eightbit_key(unsigned int code) {
++    running_machine *machine = running_machine::emscripten_get_running_machine();
++    if (!machine || code < 1 || code > 127 || !machine->natkeyboard().empty()) return 0;
++    machine->natkeyboard().post_char(char32_t(code));
++    return 1;
++}
++#endif
++
++#ifdef __EMSCRIPTEN__
++extern "C" int eightbit_ready() {
++    running_machine *machine = running_machine::emscripten_get_running_machine();
++    return machine && machine->phase() == machine_phase::RUNNING;
++}
++#endif
+--- a/src/osd/modules/sound/js_sound.js
++++ b/src/osd/modules/sound/js_sound.js
+@@ -82,7 +82,7 @@
+ 
+ 				//Work around autoplay restrictions in Chrome 71+ https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+ 				if (context) {
+-					context.resume();
++					// Eightbit Studio: audio resumes only on explicit user input.
+ 				}
+ 			}
+ 		}, 500);
+@@ -185,6 +185,8 @@
+ }
+ 
+ return {
++	studioResume: function () { if (context) return context.resume(); },
++	studioStop: function () { if (watchDogTimerEvent !== null) clearInterval(watchDogTimerEvent); watchDogTimerEvent = null; if (context) { disconnect_old_event(); context.close().catch(function () {}); context = null; } },
+ 	stream_sink_update: stream_sink_update,
+ 	get_context: get_context,
+ 	sample_count: sample_count
+@@ -194,3 +196,5 @@
+ 
+ window.jsmame_stream_sink_update = jsmame_web_audio.stream_sink_update;
+ window.jsmame_sample_count = jsmame_web_audio.sample_count;
++
++window.__eightbit_mameAudio = jsmame_web_audio;

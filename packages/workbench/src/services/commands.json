@@ -1,0 +1,866 @@
+{
+  "save": {
+    "path": [
+      "File"
+    ],
+    "label": "Save",
+    "accelerator": "CmdOrCtrl+S",
+    "aliases": "",
+    "order": 0,
+    "hidden": false
+  },
+  "save-all": {
+    "path": [
+      "File"
+    ],
+    "label": "Save All",
+    "accelerator": "CmdOrCtrl+Alt+S",
+    "aliases": "",
+    "order": 2,
+    "hidden": false
+  },
+  "new-file": {
+    "path": [
+      "File"
+    ],
+    "label": "New File\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 1,
+    "hidden": false,
+    "separator": true
+  },
+  "new-folder": {
+    "path": [
+      "File"
+    ],
+    "label": "New Folder\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 3,
+    "hidden": false
+  },
+  "rename-file": {
+    "path": [
+      "File",
+      "Selected File"
+    ],
+    "label": "Rename\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 4,
+    "hidden": false
+  },
+  "delete-file": {
+    "path": [
+      "File",
+      "Selected File"
+    ],
+    "label": "Delete\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 5,
+    "hidden": false
+  },
+  "reveal-file": {
+    "path": [
+      "File",
+      "Selected File"
+    ],
+    "label": "Show in Finder",
+    "accelerator": "",
+    "aliases": "",
+    "order": 6,
+    "hidden": false
+  },
+  "history": {
+    "path": [
+      "File",
+      "History"
+    ],
+    "label": "Local Recovery\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 17,
+    "hidden": false,
+    "separator": true
+  },
+  "git-history": {
+    "path": [
+      "File",
+      "History"
+    ],
+    "label": "Git File History\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 18,
+    "hidden": false
+  },
+  "import": {
+    "path": [
+      "File",
+      "Import"
+    ],
+    "label": "Replace BASIC Entry\u2026",
+    "accelerator": "",
+    "aliases": "BAS tokenised BIN",
+    "order": 12,
+    "hidden": false
+  },
+  "import-cassette": {
+    "path": [
+      "File"
+    ],
+    "label": "Open Programme\u2026",
+    "accelerator": "",
+    "aliases": "tape CAS WAV",
+    "order": 13,
+    "hidden": true
+  },
+  "record": {
+    "path": [
+      "File",
+      "Import"
+    ],
+    "label": "Record from Cassette\u2026",
+    "accelerator": "",
+    "aliases": "tape audio WAV",
+    "order": 11,
+    "hidden": false
+  },
+  "import-source": {
+    "path": [
+      "File",
+      "Import"
+    ],
+    "label": "Source File\u2026",
+    "accelerator": "",
+    "aliases": "BAS ASM assembly source",
+    "order": 10,
+    "hidden": false,
+    "separator": true
+  },
+  "export": {
+    "path": [
+      "File",
+      "Export"
+    ],
+    "label": "Cassette Image\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 14,
+    "hidden": false,
+    "separator": true
+  },
+  "export-wav": {
+    "path": [
+      "File",
+      "Export"
+    ],
+    "label": "WAV Audio\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 15,
+    "hidden": false
+  },
+  "open-cartridge-file": {
+    "path": [
+      "File"
+    ],
+    "label": "Open Cartridge\u2026",
+    "accelerator": "",
+    "aliases": "Vectrex bin vec cartridge emulator",
+    "explicitOnly": true,
+    "order": 12,
+    "hidden": false
+  },
+  "export-cartridge": {
+    "path": [
+      "File",
+      "Export"
+    ],
+    "label": "Cartridge Image\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 16,
+    "hidden": false
+  },
+  "find": {
+    "path": [
+      "Edit"
+    ],
+    "label": "Find\u2026",
+    "accelerator": "CmdOrCtrl+F",
+    "aliases": "",
+    "order": 22,
+    "hidden": false
+  },
+  "replace": {
+    "path": [
+      "Edit"
+    ],
+    "label": "Replace\u2026",
+    "accelerator": "CmdOrCtrl+Alt+F",
+    "aliases": "",
+    "order": 23,
+    "hidden": false
+  },
+  "search": {
+    "path": [
+      "Edit"
+    ],
+    "label": "Find in Project\u2026",
+    "accelerator": "CmdOrCtrl+Shift+F",
+    "aliases": "",
+    "order": 24,
+    "hidden": false
+  },
+  "renumber": {
+    "path": [
+      "Edit"
+    ],
+    "label": "Renumber BASIC Lines\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 25,
+    "hidden": false
+  },
+  "build": {
+    "path": [
+      "Project"
+    ],
+    "label": "Build",
+    "accelerator": "CmdOrCtrl+B",
+    "aliases": "",
+    "order": 38,
+    "hidden": false
+  },
+  "run": {
+    "path": [
+      "Project"
+    ],
+    "label": "Run Project",
+    "accelerator": "CmdOrCtrl+R",
+    "aliases": "",
+    "order": 39,
+    "hidden": false
+  },
+  "tests": {
+    "path": [
+      "Project"
+    ],
+    "label": "Run Tests",
+    "accelerator": "",
+    "aliases": "",
+    "order": 40,
+    "hidden": false
+  },
+  "sources": {
+    "path": [
+      "Project"
+    ],
+    "label": "Source Files\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 41,
+    "hidden": false,
+    "separator": true
+  },
+  "open-cassette": {
+    "path": [
+      "File"
+    ],
+    "label": "Open Programme\u2026",
+    "accelerator": "",
+    "aliases": "Open Cassette Open Cartridge Import Cassette Cassette File CAS WAV BIN ROM CCC BAS",
+    "order": 7,
+    "hidden": false,
+    "separator": true
+  },
+  "open-cartridge": {
+    "path": [
+      "File"
+    ],
+    "label": "Open Programme\u2026",
+    "accelerator": "",
+    "aliases": "CART ROM CCC",
+    "order": 20,
+    "hidden": true
+  },
+  "view-media": {
+    "path": [
+      "File"
+    ],
+    "label": "View Code",
+    "accelerator": "",
+    "aliases": "Disassemble Programme View Disassembly reconstructed 6809 BASIC listing BIN ROM cartridge",
+    "order": 8,
+    "hidden": false
+  },
+  "run-media": {
+    "path": [
+      "Emulator"
+    ],
+    "label": "Run Selected Programme",
+    "accelerator": "",
+    "aliases": "",
+    "order": 46,
+    "hidden": false
+  },
+  "eject-media": {
+    "path": [
+      "Emulator"
+    ],
+    "label": "Remove Opened Programme",
+    "accelerator": "",
+    "aliases": "",
+    "order": 54,
+    "hidden": false,
+    "separator": true
+  },
+  "focus-emulator": {
+    "path": [
+      "Emulator"
+    ],
+    "label": "Show Window",
+    "accelerator": "",
+    "aliases": "",
+    "order": 50,
+    "hidden": false
+  },
+  "reset": {
+    "path": [
+      "Emulator"
+    ],
+    "label": "Restart",
+    "accelerator": "",
+    "aliases": " Reset",
+    "order": 49,
+    "hidden": false
+  },
+  "stop": {
+    "path": [
+      "Emulator"
+    ],
+    "label": "Stop",
+    "accelerator": "",
+    "aliases": " Terminate",
+    "order": 48,
+    "hidden": false
+  },
+  "capture": {
+    "path": [
+      "Emulator",
+      "Capture"
+    ],
+    "label": "Screenshot\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 51,
+    "hidden": false
+  },
+  "runtime": {
+    "path": [
+      "Emulator"
+    ],
+    "label": "Settings\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 55,
+    "hidden": false,
+    "separator": true
+  },
+  "debug": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Start Debugging",
+    "accelerator": "F5",
+    "aliases": "",
+    "order": 59,
+    "hidden": false
+  },
+  "continue": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Continue",
+    "accelerator": "",
+    "aliases": "",
+    "order": 60,
+    "hidden": false
+  },
+  "pause": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Pause",
+    "accelerator": "",
+    "aliases": "",
+    "order": 61,
+    "hidden": false
+  },
+  "step": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Step Instruction",
+    "accelerator": "",
+    "aliases": "",
+    "order": 62,
+    "hidden": false
+  },
+  "breakpoints": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Breakpoints\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 63,
+    "hidden": false
+  },
+  "registers": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Registers",
+    "accelerator": "",
+    "aliases": "",
+    "order": 64,
+    "hidden": false
+  },
+  "memory": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Memory & Disassembly",
+    "accelerator": "",
+    "aliases": "",
+    "order": 65,
+    "hidden": false
+  },
+  "stop-debug": {
+    "path": [
+      "Debug"
+    ],
+    "label": "Stop Debugging",
+    "accelerator": "",
+    "aliases": "",
+    "order": 66,
+    "hidden": false,
+    "separator": true
+  },
+  "reconstruct": {
+    "path": [
+      "File"
+    ],
+    "label": "View Code",
+    "accelerator": "",
+    "aliases": "reconstruct recover assembly ASM CAS WAV BIN ROM CCC Disassemble View Code BIN ROM",
+    "order": 21,
+    "hidden": true
+  },
+  "lwtools": {
+    "path": [
+      "Tools"
+    ],
+    "label": "Assembler Setup\u2026",
+    "accelerator": "",
+    "aliases": "LWTOOLS",
+    "order": 67,
+    "hidden": false
+  },
+  "git-status": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "Changes",
+    "accelerator": "",
+    "aliases": "",
+    "order": 42,
+    "hidden": false,
+    "separator": true
+  },
+  "git-stage": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "Stage Files\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 43,
+    "hidden": false
+  },
+  "git-commit": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "Commit\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 45,
+    "hidden": false
+  },
+  "git-branches": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "Switch Branch\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 47,
+    "hidden": false
+  },
+  "git-log": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "History",
+    "accelerator": "",
+    "aliases": "",
+    "order": 56,
+    "hidden": false
+  },
+  "git-remotes": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "Remote Repositories\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 57,
+    "hidden": false
+  },
+  "git-init": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "Initialise Repository\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 58,
+    "hidden": false
+  },
+  "terminal-new": {
+    "path": [
+      "Tools",
+      "Terminal"
+    ],
+    "label": "New",
+    "accelerator": "",
+    "aliases": "",
+    "order": 68,
+    "hidden": false
+  },
+  "terminal-rename": {
+    "path": [
+      "Tools",
+      "Terminal"
+    ],
+    "label": "Rename\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 69,
+    "hidden": false
+  },
+  "terminal-colour": {
+    "path": [
+      "Tools",
+      "Terminal"
+    ],
+    "label": "Colour\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 70,
+    "hidden": false
+  },
+  "terminal-close": {
+    "path": [
+      "Tools",
+      "Terminal"
+    ],
+    "label": "Close",
+    "accelerator": "",
+    "aliases": "",
+    "order": 71,
+    "hidden": false
+  },
+  "agent-connections": {
+    "path": [
+      "Tools",
+      "Agent"
+    ],
+    "label": "Connections\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 72,
+    "hidden": false
+  },
+  "agent-request": {
+    "path": [
+      "Tools",
+      "Agent"
+    ],
+    "label": "New Request\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 73,
+    "hidden": false
+  },
+  "agent-context": {
+    "path": [
+      "Tools",
+      "Agent"
+    ],
+    "label": "Review Context",
+    "accelerator": "",
+    "aliases": "",
+    "order": 74,
+    "hidden": false
+  },
+  "agent-changes": {
+    "path": [
+      "Tools",
+      "Agent"
+    ],
+    "label": "Review Changes",
+    "accelerator": "",
+    "aliases": "",
+    "order": 75,
+    "hidden": false
+  },
+  "agent-undo": {
+    "path": [
+      "Tools",
+      "Agent"
+    ],
+    "label": "Undo Saved Changes\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 76,
+    "hidden": false
+  },
+  "agent-cancel": {
+    "path": [
+      "Tools",
+      "Agent"
+    ],
+    "label": "Cancel Request",
+    "accelerator": "",
+    "aliases": "",
+    "order": 77,
+    "hidden": false
+  },
+  "commands": {
+    "path": [
+      "View"
+    ],
+    "label": "Command Palette\u2026",
+    "accelerator": "CmdOrCtrl+Shift+P",
+    "aliases": "",
+    "order": 26,
+    "hidden": false
+  },
+  "quick-open": {
+    "path": [
+      "View"
+    ],
+    "label": "Go to File\u2026",
+    "accelerator": "CmdOrCtrl+P",
+    "aliases": " Quick Open",
+    "order": 27,
+    "hidden": false
+  },
+  "view-explorer": {
+    "path": [
+      "View"
+    ],
+    "label": "Explorer",
+    "accelerator": "",
+    "aliases": "",
+    "order": 28,
+    "hidden": false
+  },
+  "view-problems": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Problems",
+    "accelerator": "",
+    "aliases": "",
+    "order": 29,
+    "hidden": false
+  },
+  "view-output": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Output",
+    "accelerator": "",
+    "aliases": "",
+    "order": 30,
+    "hidden": false
+  },
+  "view-build": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Build Results",
+    "accelerator": "",
+    "aliases": "",
+    "order": 31,
+    "hidden": false
+  },
+  "view-tests": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Tests",
+    "accelerator": "",
+    "aliases": "",
+    "order": 32,
+    "hidden": false
+  },
+  "view-symbols": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Symbols",
+    "accelerator": "",
+    "aliases": "",
+    "order": 33,
+    "hidden": false
+  },
+  "view-preview": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Emulator",
+    "accelerator": "",
+    "aliases": "",
+    "order": 34,
+    "hidden": false
+  },
+  "view-debug": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Debugger",
+    "accelerator": "",
+    "aliases": "",
+    "order": 35,
+    "hidden": false
+  },
+  "view-terminal": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Terminal",
+    "accelerator": "",
+    "aliases": "",
+    "order": 36,
+    "hidden": false
+  },
+  "view-source-control": {
+    "path": [
+      "View",
+      "Panels"
+    ],
+    "label": "Source Control",
+    "accelerator": "",
+    "aliases": "",
+    "order": 37,
+    "hidden": false
+  },
+  "clear-recent": {
+    "path": [
+      "File",
+      "Open Recent"
+    ],
+    "label": "Clear Recent Projects",
+    "accelerator": "",
+    "aliases": "history welcome startup",
+    "order": 19,
+    "hidden": false
+  },
+  "create-programme-project": {
+    "path": [
+      "File"
+    ],
+    "label": "Create Project from Programme\u2026",
+    "accelerator": "",
+    "aliases": "import convert BASIC assembly reconstruct disassemble CAS WAV BIN ROM",
+    "order": 9,
+    "hidden": false
+  },
+  "capture-video": {
+    "path": [
+      "Emulator",
+      "Capture"
+    ],
+    "label": "Record Video\u2026",
+    "accelerator": "",
+    "aliases": "movie screen capture",
+    "order": 52,
+    "hidden": false
+  },
+  "capture-controls": {
+    "path": [
+      "Emulator",
+      "Capture"
+    ],
+    "label": "Show Controls",
+    "accelerator": "",
+    "aliases": "stop video recording capture toolbar Screenshot & Video Capture controls",
+    "order": 53,
+    "hidden": false
+  },
+  "git-unstage": {
+    "path": [
+      "Project",
+      "Source Control"
+    ],
+    "label": "Unstage Files\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 44,
+    "hidden": false
+  },
+  "export-media": {
+    "path": [
+      "File",
+      "Export"
+    ],
+    "label": "Export Media\u2026",
+    "accelerator": "",
+    "aliases": "",
+    "order": 16,
+    "hidden": false
+  },
+  "source-tools": {
+    "path": [
+      "Tools"
+    ],
+    "label": "Build Tools\u2026",
+    "accelerator": "",
+    "aliases": "LWTOOLS",
+    "order": 67,
+    "hidden": false
+  }
+}

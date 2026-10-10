@@ -1,0 +1,8 @@
+schema_version = 1
+id = "dragon32-basic"
+display_name = "Dragon 32 BASIC"
+program_start = 7681
+maximum_program_address = 32767
+maximum_line_number = 63999
+significant_variable_characters = 2
+

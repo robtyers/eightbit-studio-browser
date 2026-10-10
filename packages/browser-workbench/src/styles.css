@@ -1,0 +1,110 @@
+.browser-workbench { height: 100%; min-height: 0; }
+.browser-workbench .editor-toolbar { height: auto; min-height: 48px; padding: 9px 14px; flex: 0 0 auto; }
+.browser-workbench .editor-toolbar .command-actions { flex-wrap: wrap; white-space: normal; }
+.browser-workbench .command-actions button { min-height: 32px; height: auto; font-size: 12px; }
+.browser-workbench .command-actions .build-button:not(:disabled) { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.browser-sidebar-content { display: flex; flex-direction: column; min-height: 0; gap: 12px; padding: 20px 14px; overflow: auto; font-size: 13px; }
+.browser-sidebar-content p, .browser-muted { margin: 0; color: var(--muted); line-height: 1.5; }
+.browser-sidebar-content strong { font-size: 14px; }
+.browser-workbench button { cursor: pointer; }
+.browser-workbench button:disabled { cursor: default; opacity: .5; }
+.browser-sidebar-content button, .browser-output button, .browser-import button, .browser-welcome-actions button, .browser-dialog button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-raised); color: var(--text); font-size: 13px; }
+.browser-sidebar-content button { text-align: left; }
+.browser-workbench button svg, .browser-file-control svg { flex-shrink: 0; width: 16px; height: 16px; }
+.browser-file-control { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-raised); color: var(--text); font-size: 13px; cursor: pointer; }
+.browser-file-control input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.browser-file-control:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.browser-file-control:has(input:disabled) { opacity: .5; cursor: default; }
+.browser-sidebar-content a { color: var(--accent); overflow-wrap: anywhere; }
+.browser-workbench details summary { padding: 9px 0; color: var(--muted); cursor: pointer; }
+.browser-advanced { margin-top: 12px; }
+.browser-advanced[open] { display: flex; flex-direction: column; gap: 12px; }
+.browser-advanced label { display: flex; flex-direction: column; gap: 7px; }
+.browser-advanced input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface-raised); color: var(--text); }
+.browser-guide { flex: 0 0 auto; padding: 12px 20px; border-bottom: 1px solid var(--separator); }
+.browser-guide ol { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: 12px; }
+.browser-guide li:not(:last-child)::after { content: '›'; padding-left: 16px; color: var(--muted); }
+.browser-guide li[aria-current] { color: var(--text); font-weight: 600; }
+.browser-guide p { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+.browser-welcome { flex: 1; min-height: 0; padding: clamp(20px, 4vw, 48px); overflow: auto; }
+.browser-eyebrow { margin: 0 0 10px; color: var(--muted); font-size: 12px; letter-spacing: .06em; }
+.browser-welcome h1 { margin: 0 0 16px; font-size: clamp(24px, 3vw, 34px); line-height: 1.15; letter-spacing: -.025em; }
+.browser-welcome-copy { max-width: 520px; color: var(--muted); line-height: 1.6; }
+.browser-sample { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; max-width: 680px; margin: 28px 0 18px; padding: 22px; border: 1px solid var(--border-soft); border-radius: 9px; background: var(--surface); }
+.browser-sample > div { flex: 1; min-width: min(190px, 100%); }
+.browser-sample h2 { margin: 0 0 7px; font-size: 17px; }
+.browser-sample p { margin: 0; color: var(--muted); font-size: 13px; }
+.browser-sample button { display: flex; align-items: center; gap: 8px; min-height: 38px; }
+.browser-welcome-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+.browser-welcome > .browser-muted { font-size: 12px; max-width: 550px; }
+.browser-editor-tip { flex: 0 0 auto; margin: 0; padding: 10px 20px 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.browser-editor { position: relative; display: flex; min-height: 100px; }
+.browser-editor textarea, .browser-editor pre, .browser-import textarea { font: 14px/1.8 "SFMono-Regular", Consolas, "Liberation Mono", monospace; tab-size: 4; letter-spacing: normal; white-space: pre; padding: 16px 20px; border: 0; margin: 0; border-radius: 0; }
+.browser-editor textarea, .browser-import textarea { width: 100%; height: 100%; resize: none; background: var(--bg); color: var(--text); }
+.browser-editor-mirror { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.browser-editor pre { width: max-content; min-width: 100%; color: var(--text); }
+.browser-editor textarea { z-index: 1; }
+.browser-editor-highlighted textarea { background: transparent; color: transparent; caret-color: var(--text); }
+.browser-syntax-number { color: var(--muted); }
+.browser-syntax-keyword { color: var(--blue); }
+.browser-syntax-string { color: var(--amber); }
+.browser-syntax-comment { color: var(--muted); font-style: italic; }
+.browser-editor textarea:focus-visible, .browser-import textarea:focus-visible { outline: 1px solid var(--accent); outline-offset: -2px; }
+.browser-output { padding: 14px 20px; overflow: auto; line-height: 1.6; font-size: 13px; }
+.browser-output p { margin: 0 0 12px; }
+.browser-output [role='status'], .browser-output [role='alert'] { white-space: pre-wrap; }
+.browser-output code { overflow-wrap: anywhere; }
+.browser-output details { font-size: 12px; }
+.browser-diagnostics { padding: 0; list-style: none; }
+.browser-diagnostics button { text-align: left; margin: 0 0 8px; }
+.browser-import { display: flex; flex-direction: column; height: 100%; padding: 12px 16px; gap: 10px; }
+.browser-import-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.browser-import-heading p { flex: 1; margin: 0; font-size: 13px; }
+.browser-import textarea { flex: 1; min-height: 60px; padding: 10px; }
+.browser-import > .browser-muted { font-size: 12px; }
+.browser-rom-setup h2 { font-size: 16px; margin: 0 0 10px; }
+.browser-rom-setup .browser-file-control { margin-bottom: 12px; }
+.browser-rom-setup .browser-muted { font-size: 12px; }
+.browser-storage-state { margin-left: auto; }
+.browser-runtime { width: 100%; height: 360px; border: 0; background: var(--bg); }
+.browser-workbench .status-bar button { padding: 0; border: 0; background: transparent; color: inherit; font-size: inherit; }
+.browser-dialog-scrim { position: fixed; inset: 0; z-index: 100; background: rgba(0, 0, 0, .48); display: grid; place-items: center; padding: 18px; }
+.browser-dialog { width: min(480px, 100%); max-height: calc(100dvh - 36px); overflow: auto; padding: 22px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); box-shadow: 0 12px 32px var(--shadow); font-size: 14px; }
+.browser-dialog-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+.browser-dialog-heading h2 { flex: 1; margin: 0; font-size: 19px; }
+.browser-dialog-heading button { font-size: 20px; padding: 2px 9px; }
+.browser-dialog p { line-height: 1.5; }
+.browser-dialog .browser-muted { font-size: 12px; margin-top: 18px; }
+.browser-dialog > button, .browser-dialog > .browser-file-control { margin-top: 10px; }
+.browser-save-options { display: flex; flex-direction: column; gap: 12px; }
+.browser-save-options button { text-align: left; padding: 14px; }
+.browser-save-options small { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+@media (max-width: 700px) { .browser-storage-state { display: none; } .browser-workbench .editor-toolbar { padding: 8px; } .browser-workbench .editor-toolbar .command-actions { flex: 1 1 auto; margin: 0; gap: 6px; } .browser-workbench .command-actions button { padding: 6px 8px; } .browser-guide { padding: 10px 14px; } .browser-editor-tip { padding: 10px 14px 0; } .browser-editor textarea, .browser-editor pre { padding: 14px; } .browser-workbench .status-bar { gap: 8px; } }
+@media (pointer: coarse) { .browser-workbench .command-actions button, .browser-workbench .activity-bar button, .browser-workbench .panel-tabs button, .browser-workbench .editor-tab button, .browser-workbench summary, .browser-sidebar-content button, .browser-file-control, .browser-dialog button, .browser-welcome button, .browser-output button { min-height: 44px; } .browser-workbench .activity-bar button { width: 44px; } .browser-editor textarea, .browser-editor pre, .browser-import textarea, .browser-advanced input { font-size: 16px; } .browser-workbench .editor-tabs { height: 44px; flex-basis: 44px; } }
+@media (forced-colors: active) { .browser-editor-highlighted textarea { color: CanvasText; background: Canvas; } .browser-editor-mirror { display: none; } }
+.browser-project-welcome { flex: 1; min-height: 0; overflow: auto; padding: clamp(20px, 4vw, 48px); }
+.browser-project-welcome .welcome-view { overflow: visible; padding: 0; margin: 0; width: 100%; max-width: 740px; display: block; }
+.browser-project-welcome .welcome-actions { justify-content: flex-start; flex-wrap: wrap; }
+.browser-project-welcome .welcome-copy { max-width: 540px; }
+.browser-project-welcome .recent-projects { max-width: 740px; width: 100%; }
+.browser-brand { margin-bottom: 24px; }
+.browser-brand .processor-mark { width: 64px; height: 64px; }
+.browser-cloud-card { max-width: 740px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; margin: 28px 0 0; padding: 20px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); }
+.browser-cloud-card > div { flex: 1; min-width: min(220px, 100%); }
+.browser-cloud-card p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 8px 0 0; }
+.browser-cloud-card button { border: 1px solid var(--border); background: var(--surface-raised); padding: 10px 14px; border-radius: 6px; color: var(--text); }
+.browser-welcome-status { color: var(--amber); font-size: 13px; }
+.browser-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; font-size: 13px; }
+.browser-field input, .browser-field select { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-raised); color: var(--text); font: inherit; }
+.browser-dialog a { color: var(--accent); }
+.browser-cloud-preview { display: flex; flex-direction: column; gap: 7px; padding: 14px; border: 1px solid var(--border); margin: 16px 0; border-radius: 6px; }
+.browser-cloud-preview small { color: var(--muted); }
+.browser-remote-project { display: flex !important; width: 100%; margin-bottom: 8px; text-align: left; }
+.browser-connect-link { display: inline-block; padding: 12px 0; }
+@media (max-width: 700px) { .browser-project-welcome .welcome-actions { display: flex; flex-direction: column; align-items: stretch; } .browser-project-welcome .welcome-actions button { justify-content: center; } .browser-brand { margin-bottom: 22px; } .browser-cloud-card { padding: 16px; } .browser-workbench .status-bar .browser-storage-state { display: inline; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-left: auto; } }
+.browser-project-file { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.browser-project-file p { padding: 12px 20px; font-size: 12px; border-bottom: 1px solid var(--border); }
+.browser-project-file textarea { flex: 1; width: 100%; min-height: 100px; resize: none; border: 0; padding: 16px 20px; color: var(--text); background: var(--bg); font: 13px/1.7 monospace; }
+.browser-project-welcome .welcome-view { min-height: 0; text-align: left; }
+.browser-project-welcome .welcome-copy { margin: 18px 0 24px; }
+.browser-project-welcome .welcome-footnote { color: var(--muted); line-height: 1.6; }

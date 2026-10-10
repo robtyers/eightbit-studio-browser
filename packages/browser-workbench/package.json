@@ -1,0 +1,26 @@
+{
+  "name": "@eightbitstudio/browser-workbench",
+  "private": true,
+  "version": "0.5.2",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": "./src/BrowserWorkbench.tsx",
+    "./contracts": "./src/contracts.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": { "check": "tsc --noEmit", "test": "vitest run" },
+  "dependencies": {
+    "@eightbitstudio/workbench": "workspace:*",
+    "react": "19.2.8"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "jsdom": "30.0.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  }
+}

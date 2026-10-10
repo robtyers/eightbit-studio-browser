@@ -1,0 +1,6 @@
+{
+  "name": "eightbit-studio-browser-source",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "packageManager": "pnpm@11.5.0"
+}

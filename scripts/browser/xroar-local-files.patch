@@ -1,0 +1,18 @@
+--- a/src/wasm/wasm.c
++++ b/src/wasm/wasm.c
+@@ -604,5 +604,0 @@
+-static void wasm_onload(const char *file) {
+-	WASM_DEBUG("wasm_onload(%s)\n", file);
+-	unlock_fetch(file);
+-}
+-
+@@ -683,6 +678,3 @@
+-	// Submit fetch.  Callbacks will unlock the fetch when done.  The more
+-	// full-featured Emscripten wget function would allow us to display
+-	// progress bars, etc., but nothing we'll ever fetch is really large
+-	// enough to justify that.
+-	WASM_DEBUG("wasm_wget: %s: submitting call to emscripten_async_wget\n", file);
+-	emscripten_async_wget(file, file, wasm_onload, wasm_onerror);
++	// Eightbit Studio: firmware and media must already be in volatile MEMFS.
++	// A missing file must never trigger a firmware or game download.
++	wasm_onerror(file);
