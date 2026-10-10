@@ -1,0 +1,4 @@
+packages:
+  - apps/eightbit-studio-web/ui
+  - packages/browser-workbench
+  - packages/workbench

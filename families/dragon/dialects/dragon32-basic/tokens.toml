@@ -1,0 +1,341 @@
+schema_version = 1
+dialect = "dragon32-basic"
+
+[[statement]]
+code = 128
+text = "FOR"
+[[statement]]
+code = 129
+text = "GO"
+[[statement]]
+code = 130
+text = "REM"
+[[statement]]
+code = 131
+text = "'"
+[[statement]]
+code = 132
+text = "ELSE"
+[[statement]]
+code = 133
+text = "IF"
+[[statement]]
+code = 134
+text = "DATA"
+[[statement]]
+code = 135
+text = "PRINT"
+[[statement]]
+code = 136
+text = "ON"
+[[statement]]
+code = 137
+text = "INPUT"
+[[statement]]
+code = 138
+text = "END"
+[[statement]]
+code = 139
+text = "NEXT"
+[[statement]]
+code = 140
+text = "DIM"
+[[statement]]
+code = 141
+text = "READ"
+[[statement]]
+code = 142
+text = "LET"
+[[statement]]
+code = 143
+text = "RUN"
+[[statement]]
+code = 144
+text = "RESTORE"
+[[statement]]
+code = 145
+text = "RETURN"
+[[statement]]
+code = 146
+text = "STOP"
+[[statement]]
+code = 147
+text = "POKE"
+[[statement]]
+code = 148
+text = "CONT"
+[[statement]]
+code = 149
+text = "LIST"
+[[statement]]
+code = 150
+text = "CLEAR"
+[[statement]]
+code = 151
+text = "NEW"
+[[statement]]
+code = 152
+text = "DEF"
+[[statement]]
+code = 153
+text = "CLOAD"
+[[statement]]
+code = 154
+text = "CSAVE"
+[[statement]]
+code = 155
+text = "OPEN"
+[[statement]]
+code = 156
+text = "CLOSE"
+[[statement]]
+code = 157
+text = "LLIST"
+[[statement]]
+code = 158
+text = "SET"
+[[statement]]
+code = 159
+text = "RESET"
+[[statement]]
+code = 160
+text = "CLS"
+[[statement]]
+code = 161
+text = "MOTOR"
+[[statement]]
+code = 162
+text = "SOUND"
+[[statement]]
+code = 163
+text = "AUDIO"
+[[statement]]
+code = 164
+text = "EXEC"
+[[statement]]
+code = 165
+text = "SKIPF"
+[[statement]]
+code = 166
+text = "DEL"
+[[statement]]
+code = 167
+text = "EDIT"
+[[statement]]
+code = 168
+text = "TRON"
+[[statement]]
+code = 169
+text = "TROFF"
+[[statement]]
+code = 170
+text = "LINE"
+[[statement]]
+code = 171
+text = "PCLS"
+[[statement]]
+code = 172
+text = "PSET"
+[[statement]]
+code = 173
+text = "PRESET"
+[[statement]]
+code = 174
+text = "SCREEN"
+[[statement]]
+code = 175
+text = "PCLEAR"
+[[statement]]
+code = 176
+text = "COLOR"
+[[statement]]
+code = 177
+text = "CIRCLE"
+[[statement]]
+code = 178
+text = "PAINT"
+[[statement]]
+code = 179
+text = "GET"
+[[statement]]
+code = 180
+text = "PUT"
+[[statement]]
+code = 181
+text = "DRAW"
+[[statement]]
+code = 182
+text = "PCOPY"
+[[statement]]
+code = 183
+text = "PMODE"
+[[statement]]
+code = 184
+text = "PLAY"
+[[statement]]
+code = 185
+text = "DLOAD"
+[[statement]]
+code = 186
+text = "RENUM"
+[[statement]]
+code = 187
+text = "TAB("
+[[statement]]
+code = 188
+text = "TO"
+[[statement]]
+code = 189
+text = "SUB"
+[[statement]]
+code = 190
+text = "FN"
+[[statement]]
+code = 191
+text = "THEN"
+[[statement]]
+code = 192
+text = "NOT"
+[[statement]]
+code = 193
+text = "STEP"
+[[statement]]
+code = 194
+text = "OFF"
+[[statement]]
+code = 195
+text = "+"
+[[statement]]
+code = 196
+text = "-"
+[[statement]]
+code = 197
+text = "*"
+[[statement]]
+code = 198
+text = "/"
+[[statement]]
+code = 199
+text = "^"
+[[statement]]
+code = 200
+text = "AND"
+[[statement]]
+code = 201
+text = "OR"
+[[statement]]
+code = 202
+text = ">"
+[[statement]]
+code = 203
+text = "="
+[[statement]]
+code = 204
+text = "<"
+[[statement]]
+code = 205
+text = "USING"
+
+[[function]]
+code = 128
+text = "SGN"
+[[function]]
+code = 129
+text = "INT"
+[[function]]
+code = 130
+text = "ABS"
+[[function]]
+code = 131
+text = "POS"
+[[function]]
+code = 132
+text = "RND"
+[[function]]
+code = 133
+text = "SQR"
+[[function]]
+code = 134
+text = "LOG"
+[[function]]
+code = 135
+text = "EXP"
+[[function]]
+code = 136
+text = "SIN"
+[[function]]
+code = 137
+text = "COS"
+[[function]]
+code = 138
+text = "TAN"
+[[function]]
+code = 139
+text = "ATN"
+[[function]]
+code = 140
+text = "PEEK"
+[[function]]
+code = 141
+text = "LEN"
+[[function]]
+code = 142
+text = "STR$"
+[[function]]
+code = 143
+text = "VAL"
+[[function]]
+code = 144
+text = "ASC"
+[[function]]
+code = 145
+text = "CHR$"
+[[function]]
+code = 146
+text = "EOF"
+[[function]]
+code = 147
+text = "JOYSTK"
+[[function]]
+code = 148
+text = "FIX"
+[[function]]
+code = 149
+text = "HEX$"
+[[function]]
+code = 150
+text = "LEFT$"
+[[function]]
+code = 151
+text = "RIGHT$"
+[[function]]
+code = 152
+text = "MID$"
+[[function]]
+code = 153
+text = "POINT"
+[[function]]
+code = 154
+text = "INKEY$"
+[[function]]
+code = 155
+text = "MEM"
+[[function]]
+code = 156
+text = "VARPTR"
+[[function]]
+code = 157
+text = "INSTR"
+[[function]]
+code = 158
+text = "TIMER"
+[[function]]
+code = 159
+text = "PPOINT"
+[[function]]
+code = 160
+text = "STRING$"
+[[function]]
+code = 161
+text = "USR"
+

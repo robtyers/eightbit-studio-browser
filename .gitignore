@@ -1,0 +1,12 @@
+node_modules/
+target/
+dist/
+*.tsbuildinfo
+.DS_Store
+/apps/eightbit-studio-web/ui/public/generated/
+/.cache/browser-tools/
+/.cache/xroar-web/github-release/
+/.cache/xroar-web/source-*/
+/.cache/xroar-web/browser-source.tar.gz
+/apps/eightbit-studio-web/github-worker/.dev.vars*
+/apps/eightbit-studio-web/github-worker/.wrangler/

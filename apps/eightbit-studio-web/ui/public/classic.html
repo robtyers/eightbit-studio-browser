@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+  <title>Retro computer emulator</title>
+  <link rel="stylesheet" href="runtime.css" />
+</head>
+<body>
+  <canvas id="screen" tabindex="0" aria-label="Retro computer screen; focus for keyboard input"></canvas>
+  <div class="controls">
+    <button id="audio" disabled>Enable sound</button>
+    <button data-key="up" disabled aria-label="Up">↑</button><button data-key="down" disabled aria-label="Down">↓</button>
+    <button data-key="left" disabled aria-label="Left">←</button><button data-key="right" disabled aria-label="Right">→</button>
+    <button data-key="space" disabled>Space</button><button data-key="break" disabled>Interrupt (Break)</button>
+    <label>Type into the game <input id="keys" disabled autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="128" /></label><button id="type" disabled>Send + Enter</button>
+    <span id="status" role="status">Starting…</span>
+  </div>
+  <p class="control-hint">Tap the screen to use a hardware keyboard, or enter text above and choose Send + Enter. Use Enable sound to turn on audio.</p>
+  <script src="classic.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/eightbit-targets",
+    "crates/eightbit-source-core",
+    "cpu/z80/eightbit-sinclair-basic",
+    "families/dragon/crates/eightbit-dragon-targets",
+    "families/dragon/crates/eightbit-dragon-basic-core",
+    "families/dragon/crates/eightbit-dragon-media",
+    "families/dragon/crates/eightbit-dragon-mobile",
+    "families/dragon/crates/eightbit-dragon-project",
+    "families/commodore/crates/eightbit-commodore-core",
+    "families/spectrum/crates/eightbit-spectrum-core",
+    "families/zx81/crates/eightbit-zx81-core",
+    "apps/eightbit-studio-web/core",
+]
+
+[workspace.package]
+version = "0.5.2"
+edition = "2024"
+rust-version = "1.92"
+publish = false
+license = "Apache-2.0"
+
+[workspace.dependencies]
+tauri-plugin-updater = "=2.11.0"
+semver = "=1.0.28"
+
+clap = { version = "=4.6.6", features = ["derive"] }
+cpal = "=0.16.0"
+hex = "=0.4.3"
+futures-util = "=0.3.34"
+portable-pty = "=0.9.0"
+reqwest = { version = "=0.13.4", default-features = false, features = ["json", "rustls", "stream"] }
+security-framework = "=3.7.0"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.151"
+sha2 = "=0.10.9"
+thiserror = "=2.0.20"
+tokio = { version = "=1.53.1", features = ["io-std", "io-util", "macros", "process", "rt-multi-thread", "sync", "time"] }
+toml = "=0.9.12"
+toml_edit = "=0.25.13"
+tower-lsp-server = "=0.23.0"
+tauri = "=2.11.5"
+tauri-build = "=2.6.3"
+tauri-plugin-dialog = "=2.7.3"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+format_push_string = "allow"
+items_after_statements = "allow"
+missing_errors_doc = "allow"
+naive_bytecount = "allow"
+similar_names = "allow"
+struct_field_names = "allow"
+too_many_lines = "allow"
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+

@@ -1,0 +1,37 @@
+[package]
+name = "eightbit-browser"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license = "GPL-3.0-or-later"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+native-acceptance = []
+
+[dependencies]
+eightbit-dragon-basic-core = { path = "../../../families/dragon/crates/eightbit-dragon-basic-core" }
+eightbit-dragon-media = { path = "../../../families/dragon/crates/eightbit-dragon-media" }
+eightbit-dragon-mobile = { path = "../../../families/dragon/crates/eightbit-dragon-mobile" }
+eightbit-dragon-project = { path = "../../../families/dragon/crates/eightbit-dragon-project" }
+zip = { version = "=4.6.1", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+eightbit-source = { package = "eightbit-source-core", path = "../../../crates/eightbit-source-core" }
+eightbit-commodore-core = { path = "../../../families/commodore/crates/eightbit-commodore-core", default-features = false }
+eightbit-spectrum-core = { path = "../../../families/spectrum/crates/eightbit-spectrum-core", default-features = false }
+eightbit-zx81-core = { path = "../../../families/zx81/crates/eightbit-zx81-core", default-features = false }
+toml.workspace = true
+sha2.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+wasm-bindgen = "=0.2.127"
+
+[dev-dependencies]
+tempfile = "=3.27.0"
+
+[lints]
+workspace = true

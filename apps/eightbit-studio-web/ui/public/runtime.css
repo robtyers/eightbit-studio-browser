@@ -1,0 +1,14 @@
+:root { color-scheme: dark; --bg: #1e1e1e; --text: #f2f2f2; --muted: #b2b2b7; --control: #3a3a3c; --border: #454545; --accent: #0a84ff; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 13px -apple-system, BlinkMacSystemFont, sans-serif; }
+canvas { display: block; width: min(384px, 100%); height: auto; aspect-ratio: 8 / 5; object-fit: contain; margin: 0 auto; background: #000; }
+canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 10px 12px; }
+button, input { font: inherit; background: var(--control); color: inherit; border: 1px solid var(--border); border-radius: 5px; padding: 8px 10px; }
+button { cursor: pointer; }
+button:disabled, input:disabled { opacity: .5; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[data-scan], button[data-key] { touch-action: none; user-select: none; min-width: 36px; }
+input { width: 120px; max-width: 100%; }
+.controls label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.control-hint { padding: 0 12px 10px; margin: 0; color: var(--muted); line-height: 1.5; font-size: 12px; }
+@media (pointer: coarse) { button, input { min-height: 44px; box-sizing: border-box; } button[data-scan], button[data-key] { min-width: 44px; } input { font-size: 16px; } }

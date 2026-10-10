@@ -1,0 +1,30 @@
+{
+  "name": "@eightbitstudio/eightbit-studio-web",
+  "private": true,
+  "version": "0.5.2",
+  "author": "Rob Tyers",
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite --host 127.0.0.1 --port 1425 --strictPort",
+    "preview": "vite preview --host 127.0.0.1 --port 1425 --strictPort"
+  },
+  "dependencies": {
+    "@eightbitstudio/browser-workbench": "workspace:*",
+    "@eightbitstudio/workbench": "workspace:*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "26.4.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "@vitejs/plugin-react": "6.1.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  }
+}

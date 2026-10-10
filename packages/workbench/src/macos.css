@@ -1,0 +1,436 @@
+/*
+ * macOS presentation layer.
+ *
+ * Domain behaviour remains in the existing components and Rust boundary. This
+ * layer gives every WebView-owned surface one semantic, system-led appearance.
+ */
+
+:root {
+  color-scheme: dark;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  font-synthesis: none;
+  --bg: #1e1e1e;
+  --surface: #252525;
+  --surface-raised: #2c2c2c;
+  --surface-hover: #363636;
+  --surface-selected: #3a3a3c;
+  --control: #3a3a3c;
+  --control-hover: #48484a;
+  --border: #454545;
+  --border-soft: #363636;
+  --text: #f2f2f2;
+  --muted: #b2b2b7;
+  --faint: #7c7c80;
+  --accent: #0a84ff;
+  --green: #32d74b;
+  --green-strong: #30d158;
+  --amber: #ffd60a;
+  --red: #ff453a;
+  --blue: #64d2ff;
+  --purple: #bf5af2;
+  --separator: rgba(255, 255, 255, .12);
+  --shadow: rgba(0, 0, 0, .42);
+  --radius-control: 6px;
+  --radius-panel: 10px;
+}
+
+@supports (color: AccentColor) {
+  :root { --accent: AccentColor; }
+}
+
+* { scrollbar-color: rgba(128, 128, 128, .48) transparent; }
+body { background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; accent-color: var(--accent); }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 74%, transparent); outline-offset: 1px; }
+button:active:not(:disabled) { transform: translateY(.5px); }
+
+.app { background: var(--bg); color: var(--text); }
+.window-drag-region, .titlebar { display: none; }
+
+/* Opening screen and brand */
+.welcome-shell { background: var(--bg); }
+.welcome-shell::before { display: none; }
+.welcome-view { width: min(720px, calc(100% - 64px)); padding: 42px 0 56px; }
+.dragon-brand { box-sizing: border-box; }
+.welcome-mark {
+  width: min(510px, 82vw);
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 19px;
+}
+.welcome-mark .dragon-logo-image { width: min(410px, 74vw); height: auto; aspect-ratio: 1619 / 971; object-fit: contain; }
+.dragon-wordmark {
+  display: block;
+  color: #f2262f;
+  font-family: "Arial Black", "Helvetica Neue", Helvetica, sans-serif;
+  font-size: clamp(38px, 7vw, 66px);
+  font-weight: 950;
+  font-stretch: condensed;
+  line-height: .88;
+  letter-spacing: -.075em;
+  white-space: nowrap;
+}
+/* Compact opening screens retain natural height so content can scroll, not overlap. */
+.welcome-view-compact { width: min(640px, calc(100% - 40px)); padding: 28px 0; }
+.welcome-view-compact > * { flex-shrink: 0; }
+.welcome-view-compact .welcome-mark { width: min(360px, 100%); gap: 10px; margin-bottom: 20px; }
+.welcome-view-compact .dragon-logo-image { width: min(250px, 64vw); }
+.welcome-view-compact .dragon-wordmark { font-size: clamp(28px, 6vw, 44px); }
+.welcome-view.welcome-view-compact h1 { font-size: clamp(24px, 3.5vw, 30px); }
+.welcome-view-compact .welcome-copy { margin: 12px auto 22px; }
+.welcome-view-compact .welcome-actions { flex-wrap: wrap; justify-content: center; }
+.welcome-view-compact .recent-projects { margin-top: 26px; }
+.welcome-view-compact .recent-project-button { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+.welcome-view-compact .recent-project-button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.eyebrow { margin: 0 0 13px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .08em; }
+.welcome-view h1 { max-width: 610px; margin: 0; font: 650 clamp(28px, 4vw, 42px)/1.12 -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -.025em; }
+.welcome-copy { max-width: 530px; margin: 14px auto 25px; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.welcome-actions { gap: 8px; }
+.primary-button, .secondary-button {
+  min-height: 30px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  box-shadow: 0 1px 1px rgba(0,0,0,.18);
+  font-size: 13px;
+  font-weight: 500;
+}
+.primary-button { border-color: color-mix(in srgb, var(--accent) 80%, #000); background: var(--accent); color: white; box-shadow: none; }
+.primary-button:hover { background: color-mix(in srgb, var(--accent) 88%, white); }
+.secondary-button { background: var(--control); color: var(--text); }
+.secondary-button:hover { background: var(--control-hover); }
+.recent-projects { width: min(560px, 100%); margin-top: 38px; }
+.recent-projects-heading { margin: 0 10px 6px; }
+.recent-projects-heading h2 { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.recent-projects-clear { color: var(--muted); font-size: 11px; }
+.recent-project-button { min-height: 44px; grid-template-columns: 170px minmax(0,1fr); padding: 7px 10px; border-radius: 7px; }
+.recent-project-button:hover, .recent-projects-clear:hover { background: var(--surface-hover); }
+.recent-projects span { color: var(--text); font-weight: 550; }
+.recent-projects small, .welcome-footnote { color: var(--faint); }
+
+/* Main window and navigation */
+.workbench { grid-template-columns: 48px var(--primary-sidebar-width, 246px) 5px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) 24px; }
+.workbench.assistant-visible { grid-template-columns: 48px var(--primary-sidebar-width, 246px) 5px minmax(0, 1fr) 5px var(--assistant-width, 350px); }
+.workbench.sidebar-hidden { grid-template-columns: 48px 0 0 minmax(0, 1fr); }
+.workbench.sidebar-hidden.assistant-visible { grid-template-columns: 48px 0 0 minmax(0, 1fr) 5px var(--assistant-width, 350px); }
+.workbench.sidebar-hidden .sidebar, .workbench.sidebar-hidden .primary-sidebar-resizer { display: none; }
+.activity-bar, .sidebar, .editor-area, .assistant-sidebar { grid-row: 1; }
+.workbench > .workbench-resizer.vertical { grid-row: 1; }
+.status-bar { grid-row: 2; }
+.activity-bar { padding-top: 5px; gap: 3px; border-right: 1px solid var(--separator); background: var(--surface-raised); }
+.activity-logo { width: 35px; height: 29px; margin: 4px 0 8px; }
+.activity-logo .dragon-logo-image { width: 100%; height: 100%; object-fit: contain; }
+.activity-bar button { width: 40px; height: 36px; border: 0; border-left: 0; border-radius: 7px; color: var(--muted); }
+.activity-bar button:hover { background: var(--surface-hover); color: var(--text); }
+.activity-bar button.active { border-left: 0; background: var(--surface-selected); color: var(--text); box-shadow: inset 0 0 0 1px var(--separator); }
+.activity-count { right: 2px; bottom: 1px; background: var(--red); color: white; }
+.sidebar { border-right: 1px solid var(--separator); background: var(--surface); }
+.sidebar-heading, .source-control-heading, .assistant-heading { min-height: 52px; height: 52px; padding: 0 11px; border-bottom: 1px solid var(--separator); color: var(--muted); font-size: 11px; letter-spacing: 0; text-transform: none; }
+.sidebar-project-name, .source-control-heading strong { margin-top: 3px; color: var(--text); font-size: 13px; font-weight: 600; }
+.explorer-actions button, .source-control-heading button, .assistant-heading button { width: 28px; height: 28px; border-radius: 6px; color: var(--muted); }
+.explorer-actions button:hover, .source-control-heading button:hover, .assistant-heading button:hover { background: var(--surface-hover); color: var(--text); }
+.project-tree { padding: 5px 5px 8px; font-size: 12px; }
+.tree-root, .tree-file, .tree-directory { min-height: 28px; height: 28px; border-radius: 5px; color: var(--muted); }
+.tree-root { font-size: 11px; letter-spacing: 0; text-transform: none; }
+.tree-file:hover, .tree-directory:hover, .tree-root:hover { background: var(--surface-hover); color: var(--text); }
+.tree-file.active { background: color-mix(in srgb, var(--accent) 24%, var(--surface)); color: var(--text); }
+.tree-file.selected:not(.active), .tree-directory.selected, .tree-root.selected { outline: 2px solid color-mix(in srgb, var(--accent) 58%, transparent); }
+.project-file-icon, .project-folder-icon, .twist { color: var(--muted); }
+.project-file-icon.basic { color: var(--green); }
+.project-file-icon.configuration { color: var(--amber); }
+.project-file-icon.assembly { color: var(--purple); }
+.tree-role { color: var(--faint); font-size: 9px; letter-spacing: 0; text-transform: none; }
+.tree-create-form input, .tree-rename-form input { border-color: var(--accent); border-radius: 5px; background: var(--control); color: var(--text); }
+
+/* Menus, editor chrome and resizers */
+.explorer-context-menu { padding: 5px; border: 1px solid var(--border); border-radius: 8px; background: color-mix(in srgb, var(--surface-raised) 94%, transparent); box-shadow: 0 12px 35px var(--shadow); backdrop-filter: blur(20px); }
+.explorer-context-menu button { min-height: 26px; border-radius: 5px; color: var(--text); font-size: 12px; }
+.explorer-context-menu button:hover:not(:disabled), .explorer-context-menu button:focus-visible { background: var(--accent); color: white; }
+.explorer-context-menu button:hover:not(:disabled) .explorer-context-extension, .explorer-context-menu button:focus-visible .explorer-context-extension { color: inherit; }
+.explorer-context-extension { color: var(--faint); }
+.explorer-context-separator { background: var(--separator); }
+.editor-area { background: var(--bg); }
+.command-bar { height: 44px; flex-basis: 44px; padding: 0 9px 0 12px; border-bottom: 1px solid var(--separator); background: var(--surface-raised); }
+.breadcrumbs { color: var(--muted); font-size: 12px; }
+.breadcrumbs b { color: var(--faint); }
+.dirty-label { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); font-size: 10px; letter-spacing: 0; text-transform: none; }
+.read-only-label { background: color-mix(in srgb, var(--blue) 14%, transparent); color: var(--blue); font-size: 10px; letter-spacing: 0; text-transform: none; }
+.command-actions { gap: 6px; }
+.command-actions button { height: 28px; padding: 0 9px; border: 1px solid var(--border); border-radius: 6px; background: var(--control); color: var(--text); font-size: 11px; }
+.command-actions button:hover:not(:disabled) { border-color: var(--border); background: var(--control-hover); color: var(--text); }
+.command-actions .build-button, .command-actions .run-button, .command-actions .debug-button { border-color: var(--border); background: var(--control); color: var(--text); }
+.command-actions .run-button { border-color: color-mix(in srgb, var(--accent) 70%, var(--border)); background: var(--accent); color: white; }
+.editor-toolbar { min-width: 0; gap: 8px; }
+.editor-toolbar .breadcrumbs { flex: 1 1 0; }
+.editor-toolbar .breadcrumbs span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.editor-toolbar .command-actions { flex: 0 0 auto; white-space: nowrap; }
+.editor-toolbar.compact .breadcrumbs { display: none; }
+.editor-toolbar.compact .command-actions { margin-left: auto; }
+.editor-toolbar .command-actions button svg { display: block; flex-shrink: 0; }
+.editor-toolbar .stop-button { color: var(--red); }
+.toolbar-overflow { position: relative; }
+.toolbar-overflow-menu { position: absolute; z-index: 20; top: calc(100% + 6px); right: 0; display: flex; flex-direction: column; min-width: 160px; padding: 5px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-raised); box-shadow: 0 8px 24px var(--shadow); }
+.toolbar-overflow-menu button { width: 100%; border: 0; background: transparent; }
+.toolbar-overflow-menu kbd { margin-left: auto; color: var(--muted); font: inherit; }
+.toolbar-overflow-menu button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.launcher-results button:disabled { opacity: .5; cursor: default; }
+.editor-tabs { height: 35px; flex-basis: 35px; border-bottom: 1px solid var(--separator); background: var(--surface); }
+.editor-tab { min-width: 138px; border-right: 1px solid var(--separator); color: var(--muted); }
+.editor-tab.active { border-top: 0; background: var(--bg); color: var(--text); box-shadow: inset 0 -2px var(--accent); }
+.editor-tab-select { padding-left: 11px; }
+.editor-tab-close { color: transparent; border-radius: 5px; }
+.editor-tab:hover .editor-tab-close, .editor-tab.active .editor-tab-close, .editor-tab-close:focus-visible { color: var(--muted); }
+.editor-tab-close:hover { background: var(--surface-hover); color: var(--text); }
+.tab-save-status.saved { display: none; }
+.tab-save-status.unsaved { color: var(--muted); font-size: 8px; }
+.file-badge { background: transparent; color: var(--muted); }
+.file-badge.basic { background: transparent; color: var(--green); }
+.file-badge.assembly { background: transparent; color: var(--purple); }
+.file-badge.toml { background: transparent; color: var(--amber); }
+.file-badge.cassette, .tab-read-only { color: var(--blue); }
+.cassette-content-preview { background: var(--bg); color: var(--text); }
+.cassette-preview-notice { border-bottom-color: var(--separator); background: var(--surface-raised); color: var(--muted); }
+.cassette-machine-summary span { border-color: var(--border); color: var(--muted); }
+.cassette-machine-columns h2 { color: var(--text); }
+.cassette-machine-columns pre, .cassette-disassembly-scroll { border-color: var(--border); background: var(--surface); }
+.cassette-machine-columns pre { color: var(--text); }
+.cassette-disassembly-scroll th, .cassette-disassembly-scroll td { border-bottom-color: var(--separator); }
+.cassette-disassembly-scroll th { background: var(--surface-raised); color: var(--muted); }
+.cassette-disassembly-scroll td:first-child { color: var(--blue); }
+.cassette-disassembly-scroll td:nth-child(2) { color: var(--muted); }
+.workbench-resizer::before { background: var(--muted); }
+/* Keep keyboard focus visible without turning a panel boundary into an accent bar. */
+.workbench-resizer:focus-visible { outline: 1px solid var(--muted); outline-offset: -1px; }
+
+/* Bottom workbench and status */
+.bottom-panel { background: var(--surface); border-top: 1px solid var(--separator); }
+.panel-tabs { min-height: 35px; padding: 0 7px; border-bottom: 1px solid var(--separator); background: var(--surface-raised); }
+.panel-tabs button { min-width: 24px; height: 34px; padding: 0 8px; color: var(--muted); font-size: 11px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.panel-tabs button.active { color: var(--text); box-shadow: inset 0 -2px var(--accent); }
+.panel-tabs button span { background: var(--control); color: var(--muted); }
+.panel-tabs .panel-close { margin-left: auto; font-size: 18px; }
+.panel-tabs .panel-overflow-menu button { height: 30px; padding: 0 9px; border-radius: 5px; font-size: 11px; font-weight: 500; }
+.panel-tabs .panel-overflow-menu button:hover, .panel-tabs .panel-overflow-menu button:focus-visible { background: var(--control-hover); color: var(--text); }
+.panel-tabs .panel-overflow-menu button span { margin: 0; padding: 0; background: transparent; color: inherit; font-size: inherit; }
+.panel-tabs .panel-overflow-menu button small { color: var(--muted); }
+.panel-content { background: var(--surface); }
+.problem-list { padding: 4px; }
+.problem { min-height: 29px; border-radius: 5px; color: var(--text); }
+.problem:hover { background: var(--surface-hover); }
+.problem-code, .problem-location, .output-log, .assembly-navigation p { color: var(--muted); }
+.assembly-navigation > section, .debug-panel > * { border-right-color: var(--separator); }
+.assembly-navigation h3, .debug-inspector h3 { color: var(--muted); font-size: 11px; letter-spacing: 0; text-transform: none; }
+.assembly-navigation section > button:hover, .assembly-link button:hover { background: var(--surface-hover); }
+.assembly-navigation em { background: var(--control); color: var(--text); }
+.status-bar { gap: 13px; padding: 0 9px; border-top: 1px solid var(--separator); background: var(--surface-raised); color: var(--muted); font-size: 10px; }
+.language-status { height: 22px; border-radius: 5px; }
+.language-status:hover { background: var(--surface-hover); }
+.language-status.ready .status-dot { background: var(--green); box-shadow: none; }
+.status-errors { color: var(--red); }
+
+/* Runtime, debug, terminal and source control */
+.preview-panel { gap: 15px; padding: 12px 14px; }
+.preview-machine { border-color: var(--border); background: #111; box-shadow: none; }
+.preview-machine.running { border-color: var(--green); box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 24%, transparent); }
+.preview-machine.running .preview-screen { color: var(--green); }
+.preview-details, .debug-summary { color: var(--muted); font-size: 11px; }
+.preview-details strong, .debug-summary strong { color: var(--text); font-size: 12px; }
+.preview-actions button, .debug-actions button, .terminal-empty-state button,
+.git-branch-box button, .source-control-empty button, .commit-box button {
+  min-height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--control);
+  color: var(--text);
+  font-size: 11px;
+}
+.preview-actions button:hover:not(:disabled), .debug-actions button:hover:not(:disabled) { background: var(--control-hover); }
+.preview-actions .run-control, .debug-actions .debug-control { border-color: color-mix(in srgb, var(--accent) 58%, var(--border)); color: var(--text); }
+.preview-actions .terminate-control, .debug-actions .terminate-control { border-color: color-mix(in srgb, var(--red) 42%, var(--border)); color: var(--red); }
+.debug-summary input, .git-branch-box select, .commit-box textarea { border-color: var(--border); background: var(--control); color: var(--text); }
+.debug-summary em, .debug-inspector dd { color: var(--text); }
+.machine-disassembly tr.current { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.machine-disassembly tr.current td:last-child { color: var(--text); }
+.terminal-panel, .git-diff-panel pre { background: var(--bg); }
+.terminal-sidebar { border-right-color: var(--separator); background: var(--surface); }
+.terminal-sidebar-heading { border-bottom-color: var(--separator); }
+.terminal-list-item { border-radius: 5px; color: var(--muted); }
+.terminal-list-item:hover { background: var(--surface-hover); }
+.terminal-list-item.active { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); color: var(--text); }
+.terminal-close:hover { background: var(--surface-hover); color: var(--text) !important; }
+.git-branch-box, .commit-box, .git-change-group, .git-upstream { border-color: var(--separator); }
+.git-change:hover { background: var(--surface-hover); }
+.git-change-file { color: var(--text); }
+.git-change-file small, .git-branch-box small, .commit-box small, .git-upstream { color: var(--muted); }
+.git-change-action:hover { background: var(--surface-hover); color: var(--text); }
+
+/* Agent */
+.assistant-sidebar { border-left: 1px solid var(--separator); background: var(--surface); }
+.assistant-heading > div:first-child { color: var(--text); font-size: 12px; font-weight: 600; letter-spacing: 0; }
+.assistant-controls, .assistant-composer { border-color: var(--separator); background: var(--surface); }
+.assistant-controls label, .ai-connection-form-grid label { color: var(--muted); font-size: 11px; letter-spacing: 0; text-transform: none; }
+.assistant-controls select, .assistant-controls input, .ai-connection-form-grid select, .ai-connection-form-grid input,
+.assistant-composer textarea { border-color: var(--border); border-radius: 6px; background: var(--control); color: var(--text); font-size: 12px; }
+.assistant-setup, .assistant-patch button { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); background: var(--accent); color: white; }
+.assistant-message > span { color: var(--muted); font-size: 10px; letter-spacing: 0; }
+.assistant-message.user .assistant-message-text { background: var(--surface-selected); color: var(--text); }
+.assistant-message.assistant .assistant-message-text { color: var(--text); }
+.assistant-patch { border-color: var(--border); background: var(--surface-raised); }
+.assistant-patch pre, .assistant-context-preview { border-color: var(--border); background: var(--bg); color: var(--muted); }
+
+/* Dialogues and settings */
+.dialog-scrim, .help-backdrop { background: rgba(0,0,0,.34); backdrop-filter: blur(12px); }
+.dialog { border: 1px solid var(--border); border-radius: 12px; background: var(--surface-raised); box-shadow: 0 24px 70px var(--shadow); }
+.dialog h2 { font: 650 22px/1.2 -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -.015em; }
+.dialog p { color: var(--muted); font-size: 13px; }
+.dialog label, .project-template-picker legend { color: var(--text); font-size: 12px; }
+.dialog input { border-color: var(--border); border-radius: 6px; background: var(--control); color: var(--text); }
+.dialog small { color: var(--muted); }
+.dialog-close { top: 13px; right: 13px; border-radius: 50%; background: var(--control); color: var(--muted); }
+.dialog-close:hover { background: var(--control-hover); color: var(--text); }
+.project-target-dialog { max-height: calc(100vh - 60px); overflow: auto; }
+.project-target-dialog h2 { padding-right: 28px; }
+.dialog .project-target-name { margin: 0 0 22px; color: var(--text); font-size: 15px; font-weight: 600; }
+.project-target-facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 20px; margin: 0 0 24px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.project-target-facts dt { color: var(--muted); font-weight: 600; }
+.project-target-facts dd { margin: 0; color: var(--text); font-weight: 400; }
+.dialog .project-target-note { margin: 0; font-size: 12px; }
+.dialog .project-template-option, .theme-picker label { border-color: var(--border); background: var(--surface); }
+.dialog .project-template-option:has(input:checked), .theme-picker label:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, var(--surface)); }
+.settings-tabs { border-right-color: var(--separator); }
+.settings-tabs button { border-radius: 6px; color: var(--muted); }
+.settings-tabs button:hover { background: var(--surface-hover); color: var(--text); }
+.settings-tabs button[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 23%, var(--surface)); color: var(--text); }
+.settings-footer, .ai-connection-settings form { border-color: var(--separator); }
+.runtime-current, .runtime-legal, .ai-billing-notice { border-color: var(--border); background: var(--surface); color: var(--muted); }
+.ai-connection-list article { border-color: var(--border); background: var(--surface); }
+.ai-connection-list strong { color: var(--text); }
+.ai-connection-actions button { border-color: var(--border); background: var(--control); color: var(--text); }
+.renumber-preview-grid > div, .media-source-preview { border-color: var(--border); background: var(--bg); }
+
+/* Help and feedback */
+.help-view { border-color: var(--border); border-radius: 12px; background: var(--surface); box-shadow: 0 24px 70px var(--shadow); }
+.help-heading { background: var(--surface-raised); border-bottom-color: var(--separator); }
+.help-navigation { border-right-color: var(--separator); }
+.help-navigation > label { color: var(--muted); font-size: 11px; letter-spacing: 0; text-transform: none; }
+.help-navigation > input { border-color: var(--border); background: var(--control); color: var(--text); }
+.help-results button { border-radius: 6px; }
+.help-results button:hover { background: var(--surface-hover); }
+.help-results button.selected { background: color-mix(in srgb, var(--accent) 23%, var(--surface)); box-shadow: none; }
+.help-results span { color: var(--muted); letter-spacing: 0; text-transform: none; }
+.toast, .global-error { border: 1px solid var(--border); border-radius: 9px; background: color-mix(in srgb, var(--surface-raised) 96%, transparent); color: var(--text); box-shadow: 0 12px 35px var(--shadow); backdrop-filter: blur(20px); }
+.error-toast, .global-error { border-color: color-mix(in srgb, var(--red) 42%, var(--border)); }
+
+ :root[data-theme="light"] {
+  & {
+    color-scheme: light;
+    --bg: #ffffff;
+    --surface: #f2f2f2;
+    --surface-raised: #ececec;
+    --surface-hover: #e2e2e2;
+    --surface-selected: #d9d9dc;
+    --control: #ffffff;
+    --control-hover: #f7f7f7;
+    --border: #c7c7c7;
+    --border-soft: #d7d7d7;
+    --text: #1d1d1f;
+    --muted: #5f5f64;
+    --faint: #86868b;
+    --accent: #007aff;
+    --green: #248a3d;
+    --green-strong: #248a3d;
+    --amber: #9a6700;
+    --red: #d70015;
+    --blue: #0071a4;
+    --purple: #8944ab;
+    --separator: rgba(0, 0, 0, .12);
+    --shadow: rgba(0, 0, 0, .22);
+  }
+  .help-article, .help-article iframe { background: white; }
+  .preview-machine { background: #f7f7f7; }
+  .primary-button { color: white; }
+}
+
+@media (prefers-contrast: more) {
+  :root { --border: currentColor; --separator: rgba(128,128,128,.65); }
+  button, input, select, textarea { border-width: 2px; }
+  .tree-file.active, .editor-tab.active, .panel-tabs button.active { outline: 2px solid var(--accent); outline-offset: -2px; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .dialog-scrim, .help-backdrop, .explorer-context-menu, .toast, .global-error { backdrop-filter: none; }
+  .explorer-context-menu, .toast, .global-error { background: var(--surface-raised); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; }
+  button:active:not(:disabled) { transform: none; }
+}
+
+/* Programme inspection and session controls share the workbench's semantic palette. */
+.preview-panel { min-height: 0; display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding: 18px 20px; font-family: inherit; font-size: 12px; line-height: 1.5; }
+.preview-panel > p { margin: 0; color: var(--muted); }
+.preview-header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.preview-header .preview-logo { width: 44px; height: 34px; flex: 0 0 auto; object-fit: contain; }
+.preview-header > div { display: flex; flex-direction: column; gap: 3px; }
+.preview-header strong { font-size: 14px; font-weight: 600; }
+.preview-header span, .preview-selection p, .preview-setup { color: var(--muted); font-size: 12px; }
+.preview-runtime-details { margin-left: auto; flex: 0 0 auto; }
+.emulator-runtime-dialog { display: flex; flex-direction: column; max-height: calc(100vh - 60px); }
+.emulator-runtime-dialog h2 { padding-right: 24px; }
+.emulator-runtime-content { min-height: 0; overflow: auto; overflow-wrap: anywhere; }
+.emulator-runtime-content p:last-child { margin-bottom: 0; }
+.preview-selection label { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+.preview-selection select { min-width: 0; max-width: 100%; padding: 5px 8px; border: 1px solid var(--border); border-radius: 5px; background: var(--control); color: var(--text); }
+.preview-selection p { margin: 0; }
+.preview-selection label + p { margin-top: 8px; }
+.preview-controls, .preview-setup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.preview-panel button, .preview-capture > summary, .programme-code-view button { min-height: 30px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 5px 12px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--control); color: var(--text); font-size: 12px; cursor: pointer; }
+.preview-panel button:hover, .programme-code-view button:hover { background: var(--control-hover); }
+.preview-panel button:disabled, .programme-code-view button:disabled { opacity: .45; cursor: default; }
+.preview-panel .primary-button { background: var(--accent); color: white; border-color: var(--accent); }
+.preview-panel .terminate-control { color: var(--red); }
+.preview-controls svg { width: 15px; height: 15px; }
+.preview-panel summary:focus-visible, .programme-code-view summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.programme-code-view { display: flex; flex: 1; flex-direction: column; min-height: 0; min-width: 0; overflow: auto; background: var(--bg); }
+.programme-code-header { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--separator); }
+.programme-code-header > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.programme-code-header strong { font-size: 13px; }
+.programme-code-header span, .programme-code-note { color: var(--muted); font-size: 12px; }
+.programme-code-note { flex: 0 0 auto; margin: 0; padding: 8px 16px; }
+.programme-code-editor { flex: 1 0 240px; min-height: 240px; display: flex; overflow: hidden; }
+.programme-code-editor > * { flex: 1; }
+.programme-disclosure { flex: 0 0 auto; padding: 10px 16px; border-top: 1px solid var(--separator); font-size: 12px; }
+.programme-disclosure summary { cursor: pointer; color: var(--muted); }
+.programme-disclosure fieldset { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; min-width: 0; border: 1px solid var(--border); margin: 12px 0; }
+.programme-disclosure label { display: flex; flex-direction: column; gap: 5px; }
+.programme-disclosure input, .programme-disclosure select { max-width: 160px; padding: 5px; color: var(--text); background: var(--control); border: 1px solid var(--border); border-radius: 4px; }
+.programme-disclosure ul { width: 100%; max-height: 140px; overflow: auto; }
+.programme-hash { overflow-wrap: anywhere; font-size: 11px; color: var(--muted); }
+.standalone-programme { display: flex; flex: 1; flex-direction: column; min-height: 0; overflow: auto; }
+.standalone-programme > .preview-panel { flex-shrink: 0; border-top: 1px solid var(--separator); }
+
+.preview-capture-menu { position: fixed; z-index: 300; width: 168px; max-height: calc(100vh - 16px); overflow: auto; display: flex; flex-direction: column; padding: 5px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 5px 15px var(--shadow); }
+.preview-capture-menu button { min-height: 30px; padding: 5px 10px; text-align: left; background: transparent; color: var(--text); border: 0; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.preview-capture-menu button:hover, .preview-capture-menu button:focus-visible { background: var(--control-hover); }
+
+.programme-shell { display: flex; flex-direction: column; }
+/* Panel logs fill their container; a standalone log must leave room for the programme. */
+.programme-shell > .output-log { flex: 0 0 auto; min-height: 0; max-height: 20vh; overflow: auto; margin: 0; }
+
+
+/* Processor identity occupies the established product-mark slots. */
+@font-face { font-family: Silkscreen; src: url("../branding/fonts/Silkscreen-Regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
+.processor-brand { display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
+.processor-mark { width: 64px; height: 64px; image-rendering: pixelated; }
+.processor-brand.activity-logo .processor-mark { width: 28px; height: 28px; }
+.processor-brand.welcome-mark { flex-direction: column; }
+.processor-brand.welcome-mark .processor-mark { width: 80px; height: 80px; }
+.processor-wordmark { font-family: Silkscreen, monospace; font-size: 28px; font-weight: 400; letter-spacing: 0; text-align: center; }
+.processor-edition { display: block; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .16em; margin-top: 6px; }
+.recent-project-target { display: block; color: var(--muted); font-size: 12px; }
