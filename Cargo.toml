@@ -10,6 +10,7 @@ members = [
     "families/dragon/crates/eightbit-dragon-mobile",
     "families/dragon/crates/eightbit-dragon-project",
     "families/commodore/crates/eightbit-commodore-core",
+    "families/acorn/crates/eightbit-acorn-core",
     "families/spectrum/crates/eightbit-spectrum-core",
     "families/zx81/crates/eightbit-zx81-core",
     "apps/eightbit-studio-web/core",

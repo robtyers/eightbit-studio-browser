@@ -11,6 +11,7 @@ const DRAGON: BrowserMachine = { id: "dragon32", label: "Dragon 32", cpu: "6809"
 const C64: BrowserMachine = { id: "c64-pal", label: "Commodore 64 (PAL)", cpu: "6502", extension: "prg", manifest: "c64.toml", runtime: "chips-c64", romSize: 20480, romNames: ["basic-901226-01.bin", "kernal-901227-03.bin", "chargen-901225-01.bin"], sample: '10 PRINT "C64"\n20 END\n' };
 const SPECTRUM: BrowserMachine = { id: "spectrum48", label: "ZX Spectrum 48K (UK)", cpu: "Z80", extension: "tap", manifest: "spectrum.toml", runtime: "mame-z80", romSize: 16384, romNames: ["spectrum.rom"], sample: '10 PRINT "SPECTRUM"\n20 STOP\n' };
 const ZX81: BrowserMachine = { id: "zx81-1k", label: "ZX81 (1K)", cpu: "Z80", extension: "p", manifest: "zx81.toml", runtime: "mame-z80", romSize: 8192, romNames: ["zx81.rom"], sample: '10 PRINT "ZX81"\n20 STOP\n' };
+const BBC: BrowserMachine = { id: "bbc-model-b", label: "BBC Micro Model B (32 KB)", cpu: "6502", extension: "ssd", manifest: "bbc.toml", runtime: "mame-bbc", romSize: 66496, romNames: ["os12.rom", "basic2.rom", "dnfs120.rom", "cm62024.bin", "saa5050"], sample: '10 MODE 7\n20 PRINT "BBC"\n30 END\n' };
 function mount(handler: BrowserEngine["request"], machines: BrowserMachine[] = [DRAGON]) {
   return render(<BrowserWorkbench machines={machines} engine={{ request: (request, bytes, signal) => request.operation === "presentation" ? Promise.resolve({ schemaVersion: 1, ok: true, result: { highlights: [] } }) : request.operation === "create-project" ? Promise.resolve({ schemaVersion: 1, ok: true, result: { entryPath: request.kind === "basic" ? "src/main.bas" : "src/recovered.asm", project: { schemaVersion: request.target === "dragon32" ? 1 : 2, ...(request.target !== "dragon32" ? { target: request.target, supportFiles: {} } : {}), name: request.name, kind: request.kind, source: request.source, manifest: request.kind === "basic" ? "test-manifest" : null } } }) : request.operation === "import-project" ? Promise.resolve({ schemaVersion: 1, ok: true, result: { entryPath: "src/main.bas", project: JSON.parse(new TextDecoder().decode(bytes)) } }) : handler(request, bytes, signal) }} Emulator={Emulator} assetBase="/studio/" />);
 }
@@ -41,7 +42,7 @@ it("starts with a project welcome, inert shell and hides technical imports", asy
   expect(screen.getByRole("textbox", { name: "Dragon 32 BASIC source" })).toHaveValue("");
 });
 
-it.each([DRAGON, C64, SPECTRUM, ZX81])("explains ROM setup and keeps source and licence links available for $label", (machine) => {
+it.each([DRAGON, C64, BBC, SPECTRUM, ZX81])("explains ROM setup and keeps source and licence links available for $label", (machine) => {
   const request = vi.fn(); mount(request, [machine]);
   fireEvent.click(within(screen.getByRole("navigation", { name: "Workbench views" })).getByRole("button", { name: "Computer setup" }));
   const setup = screen.getByRole("complementary", { name: "Computer setup" });
@@ -53,8 +54,29 @@ it.each([DRAGON, C64, SPECTRUM, ZX81])("explains ROM setup and keeps source and 
   expect(within(rom).getByRole("button", { name: "Remove ROM" })).toBeDisabled();
   const source = within(setup).getByRole("region", { name: "Open-source software" });
   expect(within(source).getAllByRole("link")).toHaveLength(1);
-  expect(within(source).getByRole("link", { name: "Source code on GitHub" })).toHaveAttribute("href", "https://github.com/robtyers/eightbit-studio-browser/releases/tag/browser-0.5.2-20261010.1");
+  expect(within(source).getByRole("link", { name: "Source code on GitHub" })).toHaveAttribute("href", "https://github.com/robtyers/eightbit-studio-browser/releases/tag/browser-0.5.2-20261011.1");
   expect(request).not.toHaveBeenCalled();
+});
+
+it("allows the extensionless BBC character ROM and checks all five files before playing", async () => {
+  const inspected: Uint8Array[] = [];
+  mount(async (request, bytes) => {
+    if (request.operation === "firmware") { inspected.push(bytes.slice()); return { schemaVersion: 1, ok: true, result: { matchesVerifiedFirmware: true } }; }
+    return BUILD;
+  }, [BBC]);
+  fireEvent.click(screen.getByRole("button", { name: "Create new project" }));
+  fireEvent.change(screen.getByLabelText("Computer"), { target: { value: BBC.id } });
+  fireEvent.click(screen.getByRole("button", { name: "Create project" }));
+  await screen.findByRole("textbox", { name: `${BBC.label} BASIC source` });
+  await check(); fireEvent.click(screen.getByRole("button", { name: "Play" }));
+  const picker = screen.getByLabelText(`Choose ROM files… for ${BBC.label}`);
+  expect(picker).not.toHaveAttribute("accept");
+  fireEvent.change(picker, { target: { files: BBC.romNames.map((name, index) => file(index === 4 ? 960 : 16384, name)).reverse() } });
+  await screen.findAllByText("System ROM checked. Choose Play to start your game.");
+  expect(inspected[0]).toHaveLength(66496);
+  expect(localStorage.getItem("roms")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Play" }));
+  await screen.findByRole("button", { name: "Fake emulator ready" });
 });
 
 it("shows ROM readiness and requires setup again after Remove ROM", async () => {

@@ -33,7 +33,7 @@ it("retains an existing copy when safe cross-tab locking is unavailable", async 
 });
 
 it("preserves exact schema-2 computer identity and rejects unknown or ambiguous legacy targets", async () => {
-  for (const target of ["c64-pal", "spectrum16", "spectrum48", "spectrum128", "spectrum-plus2", "zx81-1k", "zx81-16k"]) {
+  for (const target of ["c64-pal", "bbc-model-b", "spectrum16", "spectrum48", "spectrum128", "spectrum-plus2", "zx81-1k", "zx81-16k"]) {
     const next = snapshot({ ...project, schemaVersion: 2, target });
     const saved = await saveProject({ schemaVersion: 1, id: projectId(), project: next, entryPath: "src/main.bas" });
     expect(recentProjects().find((item) => item.id === saved.id)?.project.target).toBe(target);

@@ -1,6 +1,12 @@
-import { buildResult, decompiledSource, highlights, result, verifiedFirmware } from "./contracts";
+import { buildResult, decompiledSource, highlights, machineCatalog, result, verifiedFirmware } from "./contracts";
 
 describe("Rust browser presentation boundary", () => {
+  it("accepts the bounded BBC machine profile and rejects oversized ROM catalogues", () => {
+    const machine = { id: "bbc-model-b", label: "BBC Micro Model B (32 KB)", cpu: "6502", extension: "ssd", manifest: "bbc.toml", runtime: "mame-bbc", romSize: 66496, romNames: ["os12.rom", "basic2.rom", "dnfs120.rom", "cm62024.bin", "saa5050"], sample: "10 END\n" };
+    const value = (item: unknown) => ({ schemaVersion: 1, ok: true, result: { machines: [item] } });
+    expect(machineCatalog(value(machine))[0]).toEqual(machine);
+    for (const change of [{ romSize: 66497 }, { romNames: [...machine.romNames, "extra.rom"] }, { manifest: "unknown.toml" }, { runtime: "external" }]) expect(() => machineCatalog(value({ ...machine, ...change }))).toThrow();
+  });
   it("rejects malformed and failed responses without artefacts", () => {
     for (const value of [null, {}, { schemaVersion: 2, ok: true, result: {} }, { schemaVersion: 1, ok: true, result: [] }]) expect(() => result(value)).toThrow();
     expect(() => result({ schemaVersion: 1, ok: false, message: "DSW1002" })).toThrow("DSW1002");

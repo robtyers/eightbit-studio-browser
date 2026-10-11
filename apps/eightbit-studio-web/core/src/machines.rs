@@ -2,6 +2,7 @@
 use eightbit_source::{Engine, Family, Profile};
 use serde_json::{Value, json};
 static COMMODORE: &[&Family] = &[&eightbit_commodore_core::FAMILY];
+static ACORN: &[&Family] = &[&eightbit_acorn_core::FAMILY];
 static SPECTRUM: &[&Family] = &[&eightbit_spectrum_core::FAMILY];
 static ZX81: &[&Family] = &[&eightbit_zx81_core::FAMILY];
 pub fn engine(target: &str) -> Result<Engine, String> {
@@ -10,6 +11,8 @@ pub fn engine(target: &str) -> Result<Engine, String> {
         .any(|t| t.id == target)
     {
         (&eightbit_commodore_core::FAMILY, "Eightbit Studio 6502")
+    } else if eightbit_acorn_core::TARGETS.iter().any(|t| t.id == target) {
+        (&eightbit_acorn_core::FAMILY, "Eightbit Studio 6502")
     } else if eightbit_spectrum_core::TARGETS
         .iter()
         .any(|t| t.id == target)
@@ -22,6 +25,7 @@ pub fn engine(target: &str) -> Result<Engine, String> {
     };
     let families: &'static [&'static Family] = match family.definition.id {
         "commodore" => COMMODORE,
+        "acorn" => ACORN,
         "spectrum" => SPECTRUM,
         _ => ZX81,
     };
@@ -43,11 +47,12 @@ pub fn catalog() -> Value {
     ];
     for family in [
         &eightbit_commodore_core::FAMILY,
+        &eightbit_acorn_core::FAMILY,
         &eightbit_spectrum_core::FAMILY,
         &eightbit_zx81_core::FAMILY,
     ] {
         for p in family.profiles {
-            machines.push(json!({"id":p.target.id, "label":p.target.display_name, "cpu":if p.target.cpu == "mos6502" {"6502"} else {"Z80"}, "extension":p.extension, "manifest":family.manifest, "runtime":if family.definition.id == "commodore" {"chips-c64"} else {"mame-z80"}, "romSize":p.rom_size, "romNames":if family.definition.id == "commodore" {vec!["basic-901226-01.bin", "kernal-901227-03.bin", "chargen-901225-01.bin"]} else {p.rom_names.to_vec()}, "sample":p.basic_template}));
+            machines.push(json!({"id":p.target.id, "label":p.target.display_name, "cpu":if p.target.cpu == "mos6502" {"6502"} else {"Z80"}, "extension":p.extension, "manifest":family.manifest, "runtime":match family.definition.id {"commodore" => "chips-c64", "acorn" => "mame-bbc", _ => "mame-z80"}, "romSize":p.rom_size, "romNames":if family.definition.id == "commodore" {vec!["basic-901226-01.bin", "kernal-901227-03.bin", "chargen-901225-01.bin"]} else {p.rom_names.to_vec()}, "sample":p.basic_template}));
         }
     }
     json!({"machines":machines})
@@ -60,6 +65,7 @@ pub fn recover(target: &str, bytes: &[u8]) -> Result<String, String> {
     let p = profile(target)?;
     let value = match p.target.family {
         "commodore" => eightbit_commodore_core::basic::decompile(bytes),
+        "acorn" => eightbit_acorn_core::dfs::recover_basic(bytes),
         "spectrum" => eightbit_spectrum_core::decompile_basic(p.target, bytes),
         "zx81" => eightbit_zx81_core::decompile_basic(p.target, bytes),
         _ => return Err("DSW1020: unsupported browser computer".into()),
@@ -78,6 +84,8 @@ pub fn firmware(target: &str, bytes: &[u8]) -> Result<Value, String> {
     let digest = hex::encode(Sha256::digest(bytes));
     let matches = if p.target.family == "commodore" {
         eightbit_commodore_core::firmware::validate_packed(bytes).is_ok()
+    } else if p.target.family == "acorn" {
+        eightbit_acorn_core::firmware::validate_packed(bytes).is_ok()
     } else {
         digest == p.rom_sha256
     };

@@ -1,7 +1,7 @@
 # Eightbit Studio browser edition
 
 ADR 0052 adds an experimental GPL-3.0-or-later browser edition alongside the
-desktop products. ADR 0053 adds C64 PAL, Spectrum 16K/48K/128K UK/+2 UK and ZX81 1K/16K alongside Dragon 32 BASIC. The existing workbench
+desktop products. ADR 0053 adds C64 PAL, Spectrum 16K/48K/128K UK/+2 UK and ZX81 1K/16K alongside Dragon 32 BASIC. ADR 0055 adds BBC Micro Model B BASIC II. The existing workbench
 shell is shared; the browser editor uses a native text area for touch/keyboard
 input. Terminal, AI, debugging and assembly compilation remain outside scope.
 The optional GitHub service saves project snapshots through a separate Worker;
@@ -20,6 +20,7 @@ scaffolds prevent the defaults drifting between editions.
 | --- | --- | --- | --- |
 | Dragon 32 | dragon.toml (schema 1–3 import, schema 3 creation) | CAS; CAS/WAV recovery | 16 KiB, exact Dragon 32 SHA-256 |
 | C64 PAL | c64.toml (schema 1) | PRG at $0801 | BASIC/KERNAL/character ROMs, 20 KiB, existing desktop CRC revisions |
+| BBC Model B 32K | bbc.toml (schema 1) | 200 KiB DFS SSD; canonical BASIC subset recovery | OS1.2/BASIC II/DNFS120/speech/characters, 66,496 bytes, existing desktop CRC revisions |
 | Spectrum 16K/48K UK | spectrum.toml (schema 1) | BASIC TAP | 16 KiB, exact model SHA-256 |
 | Spectrum 128K UK/+2 UK | spectrum.toml (schema 1) | BASIC TAP | Two ordered 16 KiB ROMs, exact combined model SHA-256 |
 | ZX81 1K/16K | zx81.toml (schema 1) | BASIC P | 8 KiB second revision, exact SHA-256 |
@@ -114,10 +115,16 @@ and downloads remain available when GitHub is disconnected or unconfigured.
 the selected family’s existing revision fingerprints. The ROM dialogue lists the
 required filenames and total size. Select individual files together or one combined
 file in the displayed order. C64 uses the compact zlib-licensed chips core;
-Sinclair uses the restricted MAME 0.289 WASM build, and Dragon retains XRoar.
-The Sinclair WASM download is gzip-compressed and requires browser streaming
+Sinclair and BBC use separate restricted MAME 0.289 WASM builds, and Dragon retains XRoar.
+BBC uses OS 1.2, BASIC II, 32K and Acorn 8271/DNFS120. Select `os12.rom`,
+`basic2.rom`, `dnfs120.rom`, `cm62024.bin` and extensionless `saa5050`, or their
+combined bytes in that order. Speech data is required even with speech disabled.
+The MAME WASM download is gzip-compressed and requires browser streaming
 `DecompressionStream("gzip")` when the host has not already applied gzip content encoding; an unavailable runtime produces a visible failure.
-These adapters add no disk, cartridge, snapshot, debugger or assembly support.
+BBC plays only generated single-sided DFS BASIC SSDs; recovery rejects arbitrary
+disc contents and assembly. These adapters add no general disc, cartridge,
+snapshot, debugger or assembly support. Decompressed WASM is limited to 64 MiB
+for BBC and 48 MiB for Sinclair; each MAME runtime has a 256 MiB memory ceiling.
 
 ROM bytes remain in volatile page/emulator memory; they never enter storage,
 source downloads, logs or server requests. Remove ROM clears the retained image.
@@ -167,7 +174,8 @@ curl --fail --location --max-time 120 https://codeload.github.com/floooh/chips/t
 MAME SHA-256: `0929cc749afabcef892900e10dd90bd8b05f94a7dde8f367ac6a5d2082589f84`.
 Chips SHA-256: `fcae39995f61bfe461175047b11f16d147be0e7353c8a247ac503b5fd3a09b8d`.
 Set `MAME_EMSDK` to the separately activated 6.0.2 SDK. It defaults to
-.cache/browser-tools/emsdk-6.0.2. MAME uses only Sinclair driver sources, SDL2,
+.cache/browser-tools/emsdk-6.0.2. The separate MAME builds use only Sinclair or BBC
+driver sources, SDL2,
 software video, disabled HTTP/network adapters, and bounded 256 MiB memory.
 The original patch exports readiness/natural-key input and explicit sound cleanup.
 Resizable WASM buffer views are disabled for browser TextDecoder compatibility;
@@ -182,9 +190,10 @@ pnpm install --frozen-lockfile
 bash scripts/browser/build-core.sh
 bash scripts/browser/build-xroar.sh
 bash scripts/browser/build-c64.sh
-bash scripts/browser/build-mame.sh
+bash scripts/browser/build-mame.sh z80
+bash scripts/browser/build-mame.sh bbc
 node scripts/browser/check-core.mjs
-node --test scripts/browser/verify-assets.test.mjs scripts/browser/runtime.test.mjs
+node --test scripts/browser/verify-assets.test.mjs scripts/browser/runtime.test.mjs scripts/browser/classic-runtime.test.mjs
 node scripts/browser/package-source.mjs
 pnpm --dir apps/eightbit-studio-web/ui build
 pnpm --dir apps/eightbit-studio-web/ui preview
@@ -193,7 +202,10 @@ pnpm --dir apps/eightbit-studio-web/ui preview
 Open `http://127.0.0.1:1425/studio/`. The build scripts use pinned tools and source digests. XRoar is built with the checked-in patch disabling missing-file network
 fetches. No ROM or upstream programme catalogue is copied. On a source-only
 rebuild, run build-core, contract check, package-source and UI build again. Any
-XRoar source/patch change also requires build-xroar. Do not publish an unmatched
+XRoar source/patch change also requires build-xroar. MAME source/patch changes
+require rebuilding both restricted cores. The SDL canvas uses its required
+`canvas` identifier; BBC autoboot passes a Lua-escaped carriage return to MAME,
+while the native adapter uses `post_coded`. Do not publish an unmatched
 old source archive with new binaries.
 
 The browser core uses `target/browser-core` by default, separately from desktop

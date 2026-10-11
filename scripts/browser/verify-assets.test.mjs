@@ -49,6 +49,20 @@ test('browser staging refuses an altered emulator source part', () => fixture((d
   assert.throws(() => verifyBrowserAssets(directory), /source part mismatch/);
 }));
 
+test('BBC assets require both matching binaries in the corresponding-source receipt', () => fixture((directory) => {
+  const generated = join(directory, 'generated');
+  writeFileSync(join(generated, 'mame-bbc.js'), 'bbc fixture');
+  assert.throws(() => verifyBrowserAssets(directory), /BBC binary\/source receipt mismatch/);
+  const receipt = JSON.parse(readFileSync(join(generated, 'build-receipt.json'), 'utf8'));
+  for (const name of ['mame-bbc.js', 'mame-bbc.wasm.gz']) {
+    writeFileSync(join(generated, name), 'bbc fixture'); receipt.binaries[name] = hash('bbc fixture');
+  }
+  writeFileSync(join(generated, 'build-receipt.json'), JSON.stringify(receipt));
+  assert.equal(verifyBrowserAssets(directory).schemaVersion, 1);
+  writeFileSync(join(generated, 'mame-bbc.wasm.gz'), 'corrupt');
+  assert.throws(() => verifyBrowserAssets(directory), /BBC binary\/source receipt mismatch/);
+}));
+
 test('GitHub source receipts verify local release archives and refuse Cloudflare source parts', () => fixture((directory) => {
   const generated = join(directory, 'generated');
   const release = configuredSourceRelease();

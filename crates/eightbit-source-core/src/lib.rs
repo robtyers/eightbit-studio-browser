@@ -39,6 +39,7 @@ pub struct Profile {
     pub rom_size: usize,
     pub rom_sha256: &'static str,
     pub extension: &'static str,
+    pub media_limit: usize,
     pub load_option: &'static str,
     pub machine_options: &'static [&'static str],
     pub assembly_language: &'static str,

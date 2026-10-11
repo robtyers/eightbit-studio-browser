@@ -64,6 +64,15 @@ it("implements PKCE login, private repository selection, bounded source-only ope
   const disconnected = await worker.fetch(request("disconnect", cookie, {}), env); expect(disconnected.status).toBe(200); expect(disconnected.headers.get("set-cookie")).toContain("Max-Age=0");
   expect((await worker.fetch(request("repositories", cookie), env)).status).toBe(401);
 });
+
+it("accepts a BBC BASIC source snapshot without accepting firmware or changing its target", async () => {
+  const env = environment(); const cookie = await login(env);
+  const project = { ...PROJECT, schemaVersion: 2, target: "bbc-model-b", supportFiles: { "AGENTS.md": "User-owned BBC guidance" }, manifest: 'schema_version = 1\nname = "My-game"\ntarget = "bbc-model-b"\nsource = "src/basic/main.bas"\n' };
+  expect((await worker.fetch(request("save", cookie, { repository: "me/private", id: ID, sha: SHA, project }), env)).status).toBe(200);
+  expect(JSON.parse(atob(String(writes[0]?.body.content)))).toEqual(project);
+  expect((await worker.fetch(request("save", cookie, { repository: "me/private", id: ID, sha: remoteSha, project: { ...project, roms: [1] } }), env)).status).toBe(400);
+  expect(writes).toHaveLength(1);
+});
 it("rejects stale revisions, public repositories, cross-origin writes, traversal and extra payload fields without writing", async () => {
   const env = environment(); const cookie = await login(env);
   for (const [body, from, status] of [

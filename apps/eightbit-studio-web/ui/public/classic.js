@@ -4,6 +4,7 @@
 (() => {
   const configurations = {
     "c64-pal": { core: "c64", size: 20480 },
+    "bbc-model-b": { core: "mame-bbc", size: 66496, mediaSize: 204800, machine: "bbcb", names: ["bbcb/os12.rom", "bbcb/basic2.rom", "bbc_acorn8271/dnfs120.rom", "bbcb/cm62024.bin", "saa5050/saa5050"], options: ["-window", "-resolution", "768x576", "-bios", "120", "-ramsize", "32K", "-fdc", "acorn8271,bios=dnfs120", "-vsp", "", "-printer", "", "-rs423", "", "-econet", "", "-1mhzbus", "", "-tube", "", "-userport", "", "-internal", "", "-analogue", ""], boot: '*EXEC !BOOT\\r', extension: "ssd", load: "-flop1" },
     "spectrum16": { core: "mame-z80", size: 16384, machine: "spectrum", names: ["spectrum.rom"], options: ["-bios", "en", "-ramsize", "16K"], boot: 'j""{ENTER}', extension: "tap" },
     "spectrum48": { core: "mame-z80", size: 16384, machine: "spectrum", names: ["spectrum.rom"], options: ["-bios", "en", "-ramsize", "48K"], boot: 'j""{ENTER}', extension: "tap" },
     "spectrum128": { core: "mame-z80", size: 32768, machine: "spec128", names: ["zx128_0.rom", "zx128_1.rom"], options: ["-bios", "en", "-ramsize", "128K"], boot: '{ENTER}', extension: "tap" },
@@ -11,7 +12,7 @@
     "zx81-1k": { core: "mame-z80", size: 8192, machine: "zx81", names: ["zx81a.rom"], options: ["-bios", "2nd", "-ramsize", "1K"], boot: 'j""{ENTER}', extension: "p" },
     "zx81-16k": { core: "mame-z80", size: 8192, machine: "zx81", names: ["zx81a.rom"], options: ["-bios", "2nd", "-ramsize", "16K"], boot: 'j""{ENTER}', extension: "p" },
   };
-  const canvas = document.getElementById("screen"), status = document.getElementById("status"), keys = document.getElementById("keys");
+  const canvas = document.getElementById("canvas"), status = document.getElementById("status"), keys = document.getElementById("keys");
   const held = new Set();
   const physical = new Set();
   const queue = [];
@@ -19,7 +20,7 @@
   let pending = [];
   let session, module, config, stopped = false, ready = false, frame, poll, keyboardPoll, audio, audioAt = 0, keyAt = 0, queuedKey;
   const send = (state) => parent.postMessage({ schemaVersion: 1, session, state }, location.origin);
-  const assets = new Set(["c64.wasm", "mame-z80.wasm.gz"].map((name) => new URL(`generated/${name}`, location.href).href));
+  const assets = new Set(["c64.wasm", "mame-z80.wasm.gz", "mame-bbc.wasm.gz"].map((name) => new URL(`generated/${name}`, location.href).href));
   const fetchAsset = window.fetch.bind(window);
   window.fetch = (input, options) => {
     const url = new URL(input instanceof Request ? input.url : String(input), location.href).href;
@@ -28,7 +29,8 @@
       const decoded = response.headers.get("Content-Encoding")?.toLowerCase() === "gzip";
       if (!response.ok || !response.body || (!decoded && typeof DecompressionStream !== "function")) throw new Error("Compressed runtime is unavailable");
       let total=0;
-      const bounded=new TransformStream({ transform(chunk,controller) { total+=chunk.byteLength; if (total > 48*1024*1024) throw new Error("Runtime exceeds its limit"); controller.enqueue(chunk); } });
+      const limit = url.endsWith("mame-bbc.wasm.gz") ? 64*1024*1024 : 48*1024*1024;
+      const bounded=new TransformStream({ transform(chunk,controller) { total+=chunk.byteLength; if (total > limit) throw new Error("Runtime exceeds its limit"); controller.enqueue(chunk); } });
       return new Response((decoded ? response.body : response.body.pipeThrough(new DecompressionStream("gzip"))).pipeThrough(bounded), { headers:{ "Content-Type":"application/wasm" } });
     });
     return fetchAsset(input, { ...options, signal: transport.signal });
@@ -68,12 +70,13 @@
     if (config.core !== "c64") keyboardPoll = setInterval(() => { if (queue.length && module._eightbit_key(queue[0])) queue.shift(); }, 100);
     status.textContent = "Running locally"; canvas.focus(); send("ready");
   };
-  document.getElementById("audio").addEventListener("click", () => {
+  document.getElementById("audio").addEventListener("click", async () => {
+    if (!ready || stopped) return;
     try {
-      if (config.core === "c64") { audio ??= new AudioContext({ sampleRate:44100 }); void audio.resume(); }
-      else { void window.__eightbit_mameAudio?.studioResume(); }
-      status.textContent = "Sound enabled";
-    } catch { status.textContent = "Sound is unavailable"; }
+      if (config.core === "c64") { audio ??= new AudioContext({ sampleRate:44100 }); await audio.resume(); }
+      else { await window.__eightbit_mameAudio?.studioResume(); }
+      if (!stopped) status.textContent = "Sound enabled";
+    } catch { if (!stopped) status.textContent = "Sound is unavailable"; }
   });
   const type = () => {
     if (!ready) return;
@@ -132,14 +135,14 @@
   window.addEventListener("message", (event) => {
     if (event.source !== parent || event.origin !== location.origin || !event.data || event.data.schemaVersion !== 1 || session !== undefined) return;
     const data=event.data; const selected=Object.hasOwn(configurations,data.target) ? configurations[data.target] : undefined;
-    if (data.operation !== "start" || !selected || !Number.isSafeInteger(data.session) || !(data.firmware instanceof Uint8Array) || data.firmware.length !== selected.size || !(data.media instanceof Uint8Array) || data.media.length < 1 || data.media.length > 65536) return;
-    session=data.session; config=selected; const firmware=data.firmware, media=data.media; pending=[firmware,media];
+    if (data.operation !== "start" || !selected || !Number.isSafeInteger(data.session) || !(data.firmware instanceof Uint8Array) || data.firmware.length !== selected.size || !(data.media instanceof Uint8Array) || data.media.length < 1 || (selected.mediaSize ? data.media.length !== selected.mediaSize : data.media.length > 65536)) return;
+    session=data.session; config=selected; if (config.core === "mame-bbc") { canvas.width=768; canvas.height=576; } const firmware=data.firmware, media=data.media; pending=[firmware,media];
     if (config.core === "c64") { void startC64(firmware,media).catch(fail).finally(() => { firmware.fill(0); media.fill(0); }); return; }
-    window.Module={ canvas, noInitialRun:true, arguments:[config.machine,...config.options,"-noreadconfig","-nowriteconfig","-rompath","/roms","-hashpath","/empty","-artpath","/empty","-samplepath","/empty","-cfg_directory","/empty","-nvram_directory","/empty","-nohttp","-skip_gameinfo","-natural","-video","soft","-sound","js","-cassette",`/game.${config.extension}`,"-autoboot_delay","3","-autoboot_command",config.boot],
-      locateFile:(name) => { if (name !== "mame-z80.wasm.gz") throw new Error("Runtime asset is not allowed"); return new URL(`generated/${name}`,location.href).href; },
-      preRun:[() => { module=window.Module; if (stopped) return; module.FS.mkdir("/roms"); module.FS.mkdir(`/roms/${config.machine}`); module.FS.mkdir("/empty"); config.names.forEach((name,index) => module.FS.writeFile(`/roms/${config.machine}/${name}`,firmware.subarray(index*16384,(index+1)*16384))); module.FS.writeFile(`/game.${config.extension}`,media); firmware.fill(0); media.fill(0); }],
+    window.Module={ canvas, noInitialRun:true, arguments:[config.machine,...config.options,"-noreadconfig","-nowriteconfig","-rompath","/roms","-hashpath","/empty","-artpath","/empty","-samplepath","/empty","-cfg_directory","/empty","-nvram_directory","/empty","-nonvram_save","-noautosave","-nohttp","-skip_gameinfo","-natural","-video","soft","-sound","js",config.load ?? "-cassette",`/game.${config.extension}`,"-autoboot_delay","3","-autoboot_command",config.boot],
+      locateFile:(name) => { if (name !== `${config.core}.wasm.gz`) throw new Error("Runtime asset is not allowed"); return new URL(`generated/${name}`,location.href).href; },
+      preRun:[() => { module=window.Module; if (stopped) return; module.FS.mkdir("/roms"); module.FS.mkdir("/empty"); const directories=new Set(); config.names.forEach((name,index) => { const relative=config.core === "mame-bbc" ? name : `${config.machine}/${name}`; const directory=relative.split("/")[0]; if (!directories.has(directory)) { module.FS.mkdir(`/roms/${directory}`); directories.add(directory); } module.FS.writeFile(`/roms/${relative}`,firmware.subarray(index*16384,Math.min((index+1)*16384,firmware.length))); }); module.FS.writeFile(`/game.${config.extension}`,media); firmware.fill(0); media.fill(0); }],
       print:() => {}, printErr:() => {}, onAbort:fail, onRuntimeInitialized:() => { if (stopped) return; poll=setInterval(() => { if (module?._eightbit_ready()) { clearInterval(poll); started(); } },100); module.callMain(module.arguments); },
     };
-    const script=document.createElement("script"); script.src="generated/mame-z80.js"; script.onerror=fail; document.head.append(script);
+    const script=document.createElement("script"); script.src=`generated/${config.core}.js`; script.onerror=fail; document.head.append(script);
   });
 })();

@@ -44,4 +44,4 @@ for (const machine of request({ operation: 'machines' }).result.machines) {
   const zipped = request({ operation: 'export-project', project: made.result.project });
   assert.deepEqual(request({ operation: 'import-project' }, Uint8Array.from(zipped.result.archive)).result.project, made.result.project);
 }
-console.log('All eight machine profiles: actual WASM create, build/check, BASIC recovery and ZIP round trip passed.');
+console.log('All nine machine profiles: actual WASM create, build/check, BASIC recovery and ZIP round trip passed.');

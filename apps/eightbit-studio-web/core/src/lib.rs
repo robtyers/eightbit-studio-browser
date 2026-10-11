@@ -528,6 +528,7 @@ mod multi_machine_tests {
     fn every_registered_basic_target_builds_recovers_and_interchanges_with_desktop() {
         for family in [
             &eightbit_commodore_core::FAMILY,
+            &eightbit_acorn_core::FAMILY,
             &eightbit_spectrum_core::FAMILY,
             &eightbit_zx81_core::FAMILY,
         ] {
@@ -610,6 +611,7 @@ mod multi_machine_tests {
         assert!(machines::profile("nes").is_err());
         for family in [
             &eightbit_commodore_core::FAMILY,
+            &eightbit_acorn_core::FAMILY,
             &eightbit_spectrum_core::FAMILY,
             &eightbit_zx81_core::FAMILY,
         ] {

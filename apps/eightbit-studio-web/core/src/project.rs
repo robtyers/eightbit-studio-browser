@@ -272,6 +272,7 @@ pub(crate) fn import(bytes: &[u8]) -> Result<Snapshot, String> {
     let manifests = [
         "dragon.toml",
         "c64.toml",
+        "bbc.toml",
         "spectrum.toml",
         "zx81.toml",
         "vectrex.toml",

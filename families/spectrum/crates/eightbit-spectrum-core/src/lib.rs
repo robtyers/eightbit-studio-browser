@@ -104,6 +104,7 @@ pub static PROFILES: &[Profile] = &[
         rom_size: 16384,
         rom_sha256: "d55daa439b673b0e3f5897f99ac37ecb45f974d1862b4dadb85dec34af99cb42",
         extension: "tap",
+        media_limit: 65536,
         load_option: "-cassette",
         machine_options: &["-bios", "en", "-ramsize", "16K"],
         assembly_language: "z80",
@@ -124,6 +125,7 @@ pub static PROFILES: &[Profile] = &[
         rom_size: 16384,
         rom_sha256: "d55daa439b673b0e3f5897f99ac37ecb45f974d1862b4dadb85dec34af99cb42",
         extension: "tap",
+        media_limit: 65536,
         load_option: "-cassette",
         machine_options: &["-bios", "en", "-ramsize", "48K"],
         assembly_language: "z80",
@@ -144,6 +146,7 @@ pub static PROFILES: &[Profile] = &[
         rom_size: 32768,
         rom_sha256: "c1ff621d7910105d4ee45c31e9fd8fd0d79a545c78b66c69a562ee1ffbae8d72",
         extension: "tap",
+        media_limit: 65536,
         load_option: "-cassette",
         machine_options: &["-bios", "en", "-ramsize", "128K"],
         assembly_language: "z80",
@@ -164,6 +167,7 @@ pub static PROFILES: &[Profile] = &[
         rom_size: 32768,
         rom_sha256: "dae0690d8b433ea22b76b62520341f784071dbde0d02f50af0e3fd20fc6bca4a",
         extension: "tap",
+        media_limit: 65536,
         load_option: "-cassette",
         machine_options: &["-bios", "en", "-ramsize", "128K"],
         assembly_language: "z80",
@@ -470,6 +474,7 @@ mod mame_tests {
     #[ignore = "Requires explicitly supplied MAME 0.289, SjASMPlus 1.24.0 and exact UK Spectrum 48K ROM"]
     fn real_mame_debug_lifecycle() {
         let settings = eightbit_source::runtime::Settings {
+            emulators: std::collections::BTreeMap::default(),
             schema_version: 2,
             emulator: Some(PathBuf::from(std::env::var("STUDIO_MAME").unwrap())),
             assembler: Some(PathBuf::from(std::env::var("STUDIO_SJASMPLUS").unwrap())),

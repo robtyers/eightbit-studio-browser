@@ -6,7 +6,7 @@ import { test } from 'node:test';
 function fixture(decoded = false) {
   const events = new Map(), calls = [], sent = [], files = new Map();
   function node() { return { disabled: true, textContent: '', value: '', dataset: {}, handlers: new Map(), addEventListener(name, handler) { this.handlers.set(name, handler); }, focus() {}, setPointerCapture() {}, dispatchEvent: (event) => calls.push(['key', event.type, event.keyCode]) }; }
-  const nodes = Object.fromEntries(['screen','status','keys','audio','type'].map((name) => [name, node()]));
+  const nodes = Object.fromEntries(['canvas','status','keys','audio','type'].map((name) => [name, node()]));
   const up = node(); up.dataset.key = 'up';
   const document = { hidden:false, getElementById:(id) => nodes[id], querySelectorAll:(selector) => selector === 'button[data-key]' ? [up] : [...Object.values(nodes),up], createElement:node, head:{ append:(script) => calls.push(['script',script.src]) }, addEventListener:(name,handler) => events.set(`document:${name}`,handler) };
   const parent = { postMessage:(message,origin) => sent.push({ message,origin }) };
@@ -59,4 +59,52 @@ test('cancelling during module load erases pending firmware and never starts lat
   assert.equal(firmware.some(Boolean),false); assert.equal(media.some(Boolean),false);
   assert.equal(value.files.size,0); assert.equal(value.calls.some(([name]) => name==='main'),false);
   assert.equal(value.sent.some(({message}) => message.state==='ready'),false);
+});
+
+test('BBC runtime stages five ROMs and the full SSD with the exact fixed Model B options', async () => {
+  const value=fixture();
+  const firmware=new Uint8Array(66496).fill(0xa5),media=new Uint8Array(204800).fill(0x42);
+  value.start('bbc-model-b',{firmware,media:new Uint8Array(65536)});
+  assert.equal(value.window.Module,undefined);
+  value.start('bbc-model-b',{firmware,media}); value.ready();
+  assert.equal(value.calls[0][1],'generated/mame-bbc.js');
+  const args=value.window.Module.arguments;
+  assert.equal(args[0],'bbcb');
+  for (const [option,expected] of [['-fdc','acorn8271,bios=dnfs120'],['-bios','120'],['-ramsize','32K'],['-flop1','/game.ssd'],['-autoboot_command','*EXEC !BOOT\\r'],['-vsp','']]) assert.equal(args[args.indexOf(option)+1],expected);
+  assert.equal(args.includes('-cassette'),false);
+  for (const [path,size] of [['bbcb/os12.rom',16384],['bbcb/basic2.rom',16384],['bbc_acorn8271/dnfs120.rom',16384],['bbcb/cm62024.bin',16384],['saa5050/saa5050',960]]) assert.equal(value.files.get('/roms/'+path).length,size);
+  assert.equal(value.files.get('/game.ssd').length,204800);
+  assert.equal(firmware.some(Boolean),false); assert.equal(media.some(Boolean),false);
+  assert.equal(await (await value.window.fetch('generated/mame-bbc.wasm.gz')).text(),'original wasm fixture');
+  value.nodes.keys.value='PRINT 42'; value.nodes.type.handlers.get('click')(); value.events.get('poll')();
+  assert.deepEqual(value.calls.at(-1),['type',80]);
+  value.window.__eightbit_stop(); assert.equal(value.calls.filter(([name])=>name==='exit').length,1);
+});
+
+test('cancelled BBC loading cannot create firmware files or launch a late emulator', () => {
+  const value=fixture(); const firmware=new Uint8Array(66496).fill(0xa5),media=new Uint8Array(204800).fill(0x42);
+  value.start('bbc-model-b',{firmware,media}); value.window.__eightbit_stop(); value.ready();
+  assert.equal(firmware.some(Boolean),false); assert.equal(media.some(Boolean),false);
+  assert.equal(value.files.size,0); assert.equal(value.calls.some(([name])=>name==='main'),false);
+});
+
+// SDL2's Emscripten video backend addresses this element by its fixed selector.
+test('classic HTML supplies the SDL2 canvas identifier', () => {
+  const html=readFileSync(new URL('../../apps/eightbit-studio-web/ui/public/classic.html',import.meta.url),'utf8');
+  assert.match(html, /<canvas id="canvas"/);
+});
+
+test('BBC sound requires an explicit click and failed resume remains recoverable', async () => {
+  const value=fixture(); value.start('bbc-model-b',{firmware:new Uint8Array(66496),media:new Uint8Array(204800)}); value.ready();
+  let resumes=0; value.window.__eightbit_mameAudio.studioResume=async () => { resumes++; };
+  assert.equal(resumes,0);
+  await value.nodes.audio.handlers.get('click')();
+  assert.equal(resumes,1); assert.equal(value.nodes.status.textContent,'Sound enabled');
+  value.window.__eightbit_mameAudio.studioResume=async () => { throw new Error('Original blocked audio fixture'); };
+  await value.nodes.audio.handlers.get('click')();
+  assert.equal(value.nodes.status.textContent,'Sound is unavailable');
+  assert.equal(value.sent.some(({message}) => message.state==='failed'),false);
+  value.window.__eightbit_stop();
+  await value.nodes.audio.handlers.get('click')();
+  assert.equal(value.nodes.status.textContent,'Sound is unavailable');
 });

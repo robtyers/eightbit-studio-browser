@@ -55,6 +55,7 @@ pub static PROFILES: &[Profile] = &[Profile {
     rom_size: 20480,
     rom_sha256: "",
     extension: "prg",
+    media_limit: 65536,
     load_option: "-autostart",
     machine_options: &[],
     assembly_language: "mos6502",

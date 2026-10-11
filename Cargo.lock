@@ -109,9 +109,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "eightbit-acorn-core"
+version = "0.5.2"
+dependencies = [
+ "eightbit-source-core",
+ "eightbit-targets",
+ "serde_json",
+]
+
+[[package]]
 name = "eightbit-browser"
 version = "0.5.2"
 dependencies = [
+ "eightbit-acorn-core",
  "eightbit-commodore-core",
  "eightbit-dragon-basic-core",
  "eightbit-dragon-media",

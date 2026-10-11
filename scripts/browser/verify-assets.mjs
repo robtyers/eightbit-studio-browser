@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { lstatSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { configuredSourceRelease, sourceRelease } from './source-release.mjs';
 
@@ -12,7 +12,7 @@ export function verifyBrowserAssets(directory, inputRoot, sourceDirectory) {
   const generated = join(directory, 'generated');
   const receipt = JSON.parse(readFileSync(join(generated, 'build-receipt.json'), 'utf8'));
   if (!record(receipt)) throw new Error('Invalid browser source receipt');
-  const generatedNames = new Set(['dragon_core.js', 'dragon_core_bg.wasm', 'xroar.js', 'xroar.wasm', 'COPYING.txt', 'NOTICE.txt', 'build-receipt.json', 'sources.html', 'c64.js', 'c64.wasm', 'mame-z80.js', 'mame-z80.wasm.gz']);
+  const generatedNames = new Set(['dragon_core.js', 'dragon_core_bg.wasm', 'xroar.js', 'xroar.wasm', 'COPYING.txt', 'NOTICE.txt', 'build-receipt.json', 'sources.html', 'c64.js', 'c64.wasm', 'mame-z80.js', 'mame-z80.wasm.gz', 'mame-bbc.js', 'mame-bbc.wasm.gz']);
   // Keep old receipts verifiable for archived deployments; new staging requires schema 2.
   if (receipt.schemaVersion === 1) for (const name of [...Array.from({ length: 8 }, (_, index) => `browser-source.part${String(index + 1).padStart(2, '0')}`), ...Array.from({ length: 9 }, (_, index) => `mame-source.part${String(index + 1).padStart(2, '0')}`)]) generatedNames.add(name);
   for (const name of readdirSync(directory)) if (!rootNames.has(name)) throw new Error('Unexpected browser asset; rebuild the UI before staging');
@@ -29,6 +29,12 @@ export function verifyBrowserAssets(directory, inputRoot, sourceDirectory) {
   if (!record(receipt) || ![1, 2].includes(receipt.schemaVersion) || !record(receipt.binaries) || !record(receipt.inputs) || !Object.keys(receipt.inputs).length || !validHash(receipt.sourceArchiveSha256) || !validHash(receipt.sourceManifestSha256)) throw new Error('Invalid browser source receipt');
   for (const name of ['dragon_core.js', 'dragon_core_bg.wasm', 'xroar.js', 'xroar.wasm', 'c64.js', 'c64.wasm', 'mame-z80.js', 'mame-z80.wasm.gz']) {
     if (!validHash(receipt.binaries[name]) || digest(readFileSync(join(generated, name))) !== receipt.binaries[name]) throw new Error('Browser binary/source receipt mismatch');
+  }
+  // Archived pre-BBC receipts remain readable; a new BBC asset always needs
+  // both binaries and their exact corresponding-source receipt.
+  const bbc = ['mame-bbc.js', 'mame-bbc.wasm.gz'];
+  if (bbc.some((name) => existsSync(join(generated, name)) || Object.hasOwn(receipt.binaries, name))) for (const name of bbc) {
+    if (!validHash(receipt.binaries[name]) || digest(readFileSync(join(generated, name))) !== receipt.binaries[name]) throw new Error('BBC binary/source receipt mismatch');
   }
   if (!record(receipt.externalSources) || !validHash(receipt.externalSources.mameArchiveSha256)) throw new Error('Invalid external source receipt');
   if (receipt.schemaVersion === 2) {
