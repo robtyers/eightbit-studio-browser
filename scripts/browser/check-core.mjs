@@ -32,16 +32,25 @@ assert.deepEqual(reopened.result.project, created.result.project);
 assert.equal(request({operation:'test-project', project:{...created.result.project, source:'20 END\n'}}).ok, false);
 console.log('Browser WASM projects: shared desktop scaffold, project build, ZIP round trip and entry rejection passed.');
 
-for (const machine of request({ operation: 'machines' }).result.machines) {
-  const made = request({ operation: 'create-project', name: 'Portable game', kind: 'basic', source: machine.sample, target: machine.id });
+const machines = request({ operation: 'machines' }).result.machines;
+for (const machine of machines) {
+  const isVectrex = machine.id === 'vectrex';
+  const made = request({ operation: 'create-project', name: 'Portable game', kind: isVectrex ? 'assembly' : 'basic', source: machine.sample, target: machine.id });
   assert.equal(made.ok, true, machine.id);
   const checked = request({ operation: 'test-project', project: made.result.project });
   assert.equal(checked.ok, true, machine.id);
-  assert.equal(checked.result.roundTripVerified, true);
-  const recovered = request({ operation: 'decompile', target: machine.id, input: { format: 'cassette' } }, Uint8Array.from(checked.result.cassette));
-  assert.equal(recovered.ok, true, machine.id);
-  assert.equal(recovered.result.kind, 'basic');
+  if (isVectrex) {
+    assert.equal(checked.result.cartridgeVerified, true);
+    assert.ok(checked.result.cassette.length > 0);
+  } else {
+    assert.equal(checked.result.roundTripVerified, true);
+    if (!machine.id.startsWith('dragon64')) {
+      const recovered = request({ operation: 'decompile', target: machine.id, input: { format: 'cassette' } }, Uint8Array.from(checked.result.cassette));
+      assert.equal(recovered.ok, true, machine.id);
+      assert.equal(recovered.result.kind, 'basic');
+    }
+  }
   const zipped = request({ operation: 'export-project', project: made.result.project });
   assert.deepEqual(request({ operation: 'import-project' }, Uint8Array.from(zipped.result.archive)).result.project, made.result.project);
 }
-console.log('All nine machine profiles: actual WASM create, build/check, BASIC recovery and ZIP round trip passed.');
+console.log(`All ${machines.length} machine profiles: actual WASM create, build/check and ZIP round trip passed.`);

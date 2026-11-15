@@ -1,14 +1,22 @@
 [workspace]
 resolver = "2"
 members = [
+    "families/vectrex/crates/eightbit-vectrex-emulator",
     "crates/eightbit-targets",
     "crates/eightbit-source-core",
+    "cpu/m6809/eightbit-m6809-core",
+    "cpu/mos6502/eightbit-mos6502-core",
+    "families/commodore/crates/eightbit-commodore-machine",
     "cpu/z80/eightbit-sinclair-basic",
+    "cpu/z80/eightbit-z80-core",
+    "families/spectrum/crates/eightbit-spectrum-emulator",
+    "families/zx81/crates/eightbit-zx81-emulator",
     "families/dragon/crates/eightbit-dragon-targets",
     "families/dragon/crates/eightbit-dragon-basic-core",
     "families/dragon/crates/eightbit-dragon-media",
     "families/dragon/crates/eightbit-dragon-mobile",
     "families/dragon/crates/eightbit-dragon-project",
+    "families/dragon/crates/eightbit-dragon-emulator",
     "families/commodore/crates/eightbit-commodore-core",
     "families/acorn/crates/eightbit-acorn-core",
     "families/spectrum/crates/eightbit-spectrum-core",
@@ -17,7 +25,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.5.2"
+version = "0.5.3"
 edition = "2024"
 rust-version = "1.92"
 publish = false

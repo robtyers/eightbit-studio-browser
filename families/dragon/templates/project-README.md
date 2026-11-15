@@ -21,18 +21,18 @@ Help: “Dragon 32 and Dragon 64 architectures”.
 
 ## Getting started
 
-The usual workflow is: edit source, build, check tests, run in XRoar, debug, review and commit, then export and check the distributable programme. Opening a project does not build it, run tools or contact a remote service.
+The usual workflow is: edit source, build, check tests, run, debug, review and commit, then export and check the distributable programme. Opening a project does not build it, run tools or contact a remote service.
 
-This guide is for developing Dragon programmes in an installed Eightbit Studio 6809 application. You do not need to build the IDE or install its Rust/Node development toolchain. BASIC-only editing, builds and build tests need neither an emulator nor a firmware ROM. Running and debugging need separately installed XRoar and lawfully obtained ROMs for the configured target (one for D32, both 16 KiB slots for D64). Assembly builds also need LWTOOLS 4.25.
+This guide is for developing Dragon programmes in an installed Eightbit Studio 6809 application. You do not need to build the IDE or install its Rust/Node development toolchain. Dragon 32 BASIC and RAM machine-code programmes use the built-in emulator and original ROM by default. Cartridge projects use separately installed XRoar and a separately supplied Dragon 32 ROM; Dragon 64 retains its XRoar and two-ROM setup. Dragon 32 RAM assembly builds use the built-in assembler/linker without external tools. LWTOOLS 4.25 remains an explicit compatibility option and is required for cartridge and Dragon 64 assembly builds.
 
 ### 1. Get the starter programme running
 
 1. Open this project folder in Eightbit Studio 6809 and open `src/basic/main.bas` from Explorer.
 2. Read [dragon.toml](dragon.toml): `[assembler].enabled = false` means Dragon BASIC; `true` means BASIC + 6809 Assembly. The mixed template also contains `src/asm/main.asm`, initially a routine that returns to BASIC at `$7000`.
-3. For the mixed template, choose **Settings > Build Tools** and select the directory containing the separately installed `lwasm` and `lwlink` 4.25 executables.
+3. For Dragon 32 mixed projects, keep **Built-in 6809 assembler** in **Settings > Build Tools**. For cartridge or Dragon 64 assembly, or an explicit compatibility build, select **LWTOOLS compatibility** and validate the directory containing `lwasm` and `lwlink` 4.25. A previously configured tool path does not override the built-in default.
 4. Choose **Build** (Command–B). Check Problems and Output and fix any errors before continuing. A failed build must not be treated as a successful test of an older programme.
-5. In **Settings > Emulators**, select your XRoar application/executable; configure lawful ROMs for the selected Dragon model under **Systems & Firmware**, then **Validate and Save**. The tested XRoar baseline is 1.12.1; Eightbit Studio 6809 validates the selected installation. Tools and firmware are not included in this project.
-6. Choose **Run** (Command–R). Eightbit Studio 6809 builds the current configured project again and launches XRoar only after success. Expect `HELLO, DRAGON`; the mixed starter also prints `ASSEMBLY RETURNED`. Use **Focus** to show XRoar if needed, then **Stop** to end the session.
+5. Dragon 32 BASIC and RAM code need no emulator or ROM setup. For cartridges or Dragon 64, select your XRoar application/executable in **Settings > Emulators**, configure your ROMs under **Systems & Firmware**, then **Validate and Save**. The tested XRoar baseline is 1.12.1. Cartridge projects select this configured route automatically when you choose Run.
+6. Choose **Run** (Command–R). Eightbit Studio 6809 builds the current configured project again and starts the appropriate runtime only after success. Expect `HELLO, DRAGON`; the mixed starter also prints `ASSEMBLY RETURNED`. Use **Focus** to show the emulator if needed, then **Stop** to end the session.
 7. Change the greeting in `src/basic/main.bas`, choose **File > Save All**, then Run again and confirm the new text. Stop the session before further builds, tests or project-source changes.
 
 For details, open **Help > Eightbit Studio 6809 User Guide** and search for “Build, run and debug in Eightbit Studio 6809”. All Help references below are exact bundled topic titles, available offline; they are not paths to files in this project.
@@ -91,19 +91,19 @@ expect = "success"
 diagnostic_codes = []
 ```
 
-Choose **Project > Run Tests** and inspect the Test Explorer report. This example works for either starter template; mixed projects still require configured LWTOOLS. To check an output too, add `outputs = ["program.cas"]` for BASIC or `outputs = ["run/program.cas", "assembly/machine.bin"]` for a mixed project. Names are relative to the published build snapshot.
+Choose **Project > Run Tests** and inspect the Test Explorer report. This example works for either Dragon 32 starter template without external tools; cartridge and Dragon 64 assembly builds require configured LWTOOLS. To check an output too, add `outputs = ["program.cas"]` for BASIC or `outputs = ["run/program.cas", "assembly/machine.bin"]` for a mixed project. Names are relative to the published build snapshot.
 
 Each test definition checks the same current-project build, performed once per test run. Optional `diagnostic_codes` checks the exact diagnostic list; `expect = "failure"` is for a deliberately failing current build, not an independent source fixture. Do not combine contradictory expectations. Tests cannot contain commands or assert emulator variables, memory, input or timing.
 
-Keep a short runtime checklist alongside your tests: input or starting state, action, expected result, and what you actually observed. Include normal behaviour, boundaries, invalid input and a regression check for each fix. Re-run it in XRoar after changes, and on a physical Dragon before claiming hardware compatibility. A passing build test is not proof of runtime correctness.
+Keep a short runtime checklist alongside your tests: input or starting state, action, expected result, and what you actually observed. Include normal behaviour, boundaries, invalid input and a regression check for each fix. Re-run it in the selected emulator after changes, and on a physical Dragon before claiming hardware compatibility. A passing build test is not proof of runtime correctness.
 
-If you separately have the `dragon` CLI installed, `dragon validate .`, `dragon lint .` and `dragon build .` provide repeatable project checks from this folder. Mixed builds require `dragon build . --lwtools <directory>` with your selected tool directory. There is no generic `dragon test` command; use Test Explorer. Only you enter commands in the integrated terminal.
+If you separately have the `dragon` CLI installed, `dragon validate .`, `dragon lint .` and `dragon build .` provide repeatable project checks from this folder. Dragon 32 RAM mixed builds also use `dragon build .` without external tools. Use `dragon build . --lwtools <directory>` only for explicit LWTOOLS compatibility or an assembly target that requires it. There is no generic `dragon test` command; use Test Explorer. Only you enter commands in the integrated terminal.
 
 Help: “Build, run and debug in Eightbit Studio 6809” — “Test your programme”; “Troubleshooting and supported limits”.
 
 ### 6. Debug unexpected behaviour
 
-For BASIC, open a configured source, set a numbered-line breakpoint in the gutter and choose **Debug** (F5). At a verified stop, inspect scalar variables and registers; use Continue to resume. BASIC debugging requires an exact supported ROM identity even when another valid ROM can Run. It is line-level debugging, not statement stepping; arrays, watches and variable mutation are not supported.
+For BASIC, open a configured source, set a numbered-line breakpoint in the gutter and choose **Debug** (F5). At a verified stop, inspect scalar variables and registers; use Continue to resume. The built-in Dragon 32 runtime carries its qualified original ROM. XRoar BASIC debugging requires an exact supported external ROM identity even when another valid ROM can Run. It is line-level debugging, not statement stepping; arrays, watches and variable mutation are not supported.
 
 For assembly, set a breakpoint on an instruction in a configured assembly source and choose Debug. Inspect the mapped source, registers, bounded memory and disassembly. Step advances one machine instruction; Continue resumes and Pause interrupts. The current machine debugger supports one installed breakpoint. Use Stop/Terminate when finished and keep BASIC `EXEC` calls aligned with linked symbols.
 
@@ -115,11 +115,19 @@ Here, deployment means producing a distributable Dragon programme and loading it
 
 | Export | What it contains | Intended use |
 | --- | --- | --- |
-| Cassette image (`.cas`) | BASIC, standalone machine code, or the complete native BASIC/assembly loader according to the selected boot mode | A compatible emulator or cassette-transfer tool. It is not an audio recording. |
+| Cassette image (`.cas`) | BASIC or standalone machine code; native D64 BASIC includes its generated loader | A compatible emulator or cassette-transfer tool. It is not an audio recording. |
 | WAV cassette audio (`.wav`) | The same mode-specific cassette content encoded as audio | A suitable playback/recording chain and the Dragon cassette input; follow your hardware instructions. |
+| Complete BASIC and assembly (`.cas` or `.wav`) | The current Run programme, including the generated BASIC loader and caller | For a mixed project on cassette: `CLOAD`, then `RUN`. Existing DATA, memory and line-space limits apply. |
 | Cartridge image (`.rom`) | Linked BASIC and optional assembly together, with auto-start code | Preview and explicitly start in XRoar, or use compatible cartridge hardware and its separate programming tools. |
 
-In Dragon 32 and D64 compatibility projects, mixed cassette/WAV export contains standalone assembly; use cartridge export to package BASIC and assembly together. In native D64 BASIC projects, cassette/WAV export includes the complete generated BASIC/assembly loader because cartridges conflict with the interpreter. Machine-code boot exports standalone assembly in either mode. Exported cartridges are 8 or 16 KiB; oversized programmes or insufficient BASIC workspace are rejected. They contain no Dragon firmware. Eightbit Studio 6809 does not program physical cartridges.
+In Dragon 32 and D64 compatibility projects, the original Cassette image/Audio recording choices retain their standalone assembly content. Choose **Complete BASIC and assembly** to transfer the BASIC caller and generated loader together through cassette. In native D64 BASIC projects, the original choices already include that loader; enter native mode before loading. Machine-code boot exports standalone assembly. Exported cartridges retain their existing 8 or 16 KiB limits and contain no Dragon firmware.
+
+Games intended for a stock Dragon 32 must stay within its original RAM and
+hardware limits and use the original BASIC dialect and published ROM interfaces.
+The expanded Studio ROM is a development runtime, not something the game needs
+installed on the physical machine. In the website's **Save work** dialogue,
+**Save cassette loading audio** downloads the current checked BASIC or assembly
+build as `game.wav`; this is loading audio, not the game's soundtrack.
 
 Inspect and test the actual exported file, not just the source project's Run result. BASIC cassette loading uses `CLOAD` then `RUN`; standalone machine code uses `CLOADM` and its documented entry/`EXEC` convention. See the command reference before loading on real hardware. Check your real transfer setup and record the Dragon model, runtime/firmware requirements, loading steps, controls and observed results in this README. Emulator success alone does not establish physical-hardware compatibility.
 

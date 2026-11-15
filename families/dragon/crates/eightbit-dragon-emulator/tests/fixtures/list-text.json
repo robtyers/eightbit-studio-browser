@@ -1,0 +1,28 @@
+{
+  "provenance": "Original synthetic programmes; printer listings observed with lawful exact-SHA Dragon 32 firmware. No firmware instructions or bytes retained.",
+  "romSha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
+  "observations": [
+    {
+      "programme": [
+        "10 IF A THEN 30 ELSE 20",
+        "20 PRINT \":ELSE\":REM :ELSE",
+        "30 DATA :ELSE",
+        "40 END"
+      ],
+      "listing": "10 IF A THEN 30 ELSE 20\r20 PRINT \":ELSE\":REM :ELSE\r30 DATA :ELSE\r40 END\r",
+      "continuesAfterCommand": false,
+      "errors": []
+    },
+    {
+      "programme": [
+        "10 A=1 'NOTE",
+        "20 'WHOLE",
+        "30 IF A THEN 40:ELSE 20",
+        "40 END"
+      ],
+      "listing": "10 A=1 'NOTE\r20 'WHOLE\r30 IF A THEN 40:ELSE 20\r40 END\r",
+      "continuesAfterCommand": false,
+      "errors": []
+    }
+  ]
+}

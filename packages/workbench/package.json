@@ -1,7 +1,7 @@
 {
   "name": "@eightbitstudio/workbench",
   "private": true,
-  "version": "0.5.2",
+  "version": "0.5.3",
   "author": "Rob Tyers",
   "eightbitStudioProjectDate": "1 September 2026",
   "license": "Apache-2.0",
@@ -17,16 +17,28 @@
     "typescript": "7.0.2"
   },
   "exports": {
+    "./services/monitorFrame": "./src/services/monitorFrame.ts",
+    "./services/monitorProtocol": "./src/services/monitorProtocol.ts",
+    "./components/MonitorConsole": "./src/components/MonitorConsole.tsx",
     "./styles.css": "./src/styles.css",
     "./components/WorkbenchPanelTabs": "./src/components/WorkbenchPanelTabs.tsx",
     "./components/EditorToolbar": "./src/components/EditorToolbar.tsx",
     "./components/WorkbenchShell": "./src/components/WorkbenchShell.tsx",
     "./components/Icons": "./src/components/Icons.tsx",
     "./components/WorkbenchResizeHandle": "./src/components/WorkbenchResizeHandle.tsx",
+    "./hooks/useWorkbenchCommands": "./src/hooks/useWorkbenchCommands.ts",
     "./services/editorCommands": "./src/services/editorCommands.ts",
+    "./services/workbenchLayout": "./src/services/workbenchLayout.ts",
+    "./services/recentProjects": "./src/services/recentProjects.ts",
     "./macos.css": "./src/macos.css",
     "./components/EditorTabs": "./src/components/EditorTabs.tsx",
     "./components/WelcomeView": "./src/components/WelcomeView.tsx",
-    "./components/ProcessorLogo": "./src/components/ProcessorLogo.tsx"
+    "./components/MachineDebugPanel": "./src/components/MachineDebugPanel.tsx",
+    "./components/ProcessorLogo": "./src/components/ProcessorLogo.tsx",
+    "./services/originalBasicDebug": "./src/services/originalBasicDebug.ts",
+    "./services/developmentHost": "./src/services/developmentHost.ts",
+    "./components/BasicDebugPanel": "./src/components/BasicDebugPanel.tsx",
+    "./services/originalRuntime": "./src/services/originalRuntime.ts",
+    "./services/originalMachineDebug": "./src/services/originalMachineDebug.ts"
   }
 }

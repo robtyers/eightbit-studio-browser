@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Original synthetic BASIC inputs, observed through separately installed XRoar with independently provisioned Dragon 32 ROM; only canvas hashes and completion markers retained. No reference code or firmware bytes.",
+  "referenceSha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
+  "cases": [
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(-1,1):Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(-1,1),PSET:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(256,1):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "d5c4d631b5149243db47d69f712a950071021d50fc50fd3a9467cf22f8dee653"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(256,1),PSET:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b68abb207fb9e8e0b5fabb8ae6f8f017587b246cd9a61e70ef5c889ca6ea5804"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(300,1):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "d5c4d631b5149243db47d69f712a950071021d50fc50fd3a9467cf22f8dee653"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(300,1),PSET:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b68abb207fb9e8e0b5fabb8ae6f8f017587b246cd9a61e70ef5c889ca6ea5804"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(65535,1):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "d5c4d631b5149243db47d69f712a950071021d50fc50fd3a9467cf22f8dee653"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(65535,1),PSET:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b68abb207fb9e8e0b5fabb8ae6f8f017587b246cd9a61e70ef5c889ca6ea5804"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(65536,1):Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(65536,1),PSET:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(1,-1):Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(1,-1),PSET:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(1,192):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "93848165eb105832e4c90294cf5cfd1dfa8e9e4e20c7a725933f8b89467aaf00"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(1,192),PSET:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "f4720bb81ea53e60c46f51f0ab1c217b256c0798a893dcf39c3d4b41a395eebc"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PSET(1,256):Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:LINE(0,0)-(1,256),PSET:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:CIRCLE(256,1),1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "8304950e4b1310cd1f1c5960552380fbfea519862e802e66431e8896a20f55b1"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:Q=PPOINT(256,1):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:CIRCLE(1,192),1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "e48beca093f887a7e498fc2d43084f78bfaded8740d3b9bb90dd4209e6a9af3e"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:Q=PPOINT(1,192):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:CIRCLE(65535,255),1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "dd95e17d55b56092c9852a64e7afa45a73c009ab79896fb1868d0bf6978adfb2"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:Q=PPOINT(65535,255):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:CIRCLE(1,256),1:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:PAINT(1,256),1,1:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS0:Q=PPOINT(1,256):Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:CIRCLE(256,1),1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:PAINT(256,1),1,1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:Q=PPOINT(256,1):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:CIRCLE(1,192),1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:PAINT(1,192),1,1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:Q=PPOINT(1,192):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:CIRCLE(65535,255),1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:PAINT(65535,255),1,1:Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:Q=PPOINT(65535,255):Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:CIRCLE(1,256),1:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:PAINT(1,256),1,1:Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    },
+    {
+      "source": "Z=0:DIM A(7,3):PMODE4,1:PCLS1:Q=PPOINT(1,256):Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+      }
+    }
+  ]
+}

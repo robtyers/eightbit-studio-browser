@@ -93,8 +93,12 @@ pub struct AuthoringSession {
 impl AuthoringSession {
     /// Create an inert session with no document, firmware or executable authority.
     pub fn new() -> Result<Self, MobileError> {
+        Self::for_dialect("dragon32-basic")
+    }
+    /// Select an implemented family dialect without filesystem or runtime authority.
+    pub fn for_dialect(id: &str) -> Result<Self, MobileError> {
         Ok(Self {
-            dialect: Dialect::dragon32().map_err(MobileError::Dialect)?,
+            dialect: Dialect::for_id(id).map_err(MobileError::Dialect)?,
             revision: 0,
             source: String::new(),
             built: None,

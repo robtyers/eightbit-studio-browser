@@ -1,0 +1,8 @@
+# Generated build output and local Vectrex state
+/.vectrex/
+.DS_Store
+# Keep any locally provisioned firmware and secrets outside version control
+/roms/
+/.env
+/.env.*
+!/.env.example

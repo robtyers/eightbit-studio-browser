@@ -418,6 +418,16 @@ fn find_token<'a>(
             && code[index..end].eq_ignore_ascii_case(&token.text)
             && (!require_end_boundary
                 || token.text.ends_with('(')
+                || token.text == "FN"
+                || (matches!(token.text.as_str(), "CLOAD" | "CSAVE")
+                    && code
+                        .as_bytes()
+                        .get(end)
+                        .is_some_and(|byte| byte.eq_ignore_ascii_case(&b'M'))
+                    && code
+                        .as_bytes()
+                        .get(end + 1)
+                        .is_none_or(|byte| !is_keyword_continuation(*byte)))
                 || token
                     .text
                     .chars()
@@ -663,6 +673,49 @@ mod tests {
                 b'1', b'0', 0x00
             ]
         );
+    }
+
+    #[test]
+    fn compact_fn_names_tokenise_without_touching_literal_text() {
+        let tokenised =
+            tokenise_source("10 DEF FNF(X)=X*X+1\n20 Z=FNF(3):PRINT\"FNF(3)\":REM FNF(3)\n");
+        assert!(
+            tokenised.lines[0]
+                .code
+                .windows(2)
+                .any(|bytes| bytes == [190, b'F'])
+        );
+        assert!(
+            tokenised.lines[1]
+                .code
+                .windows(2)
+                .any(|bytes| bytes == [190, b'F'])
+        );
+        let recovered = detokenise(&tokenised.bytes, &dialect()).unwrap();
+        assert!(recovered.source.contains("PRINT\"FNF(3)\":REM FNF(3)"));
+        assert_eq!(tokenise_source(&recovered.source).bytes, tokenised.bytes);
+    }
+
+    #[test]
+    fn machine_code_cassette_suffixes_are_tokens_without_splitting_identifiers() {
+        let tokenised = tokenise_source(
+            "10 CLOADM\"FILE\"\n20 CSAVEM\"FILE\",24576,24577,24576\n30 CLOADME=1:CSAVEMX=2:PRINT\"CLOADM\":REM CSAVEM\n",
+        );
+        assert_eq!(&tokenised.lines[0].code[..2], &[0x99, b'M']);
+        assert_eq!(&tokenised.lines[1].code[..2], &[0x9a, b'M']);
+        assert!(tokenised.lines[2].code.starts_with(b"CLOADME"));
+        assert!(
+            tokenised.lines[2]
+                .code
+                .windows(7)
+                .any(|bytes| bytes == b"CSAVEMX")
+        );
+        let recovered = detokenise(&tokenised.bytes, &dialect()).unwrap();
+        assert_eq!(tokenise_source(&recovered.source).bytes, tokenised.bytes);
+        for source in ["CLOADM", "cloadm\"FILE\"", "CSAVEM123"] {
+            let code = tokenise_code(source, &dialect()).unwrap();
+            assert!(matches!(code[0], 0x99 | 0x9a));
+        }
     }
 
     #[test]

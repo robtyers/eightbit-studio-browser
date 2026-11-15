@@ -48,6 +48,7 @@ pub static DEFINITION: FamilyDefinition = FamilyDefinition {
     targets: TARGETS,
 };
 pub static PROFILES: &[Profile] = &[Profile {
+    original_assembler: None,
     #[cfg(feature = "native")]
     adapter: Some(&runtime::ADAPTER),
     #[cfg(not(feature = "native"))]

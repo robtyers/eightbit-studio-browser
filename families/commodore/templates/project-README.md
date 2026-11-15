@@ -17,6 +17,9 @@ results. This project does not require the IDE's Rust or Node development tools.
    (8192 bytes), `kernal-901227-03.bin` (8192 bytes) and `chargen-901225-01.bin`
    (4096 bytes). Validation checks the supported revisions, not just filenames.
 5. Select **Run**, then focus the external VICE window for keyboard input.
+   With the official macOS GTK3 package, choose its `bin/x64sc` launcher and keep
+   the complete installation together; the inner app resource binary alone can
+   pass the version check but fail at startup.
    Run builds saved source afresh. **Stop** ends the owned session; **Restart**
    rebuilds and starts it again. Change the source and confirm the change appears.
 6. Use **Export** to save the current programme as a PRG to a new destination.

@@ -14,6 +14,9 @@ default = []
 native-acceptance = []
 
 [dependencies]
+eightbit-vectrex-emulator = { path = "../../../families/vectrex/crates/eightbit-vectrex-emulator" }
+eightbit-m6809-core = { path = "../../../cpu/m6809/eightbit-m6809-core" }
+eightbit-dragon-emulator = { path = "../../../families/dragon/crates/eightbit-dragon-emulator" }
 eightbit-dragon-basic-core = { path = "../../../families/dragon/crates/eightbit-dragon-basic-core" }
 eightbit-dragon-media = { path = "../../../families/dragon/crates/eightbit-dragon-media" }
 eightbit-dragon-mobile = { path = "../../../families/dragon/crates/eightbit-dragon-mobile" }

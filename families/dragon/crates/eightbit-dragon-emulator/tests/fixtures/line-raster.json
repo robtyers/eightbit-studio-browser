@@ -1,0 +1,1328 @@
+{
+  "schemaVersion": 1,
+  "referenceSha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
+  "romInstructionsInspected": false,
+  "method": "Original synthetic LINE programmes in all five modes, both directions. Only generated plane digests and the requested logical target are retained.",
+  "cases": [
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(0,0),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "ad3c6bf2e8c4e64c77cbe12b2fcc56e0296bc49bdb49cde0821f0933dfc78f0d"
+      },
+      "cursor": [
+        0,
+        0
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(0,0)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "ad3c6bf2e8c4e64c77cbe12b2fcc56e0296bc49bdb49cde0821f0933dfc78f0d"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(12,9),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "ea824a8e91fdad404dc7d9452b3b6f42396be10b59d3b97e07052072a11f3247"
+      },
+      "cursor": [
+        12,
+        9
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(12,9)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "ea824a8e91fdad404dc7d9452b3b6f42396be10b59d3b97e07052072a11f3247"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(24,20),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "b58a828a0f20dabe7968dc89026e19cd4fc93cf4c9e3876804aebfeac59fbe6b"
+      },
+      "cursor": [
+        24,
+        20
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(24,20)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "b58a828a0f20dabe7968dc89026e19cd4fc93cf4c9e3876804aebfeac59fbe6b"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(20,24),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "047f8e3b7300b1ebf758eb5c1676a9b6e8c97989e652cb0f4866cf8d07352eca"
+      },
+      "cursor": [
+        20,
+        24
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(20,24)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "047f8e3b7300b1ebf758eb5c1676a9b6e8c97989e652cb0f4866cf8d07352eca"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(9,12),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "edde4f28dc0ce6e6544bdaaf10b5c6821a7c434db24f43cee363756dc4c4d80a"
+      },
+      "cursor": [
+        9,
+        12
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(9,12)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "edde4f28dc0ce6e6544bdaaf10b5c6821a7c434db24f43cee363756dc4c4d80a"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "c109b649a95eec7df30e3d6f43c3de8a14b5749c9cc34cb480f5bac3ad22e42d"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "c109b649a95eec7df30e3d6f43c3de8a14b5749c9cc34cb480f5bac3ad22e42d"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(16,3),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "0dcabc9ef6fccab3a545a23bfadbcf56dfc5fd004a0c78fcf06ab9147636f472"
+      },
+      "cursor": [
+        16,
+        3
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,3)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "0dcabc9ef6fccab3a545a23bfadbcf56dfc5fd004a0c78fcf06ab9147636f472"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(3,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "e7f2e8a3d95c418f1ac996037171baeede7b13db186cf0ae0f89b62525e6713f"
+      },
+      "cursor": [
+        3,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(3,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "e7f2e8a3d95c418f1ac996037171baeede7b13db186cf0ae0f89b62525e6713f"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(31,1),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "2e5b63e1b17006ffbffdaf03bc15ec9cab0b32bbd2e093ca6d2c7d8b2edcd976"
+      },
+      "cursor": [
+        31,
+        1
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(31,1)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "2e5b63e1b17006ffbffdaf03bc15ec9cab0b32bbd2e093ca6d2c7d8b2edcd976"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(1,31),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "3caff1ce5af29e23cb96c554f8424733983b7e8ad20e173ab7907747b1d5aee7"
+      },
+      "cursor": [
+        1,
+        31
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(1,31)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "3caff1ce5af29e23cb96c554f8424733983b7e8ad20e173ab7907747b1d5aee7"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(16,16)-(17,13),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "8ee3a0bd6206508a30be9c235b1308e66a0aea54c8fc53ad6cc2125d2d5002f3"
+      },
+      "cursor": [
+        17,
+        13
+      ]
+    },
+    {
+      "source": "PMODE0,1:PCLS0:COLOR3:LINE(17,13)-(16,16),PSET",
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "8ee3a0bd6206508a30be9c235b1308e66a0aea54c8fc53ad6cc2125d2d5002f3"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(0,0),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "2606afe5da4413ad54526ecfc6d0a3101c1f7eb47e6e8a9d62f8216045d560c3"
+      },
+      "cursor": [
+        0,
+        0
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(0,0)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "2606afe5da4413ad54526ecfc6d0a3101c1f7eb47e6e8a9d62f8216045d560c3"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(12,9),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "4ed5128dae5dcdc0c8e4903938ae5ad0813781ef688394798e0adbd9d74b6858"
+      },
+      "cursor": [
+        12,
+        9
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(12,9)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "4ed5128dae5dcdc0c8e4903938ae5ad0813781ef688394798e0adbd9d74b6858"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(24,20),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "91d4825ac0e5272ffa80274fb3bc4afffb70fa6c6aea7a04c7031fb3f4ffd158"
+      },
+      "cursor": [
+        24,
+        20
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(24,20)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "91d4825ac0e5272ffa80274fb3bc4afffb70fa6c6aea7a04c7031fb3f4ffd158"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(20,24),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "658b3729bccb0664ccee66b43ac56d8fed30a3ef5af6ad94680d75a6ca6a3565"
+      },
+      "cursor": [
+        20,
+        24
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(20,24)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "658b3729bccb0664ccee66b43ac56d8fed30a3ef5af6ad94680d75a6ca6a3565"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(9,12),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "0a6d59154de44cb31d530274dc3bc2db35ebfa96315e05c6d7071ce142b209c1"
+      },
+      "cursor": [
+        9,
+        12
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(9,12)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "0a6d59154de44cb31d530274dc3bc2db35ebfa96315e05c6d7071ce142b209c1"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "0b30cf6a5d84d813b1fae02dc0a25e9a676bdf9f4bca116c680f0821fb43e8db"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "0b30cf6a5d84d813b1fae02dc0a25e9a676bdf9f4bca116c680f0821fb43e8db"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(16,3),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "22e1436881eba49e08d2d6f6f1d30a9c54157b2a7aed8ca75344309b98de646f"
+      },
+      "cursor": [
+        16,
+        3
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,3)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "22e1436881eba49e08d2d6f6f1d30a9c54157b2a7aed8ca75344309b98de646f"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(3,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "84d831c1203cc73c0f7f2aec2221c9ff400de033b9e6978e6d03680590b87864"
+      },
+      "cursor": [
+        3,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(3,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "84d831c1203cc73c0f7f2aec2221c9ff400de033b9e6978e6d03680590b87864"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(31,1),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "590ed57dbe70bcc2d8e4f5aeb417e41e32b442085388e6117147198af74ecbb1"
+      },
+      "cursor": [
+        31,
+        1
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(31,1)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "590ed57dbe70bcc2d8e4f5aeb417e41e32b442085388e6117147198af74ecbb1"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(1,31),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "d28750a6e12be49c3786bf7778e56669791b592f5e2e09ea4691c7e67af6e5d9"
+      },
+      "cursor": [
+        1,
+        31
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(1,31)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "d28750a6e12be49c3786bf7778e56669791b592f5e2e09ea4691c7e67af6e5d9"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(16,16)-(17,13),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "112eb2272341c3948d5d84d8e54c859c20d54cd9d20f180404326531701ea3bb"
+      },
+      "cursor": [
+        17,
+        13
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS0:COLOR3:LINE(17,13)-(16,16),PSET",
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "112eb2272341c3948d5d84d8e54c859c20d54cd9d20f180404326531701ea3bb"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(0,0),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "a29643a95ab335262fa28544122f85c03ed4f5463312aaeb7a4864e71732c392"
+      },
+      "cursor": [
+        0,
+        0
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(0,0)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "a29643a95ab335262fa28544122f85c03ed4f5463312aaeb7a4864e71732c392"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(12,9),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "ba65066f6440ec7c876d3c20416c52caf541720c4bd8943da945ad4e4b3b9449"
+      },
+      "cursor": [
+        12,
+        9
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(12,9)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "ba65066f6440ec7c876d3c20416c52caf541720c4bd8943da945ad4e4b3b9449"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(24,20),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "896f7e05af887710c3a53c1428f2207c3469d4c3d8dbb6ccb3de2afcdad352d1"
+      },
+      "cursor": [
+        24,
+        20
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(24,20)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "896f7e05af887710c3a53c1428f2207c3469d4c3d8dbb6ccb3de2afcdad352d1"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(20,24),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "f794a07f7aac89e876b01e2ca00af7dcb2efdca5cb9b47e96d79753a64fe82d5"
+      },
+      "cursor": [
+        20,
+        24
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(20,24)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "f794a07f7aac89e876b01e2ca00af7dcb2efdca5cb9b47e96d79753a64fe82d5"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(9,12),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "b4aa200961293f81f24dd7a1b8d32d6371ede1239ee0423b735495f44afd97e2"
+      },
+      "cursor": [
+        9,
+        12
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(9,12)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "b4aa200961293f81f24dd7a1b8d32d6371ede1239ee0423b735495f44afd97e2"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "35c212dc97c19cbb403da2fdc9757bf1c1793c35c5c70b0cff866d393d5ffdb6"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "35c212dc97c19cbb403da2fdc9757bf1c1793c35c5c70b0cff866d393d5ffdb6"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(16,3),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "f7aa8c67d87da2ea8ba0c8c2335a45444868cceb85970f9a83bc6871ba276410"
+      },
+      "cursor": [
+        16,
+        3
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,3)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "f7aa8c67d87da2ea8ba0c8c2335a45444868cceb85970f9a83bc6871ba276410"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(3,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "b05a4d8b087a805458da045f7a2131d4398ff0944e7188cb2d09755f385d18fc"
+      },
+      "cursor": [
+        3,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(3,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "b05a4d8b087a805458da045f7a2131d4398ff0944e7188cb2d09755f385d18fc"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(31,1),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "5d1262d102ad61fddbbf8247c37ebfed89c3c5093f1c1f54ec48f65e8aa80d14"
+      },
+      "cursor": [
+        31,
+        1
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(31,1)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "5d1262d102ad61fddbbf8247c37ebfed89c3c5093f1c1f54ec48f65e8aa80d14"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(1,31),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "7dddca2de3ef3a975d12edfdf4fb6aa1c6d6b585aaac045431f6ca62a1c60e3e"
+      },
+      "cursor": [
+        1,
+        31
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(1,31)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "7dddca2de3ef3a975d12edfdf4fb6aa1c6d6b585aaac045431f6ca62a1c60e3e"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(16,16)-(17,13),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "e6492c18ae54cd2075a8daec56d2bb25c469f1341ca831ffe072f2c0c7d01746"
+      },
+      "cursor": [
+        17,
+        13
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS0:COLOR3:LINE(17,13)-(16,16),PSET",
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "e6492c18ae54cd2075a8daec56d2bb25c469f1341ca831ffe072f2c0c7d01746"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(0,0),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "cabf8fed734b7d1cd2c4169ef6b67c74943d9c903fc16d3c17042b7e6678bda0"
+      },
+      "cursor": [
+        0,
+        0
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(0,0)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "cabf8fed734b7d1cd2c4169ef6b67c74943d9c903fc16d3c17042b7e6678bda0"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(12,9),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "66a36a204667729b7cde0fbf3f5bf18349582aebaa3e004c1420667453b5c13b"
+      },
+      "cursor": [
+        12,
+        9
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(12,9)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "66a36a204667729b7cde0fbf3f5bf18349582aebaa3e004c1420667453b5c13b"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(24,20),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "ef4700bd274cebe8627d63d27ef86fd6f429fdbbdf3570978abee95431ffa89c"
+      },
+      "cursor": [
+        24,
+        20
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(24,20)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "ef4700bd274cebe8627d63d27ef86fd6f429fdbbdf3570978abee95431ffa89c"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(20,24),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "b5bfffa848eb5202e8a6d909c01be6706c3b816b4fb3fad6fedce21eec8fa57a"
+      },
+      "cursor": [
+        20,
+        24
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(20,24)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "b5bfffa848eb5202e8a6d909c01be6706c3b816b4fb3fad6fedce21eec8fa57a"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(9,12),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "211f41bad4adefdcc994e58d09f20f405ec03b390a70499971853f22f68efe78"
+      },
+      "cursor": [
+        9,
+        12
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(9,12)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "211f41bad4adefdcc994e58d09f20f405ec03b390a70499971853f22f68efe78"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "b1389f3c74a1a7faadb458fc212fc79583e39760eda6c6ca94cc3d8980473a07"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "b1389f3c74a1a7faadb458fc212fc79583e39760eda6c6ca94cc3d8980473a07"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(16,3),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "edb49d455aa5eac5137cfa177b17bb0b865882623ce3c7a11f2957e998aba126"
+      },
+      "cursor": [
+        16,
+        3
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,3)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "edb49d455aa5eac5137cfa177b17bb0b865882623ce3c7a11f2957e998aba126"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(3,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "14b2d06cef8f22d84f3c29b8bd84dfff569e585bf99d186b5d3ae1ceb160c3a1"
+      },
+      "cursor": [
+        3,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(3,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "14b2d06cef8f22d84f3c29b8bd84dfff569e585bf99d186b5d3ae1ceb160c3a1"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(31,1),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "be876f5d6207b1a1c08cdfd1a9302d8efa905fc5d3675bf2a77854fe6aaa9c0a"
+      },
+      "cursor": [
+        31,
+        1
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(31,1)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "be876f5d6207b1a1c08cdfd1a9302d8efa905fc5d3675bf2a77854fe6aaa9c0a"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(1,31),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "71664766fa3cfd9caac6746152ace0812d87af5b06751cc10cd8cf8496df59c8"
+      },
+      "cursor": [
+        1,
+        31
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(1,31)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "71664766fa3cfd9caac6746152ace0812d87af5b06751cc10cd8cf8496df59c8"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(16,16)-(17,13),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "49f993e0aeb2a7777470a737a6bb8da8bdedd80677c29bfa293e57d04c9c3608"
+      },
+      "cursor": [
+        17,
+        13
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS0:COLOR3:LINE(17,13)-(16,16),PSET",
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "49f993e0aeb2a7777470a737a6bb8da8bdedd80677c29bfa293e57d04c9c3608"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(0,0),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "48cb955e00207ea1b69ab7a7b40c1579cf6ca2085c2e6b2027921b29f7357dd9"
+      },
+      "cursor": [
+        0,
+        0
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(0,0)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "48cb955e00207ea1b69ab7a7b40c1579cf6ca2085c2e6b2027921b29f7357dd9"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(12,9),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "2bf8d3df832be2dd233a9905e91c347c6fa63ecf5b11fb14e949252c917f76b6"
+      },
+      "cursor": [
+        12,
+        9
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(12,9)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "2bf8d3df832be2dd233a9905e91c347c6fa63ecf5b11fb14e949252c917f76b6"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(24,20),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a43c37ab5e3cca72c5d9bea961cc5cc9abc85fe56a181b3bc05c36327104dcae"
+      },
+      "cursor": [
+        24,
+        20
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(24,20)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a43c37ab5e3cca72c5d9bea961cc5cc9abc85fe56a181b3bc05c36327104dcae"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(20,24),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b8a4988c48192853f330d38400cc337c10bcb3ea2092b4b703da172ed6aa9a76"
+      },
+      "cursor": [
+        20,
+        24
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(20,24)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b8a4988c48192853f330d38400cc337c10bcb3ea2092b4b703da172ed6aa9a76"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(9,12),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "eb12d792465ecac462026081d6be5f667154f97f701ab3dfe766cb7b0ce0b174"
+      },
+      "cursor": [
+        9,
+        12
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(9,12)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "eb12d792465ecac462026081d6be5f667154f97f701ab3dfe766cb7b0ce0b174"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "65ab439bf3e889d06452193fc5c7927a8d02a5768be98ac1b38f592f579d16f3"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "65ab439bf3e889d06452193fc5c7927a8d02a5768be98ac1b38f592f579d16f3"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(16,3),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "eb818674677f93a2091f9bc1f8748bc8ba0b69fd6ecac7844cfc072885146f18"
+      },
+      "cursor": [
+        16,
+        3
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,3)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "eb818674677f93a2091f9bc1f8748bc8ba0b69fd6ecac7844cfc072885146f18"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(3,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "e68f74bb1e88c54199cfb78501c8522795d20643cffd01cb8a35b85c635723cc"
+      },
+      "cursor": [
+        3,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(3,16)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "e68f74bb1e88c54199cfb78501c8522795d20643cffd01cb8a35b85c635723cc"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(31,1),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "34d97818a6ec8f7a9403781b669e2585394fe8149f3359ff6cf65ee216fab239"
+      },
+      "cursor": [
+        31,
+        1
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(31,1)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "34d97818a6ec8f7a9403781b669e2585394fe8149f3359ff6cf65ee216fab239"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(1,31),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b441445e166392ca6ac8e62abb947226a361766b6d8128dc95efd09dce527439"
+      },
+      "cursor": [
+        1,
+        31
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(1,31)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b441445e166392ca6ac8e62abb947226a361766b6d8128dc95efd09dce527439"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(16,16)-(17,13),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "34a7ff828f478de100723ac3afa08d3e49944b5851e00f25aa05d5e97cab3aa3"
+      },
+      "cursor": [
+        17,
+        13
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS0:COLOR3:LINE(17,13)-(16,16),PSET",
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "34a7ff828f478de100723ac3afa08d3e49944b5851e00f25aa05d5e97cab3aa3"
+      },
+      "cursor": [
+        16,
+        16
+      ]
+    }
+  ]
+}

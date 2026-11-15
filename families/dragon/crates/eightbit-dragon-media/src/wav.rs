@@ -1,6 +1,9 @@
 //! Bounded PCM WAV transport for validated Dragon cassette byte streams.
 
-use crate::{read_machine_code, read_tokenised_basic, supported_cassette_prefix_len};
+use crate::{
+    read_ascii_basic, read_cassette_transport, read_machine_code, read_tokenised_basic,
+    supported_cassette_prefix_len, transport::transport_prefix_len,
+};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -87,10 +90,46 @@ struct PcmFormat {
 
 /// Render one supported Dragon cassette image as deterministic mono PCM WAV.
 pub fn encode_cassette_wav(cassette: &[u8]) -> Result<Vec<u8>, WavError> {
-    if read_tokenised_basic(cassette).is_err() && read_machine_code(cassette).is_err() {
+    let ascii = read_ascii_basic(cassette).ok();
+    if ascii.is_none()
+        && read_tokenised_basic(cassette).is_err()
+        && read_machine_code(cassette).is_err()
+    {
         return Err(WavError::UnsupportedCassette);
     }
 
+    // Gapped files need silence before each following leader. Place it after
+    // the preceding $55 padding byte: its final zero bit stays zero when a WAV
+    // decoder measures the cycle across silence. Never split a checksum cycle.
+    let gap_offsets = ascii
+        .as_ref()
+        .map(|file| {
+            file.blocks
+                .windows(2)
+                .map(|blocks| {
+                    let end = blocks[0].offset + 4 + blocks[0].data_length;
+                    if end < blocks[1].offset && cassette.get(end) == Some(&0x55) {
+                        Ok(end + 1)
+                    } else {
+                        Err(WavError::UnsupportedCassette)
+                    }
+                })
+                .collect::<Result<Vec<_>, _>>()
+        })
+        .transpose()?
+        .unwrap_or_default();
+
+    render_cassette_wav(cassette, gap_offsets)
+}
+
+/// Render a bounded checked multi-file/data tape for physical guest transport.
+/// This is separate from the strict single-programme import/export API.
+pub fn encode_cassette_transport_wav(cassette: &[u8]) -> Result<Vec<u8>, WavError> {
+    let transport = read_cassette_transport(cassette).map_err(|_| WavError::UnsupportedCassette)?;
+    render_cassette_wav(cassette, transport.gap_offsets)
+}
+
+fn render_cassette_wav(cassette: &[u8], gap_offsets: Vec<usize>) -> Result<Vec<u8>, WavError> {
     let silence_frames =
         usize::try_from(u64::from(OUTPUT_SAMPLE_RATE) * u64::from(SILENCE_MILLISECONDS) / 1_000)
             .map_err(|_| WavError::TooLarge)?;
@@ -101,7 +140,7 @@ pub fn encode_cassette_wav(cassette: &[u8]) -> Result<Vec<u8>, WavError> {
         .and_then(|bits| bits.checked_mul(longest_cycle))
         .ok_or(WavError::TooLarge)?;
     let estimated_frames = silence_frames
-        .checked_mul(2)
+        .checked_mul(gap_offsets.len().saturating_add(2))
         .and_then(|silence| silence.checked_add(signal_frames))
         .ok_or(WavError::TooLarge)?;
     let estimated_bytes = estimated_frames
@@ -115,7 +154,18 @@ pub fn encode_cassette_wav(cassette: &[u8]) -> Result<Vec<u8>, WavError> {
     let mut samples = Vec::with_capacity(estimated_frames);
     samples.resize(silence_frames, 0_i16);
     let mut remainder = 0_u64;
-    for byte in cassette {
+    let mut gaps = gap_offsets.into_iter().peekable();
+    for (offset, byte) in cassette.iter().enumerate() {
+        if gaps.peek() == Some(&offset) {
+            gaps.next();
+            samples.resize(
+                samples
+                    .len()
+                    .checked_add(silence_frames)
+                    .ok_or(WavError::TooLarge)?,
+                0,
+            );
+        }
         for bit_index in 0..8 {
             let ticks = if byte & (1 << bit_index) == 0 {
                 BIT_ZERO_TICKS
@@ -196,10 +246,20 @@ pub fn encode_pcm_wav_mono(samples: &[i16], sample_rate: u32) -> Result<Vec<u8>,
 
 /// Recover exactly one supported Dragon cassette image from bounded PCM WAV audio.
 pub fn decode_wav_cassette(bytes: &[u8]) -> Result<DecodedWavCassette, WavError> {
+    decode_wav(bytes, false)
+}
+
+/// Recover a complete bounded tape, including guest data records and multiple
+/// files. Corrupt later files invalidate the result instead of returning a prefix.
+pub fn decode_wav_cassette_transport(bytes: &[u8]) -> Result<DecodedWavCassette, WavError> {
+    decode_wav(bytes, true)
+}
+
+fn decode_wav(bytes: &[u8], transport: bool) -> Result<DecodedWavCassette, WavError> {
     let (format, data, mut metadata) = parse_wav(bytes)?;
     let mut recovered = Vec::<(u16, Vec<u8>)>::new();
     for channel in 0..format.channels {
-        if let Some(cassette) = decode_channel(data, format, usize::from(channel))? {
+        if let Some(cassette) = decode_channel(data, format, usize::from(channel), transport)? {
             recovered.push((channel + 1, cassette));
         }
     }
@@ -364,6 +424,7 @@ fn decode_channel(
     data: &[u8],
     format: PcmFormat,
     channel: usize,
+    transport: bool,
 ) -> Result<Option<Vec<u8>>, WavError> {
     let frames = data.len() / format.block_align;
     let mut minimum = i32::MAX;
@@ -420,7 +481,12 @@ fn decode_channel(
             .collect::<Vec<_>>();
         for bit_offset in 0..8 {
             let packed = pack_lsb_bits(&bits[bit_offset.min(bits.len())..]);
-            if let Some(cassette) = find_supported_cassette(&packed)? {
+            let recovered = if transport {
+                find_transport_cassette(&packed)
+            } else {
+                find_supported_cassette(&packed)?
+            };
+            if let Some(cassette) = recovered {
                 return Ok(Some(cassette));
             }
         }
@@ -539,10 +605,75 @@ fn find_supported_cassette(bytes: &[u8]) -> Result<Option<Vec<u8>>, WavError> {
     Ok(recovered)
 }
 
+fn find_transport_cassette(bytes: &[u8]) -> Option<Vec<u8>> {
+    // A first filename marker establishes ownership of this stream. A damaged
+    // file before or after another valid file must not turn into a partial save.
+    let first = bytes.windows(2).position(|part| part == [0x55, 0x3c])?;
+    let mut start = first;
+    while start > 0 && bytes[start - 1] == 0x55 {
+        start -= 1;
+    }
+    if start != 0 {
+        return None;
+    }
+    let mut recovered = Vec::new();
+    loop {
+        let candidate = &bytes[start..];
+        let consumed = transport_prefix_len(candidate).ok()?;
+        let end = consumed.checked_add(usize::from(candidate.get(consumed) == Some(&0x55)))?;
+        if recovered.len().checked_add(end)? > crate::MAX_TRANSPORT_BYTES {
+            return None;
+        }
+        recovered.extend_from_slice(&candidate[..end]);
+        let remaining = &candidate[end..];
+        let Some(next) = remaining.windows(2).position(|part| part == [0x55, 0x3c]) else {
+            // Only ordinary leader padding may follow the final checked file.
+            // A partial header or unrelated bytes must not be silently saved.
+            if remaining.iter().any(|byte| *byte != 0x55) {
+                return None;
+            }
+            break;
+        };
+        if remaining[..next].iter().any(|byte| *byte != 0x55) {
+            return None;
+        }
+        start = start.checked_add(end)?;
+    }
+    read_cassette_transport(&recovered).ok()?;
+    Some(recovered)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::{create_machine_code, create_tokenised_basic};
+
+    #[test]
+    fn transport_recovery_rejects_damaged_files_instead_of_exporting_a_valid_prefix() {
+        let first = create_tokenised_basic("FIRST", &[0, 0]).unwrap();
+        let second = create_tokenised_basic("SECOND", &[0, 0]).unwrap();
+        let good = [first.clone(), second.clone()].concat();
+        let gaps = read_cassette_transport(&good).unwrap().gap_offsets;
+        for damaged_file in [0, 1] {
+            for block in &crate::read_tokenised_basic(&second).unwrap().blocks {
+                let mut damaged = good.clone();
+                let offset = if damaged_file == 0 { 0 } else { first.len() };
+                damaged[offset + block.offset + 3 + block.data_length] ^= 1;
+                let wav = render_cassette_wav(&damaged, gaps.clone()).unwrap();
+                assert!(decode_wav_cassette_transport(&wav).is_err());
+            }
+        }
+        for header_byte in [128, 129, 130] {
+            let mut damaged = good.clone();
+            damaged[header_byte] ^= 1;
+            let wav = render_cassette_wav(&damaged, gaps.clone()).unwrap();
+            assert!(decode_wav_cassette_transport(&wav).is_err());
+        }
+        for length in [first.len() + 130, good.len() - 2] {
+            let wav = render_cassette_wav(&good[..length], Vec::new()).unwrap();
+            assert!(decode_wav_cassette_transport(&wav).is_err());
+        }
+    }
 
     #[test]
     fn deterministic_pcm_round_trip_preserves_basic_cassette() {

@@ -5,7 +5,7 @@ import { projectId, type CloudLink, type ProjectSnapshot } from "./projects";
 export function GitHubDialog({ client, project, cloud, onClose, onOpen, onSaved, localProjectId }: {
   localProjectId?: string; client: GitHubClient; project?: ProjectSnapshot; cloud?: CloudLink; onClose: () => void;
   onOpen: (project: RemoteProject, repository: string) => void;
-  onSaved: (link: CloudLink, source: string) => void;
+  onSaved: (link: CloudLink, snapshot: ProjectSnapshot) => void;
 }) {
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [repository, setRepository] = useState(cloud?.repository ?? "");
@@ -33,14 +33,14 @@ export function GitHubDialog({ client, project, cloud, onClose, onOpen, onSaved,
     if (!project || !repository) return;
     const same = !copy && cloud?.repository === repository;
     const id = same ? cloud.projectId : projectId();
-    const source = project.source;
+    const snapshot = project;
     setMessage("Saving this project snapshot to GitHub…");
-    void request((signal) => client.save(repository, id, same ? cloud.sha : null, project, signal), (receipt) => { onSaved({ repository, projectId: id, sha: receipt.sha }, source); setMessage("Project saved to GitHub. Later edits stay local until you save again."); });
+    void request((signal) => client.save(repository, id, same ? cloud.sha : null, project, signal), (receipt) => { onSaved({ repository, projectId: id, sha: receipt.sha }, snapshot); setMessage("Project saved to GitHub. Later edits stay local until you save again."); });
   }
   const connectUrl = `/studio-api/connect${localProjectId ? `?project=${encodeURIComponent(localProjectId)}` : ""}`;
   return <BrowserDialog title="Continue with GitHub" onClose={onClose}>
     <p>GitHub keeps a copy you can open on another device. Your code is sent only when you choose Save to GitHub; ROMs and game files stay on your device.</p>
-    {project && <div className="browser-cloud-preview"><strong>{project.name}</strong><small>{project.kind === "basic" ? "Dragon 32 BASIC" : "Recovered assembly"} · source, settings and project guidance</small></div>}
+    {project && <div className="browser-cloud-preview"><strong>{project.name}</strong><small>{project.kind === "basic" ? "Dragon 32 BASIC" : "6809 assembly"} · source, settings and project guidance</small></div>}
     {repositories.length > 0 && <label className="browser-field">Private repository<select aria-label="Private repository" disabled={busy} value={repository} onChange={(event) => choose(event.currentTarget.value)}><option value="">Choose a repository…</option>{repositories.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}</select></label>}
     {nextPage && <button type="button" disabled={busy} onClick={() => { void request((signal) => client.moreRepositories(nextPage, signal), (data) => { setRepositories((previous) => [...previous, ...data.repositories]); setNextPage(data.nextPage); }); }}>More repositories</button>}
     {repository && <button type="button" disabled={busy} onClick={() => choose(repository)}>Refresh saved projects</button>}

@@ -1,8 +1,16 @@
 //! Family-owned targets, firmware profiles and native BASIC/media semantics.
 #![allow(missing_docs)]
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used, clippy::panic))]
-#[cfg(test)]
+#[cfg(all(test, feature = "native"))]
 mod help_tests;
+pub mod original_session;
+pub use eightbit_spectrum_emulator::Model;
+/// Original runtime availability is a family-owned, closed machine list.
+#[must_use]
+pub fn original_target(target: &str) -> Option<&'static TargetDefinition> {
+    Model::from_target(target)?;
+    TARGETS.iter().find(|item| item.id == target)
+}
 mod tokens;
 use eightbit_source_core::{Family, Profile, Result, error};
 use eightbit_targets::{Capability, FamilyDefinition, ProjectTemplate, TargetDefinition};
@@ -15,8 +23,15 @@ const TEMPLATES: &[ProjectTemplate] = &[
     ProjectTemplate {
         id: "assembly",
         name: "Z80 assembly",
-        description: "A bounded single-source Z80 program with a native BASIC loader; requires SjASMPlus.",
+        description: "A bounded single-source Z80 programme with a native BASIC loader.",
     },
+];
+const ORIGINAL_CAPABILITIES: &[Capability] = &[
+    Capability::SourceEditing,
+    Capability::Build,
+    Capability::CassetteExport,
+    Capability::Run,
+    Capability::MachineDebug,
 ];
 const CAPABILITIES: &[Capability] = &[
     Capability::SourceEditing,
@@ -51,13 +66,7 @@ pub static TARGETS: &[TargetDefinition] = &[
         ram_kib: 48,
         tv: Some("pal"),
         templates: TEMPLATES,
-        capabilities: &[
-            Capability::SourceEditing,
-            Capability::Build,
-            Capability::CassetteExport,
-            Capability::Run,
-            Capability::MachineDebug,
-        ],
+        capabilities: ORIGINAL_CAPABILITIES,
     },
     TargetDefinition {
         version: 1,
@@ -71,7 +80,7 @@ pub static TARGETS: &[TargetDefinition] = &[
         ram_kib: 128,
         tv: Some("pal"),
         templates: TEMPLATES,
-        capabilities: CAPABILITIES,
+        capabilities: ORIGINAL_CAPABILITIES,
     },
     TargetDefinition {
         version: 1,
@@ -85,7 +94,7 @@ pub static TARGETS: &[TargetDefinition] = &[
         ram_kib: 128,
         tv: Some("pal"),
         templates: TEMPLATES,
-        capabilities: CAPABILITIES,
+        capabilities: ORIGINAL_CAPABILITIES,
     },
 ];
 pub static DEFINITION: FamilyDefinition = FamilyDefinition {
@@ -96,6 +105,7 @@ pub static DEFINITION: FamilyDefinition = FamilyDefinition {
 pub static PROFILES: &[Profile] = &[
     Profile {
         adapter: None,
+        original_assembler: None,
         target: &TARGETS[0],
         machine: "spectrum",
         boot_command: "j\"\"{ENTER}",
@@ -117,6 +127,7 @@ pub static PROFILES: &[Profile] = &[
     },
     Profile {
         adapter: None,
+        original_assembler: Some(assemble_original),
         target: &TARGETS[1],
         machine: "spectrum",
         boot_command: "j\"\"{ENTER}",
@@ -138,6 +149,7 @@ pub static PROFILES: &[Profile] = &[
     },
     Profile {
         adapter: None,
+        original_assembler: Some(assemble_original),
         target: &TARGETS[2],
         machine: "spec128",
         boot_command: "{ENTER}",
@@ -159,6 +171,7 @@ pub static PROFILES: &[Profile] = &[
     },
     Profile {
         adapter: None,
+        original_assembler: Some(assemble_original),
         target: &TARGETS[3],
         machine: "specpls2",
         boot_command: "{ENTER}",
@@ -196,6 +209,7 @@ fn dialect() -> eightbit_sinclair_basic::Dialect {
     eightbit_sinclair_basic::Dialect {
         tokens: tokens::TOKENS,
         extra_tokens: &[],
+        extra_statements: &[],
         escaped_quote: None,
         encode,
         number_marker: 14,
@@ -204,11 +218,16 @@ fn dialect() -> eightbit_sinclair_basic::Dialect {
         statements: true,
     }
 }
-pub fn compile_basic(target: &TargetDefinition, source: &str) -> Result<Vec<u8>> {
+fn target_dialect(target: &TargetDefinition) -> eightbit_sinclair_basic::Dialect {
     let mut language = dialect();
     if target.ram_kib == 128 {
         language.extra_tokens = &[("SPECTRUM", 163), ("PLAY", 164)];
+        language.extra_statements = &["CAT", "ERASE"];
     }
+    language
+}
+pub fn compile_basic(target: &TargetDefinition, source: &str) -> Result<Vec<u8>> {
+    let language = target_dialect(target);
     let program = eightbit_sinclair_basic::program(source, &language)?;
     let limit = if target.ram_kib == 16 { 7000 } else { 40000 };
     if program.len() > limit {
@@ -266,10 +285,241 @@ pub fn package_assembly(target: &TargetDefinition, code: &[u8]) -> Result<Vec<u8
     tape.extend(tape_file(3, "CODE", code, 24576, 32768)?);
     Ok(tape)
 }
+
+/// Portable original Spectrum assembler, source map and stock-ROM cassette loader.
+/// The external assembler path retains its existing bounded profile separately.
+pub fn assemble_original(
+    target: &TargetDefinition,
+    source: &str,
+    source_path: &str,
+    revision: &str,
+) -> Result<eightbit_source_core::AssemblyBuild> {
+    if original_target(target.id).is_none() || source.len() > eightbit_source_core::MAX_SOURCE {
+        return Err(error(
+            "DSS1100",
+            "Original assembly supports a single Spectrum 48K, 128K or original +2 source of at most 128 KiB",
+        ));
+    }
+    let assembled = eightbit_z80_core::assembler::assemble(source, 24576, None).map_err(|e| {
+        error(
+            "S48ASM1001",
+            format!("Line {}, column {}: {}", e.line, e.column, e.message),
+        )
+    })?;
+    if assembled.bytes.len() > 40960 {
+        return Err(error(
+            "DSS1103",
+            "Spectrum code must fit at addresses 24576–65535",
+        ));
+    }
+    let end = usize::from(assembled.load_address) + assembled.bytes.len();
+    let symbols = assembled
+        .symbols
+        .into_iter()
+        .filter_map(|(name, value)| u16::try_from(value).ok().map(|value| (name, value)))
+        .filter(|(_, value)| *value >= assembled.load_address && usize::from(*value) <= end)
+        .collect();
+    let map = eightbit_source_core::source_map::SourceMap::from_instructions(
+        source,
+        source_path,
+        revision,
+        assembled.load_address,
+        &assembled.bytes,
+        assembled
+            .lines
+            .into_iter()
+            .map(|line| eightbit_source_core::source_map::Instruction {
+                line: line.source_line,
+                address: line.address,
+            })
+            .collect(),
+        symbols,
+    )?;
+    let mut media = compile_basic(
+        target,
+        "10 CLEAR 24575\n20 LOAD \"\" CODE\n30 RANDOMIZE USR 24576\n",
+    )?;
+    media.extend(tape_file(
+        3,
+        "CODE",
+        &assembled.bytes,
+        assembled.load_address,
+        32768,
+    )?);
+    verify_code_media(&media, &assembled.bytes, assembled.load_address)?;
+    Ok(eightbit_source_core::AssemblyBuild {
+        code: assembled.bytes,
+        media,
+        map,
+        tool_version: "Eightbit Z80 assembler 1",
+    })
+}
+
+fn verify_code_media(mut media: &[u8], code: &[u8], origin: u16) -> Result<()> {
+    let bad = || {
+        error(
+            "DSS1111",
+            "Generated cassette failed its code round-trip check",
+        )
+    };
+    for index in 0..4 {
+        let length = media.get(..2).ok_or_else(bad)?;
+        let size = usize::from(u16::from_le_bytes([length[0], length[1]]));
+        let block = media
+            .get(2..2 + size)
+            .filter(|block| block.len() >= 2)
+            .ok_or_else(bad)?;
+        if block[0] != if index % 2 == 0 { 0 } else { 255 }
+            || block.iter().fold(0, |sum, byte| sum ^ byte) != 0
+        {
+            return Err(bad());
+        }
+        if index % 2 == 0 && (block.len() != 19 || block[1] != if index == 0 { 0 } else { 3 }) {
+            return Err(bad());
+        }
+        if index == 2
+            && (usize::from(u16::from_le_bytes([block[12], block[13]])) != code.len()
+                || u16::from_le_bytes([block[14], block[15]]) != origin)
+        {
+            return Err(bad());
+        }
+        if index == 3 && &block[1..block.len() - 1] != code {
+            return Err(bad());
+        }
+        media = &media[2 + size..];
+    }
+    if !media.is_empty() {
+        return Err(bad());
+    }
+    Ok(())
+}
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
+    fn original_assembler_maps_instructions_and_exports_large_standard_code_files() {
+        let source = "ORG 24576\nstart: LD A,42\nLD (23296),A\nRET\ndata: DB 1,2\nDS 40952\n";
+        let built =
+            assemble_original(&TARGETS[1], source, "src/asm/main.asm", &"a".repeat(64)).unwrap();
+        assert_eq!(built.code.len(), 40960);
+        assert_eq!(&built.code[..8], &[0x3e, 42, 0x32, 0, 0x5b, 0xc9, 1, 2]);
+        assert_eq!(built.map.breakpoint(2).unwrap(), 24576);
+        assert_eq!(built.map.breakpoint(3).unwrap(), 24578);
+        assert_eq!(built.map.breakpoint(4).unwrap(), 24581);
+        assert!(built.map.breakpoint(5).is_err());
+        assert!(built.map.breakpoint(6).is_err());
+        assert_eq!(built.map.symbols["START"], 24576);
+        assert_eq!(
+            built.map.code_sha256,
+            eightbit_source_core::digest(&built.code)
+        );
+        let blocks = built.media.chunks(1).count();
+        assert!(blocks > 40960 && blocks < 42000);
+        let mut cursor = 0;
+        let mut decoded = Vec::new();
+        while cursor < built.media.len() {
+            let length = usize::from(u16::from_le_bytes([
+                built.media[cursor],
+                built.media[cursor + 1],
+            ]));
+            cursor += 2;
+            let data = &built.media[cursor..cursor + length];
+            assert_eq!(data.iter().fold(0, |a, b| a ^ b), 0);
+            decoded.push(data);
+            cursor += length;
+        }
+        assert_eq!(decoded.len(), 4);
+        assert_eq!(decoded[2][1], 3);
+        assert_eq!(u16::from_le_bytes([decoded[2][12], decoded[2][13]]), 40960);
+        assert_eq!(u16::from_le_bytes([decoded[2][14], decoded[2][15]]), 24576);
+        assert_eq!(&decoded[3][1..decoded[3].len() - 1], built.code);
+        for invalid in [
+            "include \"private.asm\"",
+            "ORG 24576\nDS 40961",
+            "ORG 0\nRET",
+        ] {
+            assert!(
+                assemble_original(&TARGETS[1], invalid, "src/asm/main.asm", &"a".repeat(64))
+                    .is_err()
+            );
+        }
+        assert!(assemble_original(&TARGETS[0], "RET", "src/main.asm", &"a".repeat(64)).is_err());
+        assert!(assemble_original(&TARGETS[1], "RET", "src/main.asm", "stale").is_err());
+    }
+
+    #[test]
+    #[cfg(feature = "native")]
+    fn native_original_build_needs_no_tool_and_keeps_failure_cancellation_and_freshness_guards() {
+        use std::sync::atomic::{AtomicBool, Ordering};
+        static ENGINE: eightbit_source::Engine = eightbit_source::Engine {
+            product: "Eightbit Studio Z80",
+            families: &[&FAMILY],
+            foreign_manifests: &[],
+        };
+        for target in ["spectrum48", "spectrum128", "spectrum-plus2"] {
+            let directory = tempfile::tempdir().unwrap();
+            let project = ENGINE
+                .create(
+                    directory.path(),
+                    "original-build",
+                    "spectrum",
+                    target,
+                    "assembly",
+                )
+                .unwrap();
+            let cancel = AtomicBool::new(false);
+            let first = ENGINE.build(&project.root, None, &cancel).unwrap();
+            let again = ENGINE.build(&project.root, None, &cancel).unwrap();
+            assert_eq!(first.sha256, again.sha256);
+            assert_eq!(first.tool_version, "Eightbit Z80 assembler 1");
+            assert!(
+                ENGINE
+                    .fresh_media(&project.root, &first.revision, &first.sha256)
+                    .is_ok()
+            );
+            let map = std::fs::read(project.root.join(".studio/build/debug-map.json")).unwrap();
+            assert!(String::from_utf8_lossy(&map).contains(&first.revision));
+            assert!(
+                ENGINE
+                    .build(
+                        &project.root,
+                        Some(std::path::Path::new("/missing/sjasmplus")),
+                        &cancel
+                    )
+                    .is_err()
+            );
+            std::fs::write(
+                project.root.join(&project.source_path),
+                "ORG 24576\nLD A,999\n",
+            )
+            .unwrap();
+            assert!(ENGINE.build(&project.root, None, &cancel).is_err());
+            assert!(
+                ENGINE
+                    .fresh_media(&project.root, &first.revision, &first.sha256)
+                    .is_err()
+            );
+            assert_eq!(
+                std::fs::read(project.root.join(".studio/build/debug-map.json")).unwrap(),
+                map
+            );
+            std::fs::write(project.root.join(&project.source_path), "ORG 24576\nRET\n").unwrap();
+            cancel.store(true, Ordering::Release);
+            assert!(ENGINE.build(&project.root, None, &cancel).is_err());
+            assert_eq!(
+                std::fs::read(project.root.join(".studio/build/debug-map.json")).unwrap(),
+                map
+            );
+            cancel.store(false, Ordering::Release);
+            assert!(ENGINE.build(&project.root, None, &cancel).is_ok());
+        }
+        assert!(PROFILES[0].original_assembler.is_none());
+        for profile in &PROFILES[1..] {
+            assert!(profile.original_assembler.is_some());
+        }
+    }
+    #[test]
+    #[cfg(feature = "native")]
     fn every_template_has_target_guidance_and_preserves_legacy_projects() {
         static TEMPLATE_ENGINE: eightbit_source::Engine = eightbit_source::Engine {
             product: "Eightbit Studio Z80",
@@ -376,10 +626,44 @@ mod tests {
         let data = compile_basic(&TARGETS[1], "10 PRINT BIN 1010\n").unwrap();
         assert!(data.windows(6).any(|w| w == [14, 132, 32, 0, 0, 0]));
         assert!(compile_basic(&TARGETS[1], "10 PRINT BIN 102\n").is_err());
-        assert!(compile_basic(&TARGETS[1], "10 DEF FN f(x)=x\n").is_err());
+        assert!(compile_basic(&TARGETS[1], "10 DEF FN f(x)=x\n").is_ok());
         assert!(compile_basic(&TARGETS[1], "10 PLAY \"c\"\n").is_err());
         let data = compile_basic(&TARGETS[2], "10 PLAY \"c\"\n").unwrap();
         assert!(data.contains(&164));
+    }
+    #[test]
+    fn function_definitions_emit_bounded_native_parameter_records_and_recover_exactly() {
+        let source =
+            "10 DEF FN f(x,y$)=x+LEN y$\n20 DEF FN g$()=\"abc\"\n30 PRINT FN f(2,FN g$())\n";
+        let data = compile_basic(&TARGETS[1], source).unwrap();
+        assert!(
+            data.windows(7)
+                .any(|bytes| bytes == [b'X', 14, 0, 0, 0, 0, 0])
+        );
+        assert!(
+            data.windows(8)
+                .any(|bytes| bytes == [b'Y', b'$', 14, 0, 0, 0, 0, 0])
+        );
+        let recovered = decompile_basic(&TARGETS[1], &data).unwrap();
+        assert_eq!(compile_basic(&TARGETS[1], &recovered).unwrap(), data);
+        for source in [
+            "10 DEF FN f(x,x)=x\n",
+            "10 DEF FN f(long)=1\n",
+            "10 DEF FN f(x y)=1\n",
+            "10 DEF FN f(x,)=1\n",
+            "10 DEF FN f(x) 1\n",
+        ] {
+            assert_eq!(
+                compile_basic(&TARGETS[1], source).unwrap_err().code,
+                "DSS1110"
+            );
+        }
+        assert_eq!(
+            eightbit_sinclair_basic::body("PRINT é", &dialect())
+                .unwrap_err()
+                .code,
+            "DSS1110"
+        );
     }
     #[test]
     fn tape_headers_and_checksums_are_independently_decodable() {
@@ -451,7 +735,7 @@ fn debug_snapshot(code: &[u8]) -> Result<Vec<u8>> {
     Ok(image)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "native"))]
 mod mame_tests {
     use super::*;
     use std::{path::PathBuf, sync::atomic::AtomicBool, time::Duration};
@@ -484,6 +768,135 @@ mod mame_tests {
             )]
             .into(),
         };
+        mame_debug_lifecycle(&settings);
+    }
+    #[test]
+    #[ignore = "requires explicitly supplied MAME 0.289 and exact UK Spectrum 48K ROM"]
+    fn real_mame_original_assembler_debug_lifecycle() {
+        let settings = eightbit_source::runtime::Settings {
+            emulators: std::collections::BTreeMap::default(),
+            schema_version: 2,
+            emulator: Some(PathBuf::from(std::env::var("STUDIO_MAME").unwrap())),
+            assembler: None,
+            roms: [(
+                "spectrum48".into(),
+                PathBuf::from(std::env::var("STUDIO_SPECTRUM48_ROM").unwrap()),
+            )]
+            .into(),
+        };
+        mame_debug_lifecycle(&settings);
+    }
+    #[test]
+    #[ignore = "requires explicitly supplied MAME 0.289 and exact UK Spectrum 48K ROM"]
+    fn real_mame_stock_rom_loads_original_small_and_full_size_cassettes() {
+        mame_stock_cassettes(
+            &PROFILES[1],
+            &PathBuf::from(std::env::var("STUDIO_SPECTRUM48_ROM").unwrap()),
+        );
+    }
+    #[test]
+    #[ignore = "requires supplied MAME and exact UK 128K/original UK +2 ROMs"]
+    fn real_mame_banked_models_load_original_small_and_full_size_cassettes() {
+        for (profile, key) in [
+            (&PROFILES[2], "STUDIO_SPECTRUM128_ROM"),
+            (&PROFILES[3], "STUDIO_SPECTRUM_PLUS2_ROM"),
+        ] {
+            mame_stock_cassettes(profile, &PathBuf::from(std::env::var(key).unwrap()));
+        }
+    }
+    fn mame_stock_cassettes(profile: &Profile, rom: &std::path::Path) {
+        let executable = PathBuf::from(std::env::var("STUDIO_MAME").unwrap());
+        let cancel = AtomicBool::new(false);
+        eightbit_source::runtime::probe(&executable, &cancel).unwrap();
+        for full in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            eightbit_source::runtime::stage_rom(profile, rom, directory.path()).unwrap();
+            let source = format!(
+                "ORG 24576\nLD A,42\nLD (23296),A\nRET\n{}",
+                if full { "DS 40954,165\n" } else { "" }
+            );
+            let built =
+                assemble_original(profile.target, &source, "src/asm/main.asm", &"a".repeat(64))
+                    .unwrap();
+            std::fs::write(directory.path().join("programme.tap"), built.media).unwrap();
+            // Only fixed adapter actions and numeric observations; no ROM reads,
+            // snapshots or source from the reference implementation are retained.
+            let script = format!(
+                r#"local frames = 0
+emu.register_frame_done(function()
+ frames = frames + 1
+ if frames == 250 then manager.machine.natkeyboard:post_coded('{boot}') end
+ if frames == 500 then
+  local cassette = manager.machine.cassettes[":cassette"]
+  cassette:seek(0,"set"); cassette.motor_state = true; cassette:play()
+ end
+ local space = manager.machine.devices[":maincpu"].spaces["program"]
+ if frames > 500 and space:read_u8(23296) == 42 and ({} or space:read_u8(65535) == 165) then
+  local receipt = assert(io.open("receipt.txt","w")); receipt:write("cassette-loaded\n"); receipt:close()
+  manager.machine:exit()
+ end
+ if frames == 15000 then manager.machine:exit() end
+end)
+"#,
+                if full { "false" } else { "true" },
+                boot = if profile.target.id == "spectrum48" {
+                    "j\"\"{ENTER}"
+                } else {
+                    "{ENTER}"
+                }
+            );
+            std::fs::write(directory.path().join("loader.lua"), script).unwrap();
+            let args: Vec<String> = [
+                profile.machine,
+                "-noreadconfig",
+                "-noplugins",
+                "-nohttp",
+                "-skip_gameinfo",
+                "-rompath",
+                ".",
+                "-bios",
+                "en",
+                "-ramsize",
+                if profile.target.ram_kib == 48 {
+                    "48K"
+                } else {
+                    "128K"
+                },
+                "-cassette",
+                "programme.tap",
+                "-natural",
+                "-script",
+                "loader.lua",
+                "-video",
+                "none",
+                "-sound",
+                "none",
+                "-nothrottle",
+                "-seconds_to_run",
+                "310",
+            ]
+            .into_iter()
+            .map(String::from)
+            .collect();
+            let output =
+                eightbit_process::Process::spawn(&executable, &args, directory.path(), true)
+                    .unwrap()
+                    .wait(Duration::from_secs(60), &cancel, 8192)
+                    .unwrap();
+            assert!(
+                output.status.success(),
+                "stock-ROM cassette process failed: {} {}",
+                String::from_utf8_lossy(&output.stderr),
+                String::from_utf8_lossy(&output.stdout)
+            );
+            assert_eq!(
+                std::fs::read_to_string(directory.path().join("receipt.txt")).unwrap_or_default(),
+                "cassette-loaded\n",
+                "stock-ROM cassette journey, full size {full}"
+            );
+        }
+    }
+    fn mame_debug_lifecycle(settings: &eightbit_source::runtime::Settings) {
         let directory = tempfile::tempdir().unwrap();
         let p = ENGINE
             .create(
@@ -499,7 +912,7 @@ mod mame_tests {
             let mut debug = eightbit_source::debug::DebugSession::start_with_presentation(
                 &ENGINE,
                 &p.root,
-                &settings,
+                settings,
                 &eightbit_source::debug::Breakpoint {
                     line: Some(3),
                     address: None,
@@ -577,10 +990,7 @@ pub fn decompile_basic(target: &TargetDefinition, bytes: &[u8]) -> Result<String
             "Additional tape files or BASIC variables are unsupported",
         ));
     }
-    let mut language = dialect();
-    if target.ram_kib == 128 {
-        language.extra_tokens = &[("SPECTRUM", 163), ("PLAY", 164)];
-    }
+    let language = target_dialect(target);
     let source = eightbit_sinclair_basic::listing(&data, &language)?;
     compile_basic(target, &source)?;
     Ok(source)

@@ -3,7 +3,9 @@
 #![cfg_attr(test, allow(clippy::expect_used, clippy::panic, clippy::unwrap_used))]
 
 mod authoring;
+pub mod breakpoints;
 mod dialect;
+pub mod inspection;
 mod parser;
 mod tokenise;
 

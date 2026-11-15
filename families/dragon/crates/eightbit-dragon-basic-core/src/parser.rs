@@ -440,11 +440,13 @@ fn unsupported_restore_argument(statement: &str) -> Option<SourceRange> {
 }
 
 fn is_statement_keyword(word: &str, dialect: &Dialect) -> bool {
-    matches!(word.to_ascii_uppercase().as_str(), "GOTO" | "GOSUB")
-        || dialect
-            .statement_tokens
-            .iter()
-            .any(|token| token.text.trim_end_matches('(').eq_ignore_ascii_case(word))
+    matches!(
+        word.to_ascii_uppercase().as_str(),
+        "GOTO" | "GOSUB" | "CLOADM" | "CSAVEM"
+    ) || dialect
+        .statement_tokens
+        .iter()
+        .any(|token| token.text.trim_end_matches('(').eq_ignore_ascii_case(word))
 }
 
 fn is_implicit_assignment(statement: &str, word_end: usize) -> bool {

@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "id": "eightbit-dragon32-basic-0.1-dev",
+  "status": "development",
+  "licence": "Apache-2.0",
+  "bytes": 16384,
+  "sourceSha256": {
+    "break.inc": "8c766cc9661af8e114c11203955f514a019dc9268fa077ff83418b5bb33b38e9",
+    "graphics-sprite.inc": "cd2a6cc0d518cc608779baada8cc50c0e39ff7a87f7cead7920a3e4e3a9e2417",
+    "play.inc": "056ad1d2d3c33bca575f824b813749eed44dcfee21b0ca3d43df567bb472b3b9",
+    "draw.inc": "24f63f704a55be697b36224c62af658159b2b5824e1c0c740e71c2cb7bc8c163",
+    "errors-data.inc": "92a2c0f71d0b6a83add2ca285cd3e33e7c42e4a40f1974a7065c94e6545da655",
+    "errors.inc": "bf939d106bffab24ed9c822b409268f3165d6ab6a044fb97beaae3e223fbe024",
+    "tape-ascii-in.inc": "19159eb2552e3e142d177d5f9a56015896b38e8f8d38ec1dc55ee177df2c774b",
+    "tape-ascii-out.inc": "4996f280bdcd265ee481ca1d4773042a99139792a95fff90f7a5424c1206e06c",
+    "syntax-open.inc": "96c40563e76340b9624b35139160d3780f22f27f5af973b9390cacd4a249d70b",
+    "tape-save.inc": "ec9c0600a94f4d67c5069af8f6fcd3293de899655330e38d3efc10446b93e60b",
+    "exec.inc": "615fa7630880ea13b1a9133e73105809536c3f64b34fd363242e47ec0e891218",
+    "tape-load.inc": "cc8f44f9304517617b5741ae3a1b31a89e838e4a13126f07ff60996970962af7",
+    "tape-basic.inc": "7b528b35ed80b24ed382b5e447cef620ffd34a220d8c62325e4b4f8627649155",
+    "tape-file.inc": "d7c81987365af49dcb9c812117272b8c917afd84248306bff0d9ceaa7cb6ff2a",
+    "native-frame.inc": "b3bf96f53d179c637f7d55d77871a6025f4b15a6f5389141d17223b616d49b84",
+    "statement-arguments.inc": "9c8540fd0f78178545d92bac38f9d1f2a48b88cf9317f1805ef721f154bf5463",
+    "print-device.inc": "d110f9643567db08bb6ea63ad2b8c498718ebe75df2a2e650a917355e0d3140a",
+    "print-channel.inc": "d66ea46ae4c27065225a2fdd449415dffe90e6024f0b1f28bd7ad84b1910e1f6",
+    "command-guards.inc": "c56950bd7471c81a9678bd6b1185fde302886dca73a8d5006d5b1f1a73159f0e",
+    "graphics-paint.inc": "5c98db6c996f216d78744f8301470f2f4021ee4b2c129ea70dcf51495fa6a76b",
+    "mid-assignment.inc": "09465784a6ff16be928d502b636cd6bb1d8411a06d1b70c7777843060f8b44a3",
+    "circle.inc": "abb4b68e7856f715e56c7c18c3b754715ea5872230bceb14a77a95cb6bfbde30",
+    "console.inc": "9e9b3c282a43110595c82168b053b6c8ddebb6b1bd562528fbe69d1b5eeec41c",
+    "series.inc": "5231d8102f4de4935775346a00f4b8d684479947238dba9c9b20ee0231f86b3e",
+    "line-range.inc": "ec9ea5b4c278abd3f9baa13320eac35244c67cf495b054e46943e9d13bbb4a0d",
+    "delete.inc": "ed39f849acb9d46cb58e4701141912fb20f4f1e7ea9b270355740ddd81e4205f",
+    "print-position.inc": "045e8d91c771fbc12679f1a2c7762c398210eb9323acef6ab0aba237e1fa3a70",
+    "print-tab.inc": "28580c47a78fed47dcff2495c1a603cc03f71d6c5e2088fd9685dfdce8a8e381",
+    "graphics-page.inc": "d51d462b8aa15a9227aaa0b2db3f20ff7ffcc65a654dfbac19c242c76b181f26",
+    "graphics-copy.inc": "c6fce8d36f185c0e38633998b287ac8569f82662fd85daedba3c0a1477b57d33",
+    "graphics-copy-page.inc": "1a967b15721bb4b9865516a424f8d2bd2f12d9fb940a00b1e8c5bb2f80e9ca80",
+    "input-start.inc": "96ab17d6e87f81bda618ec8b77591abcea64a6a532478888756d8d31c892ac6a",
+    "input-variable.inc": "8b55e5c88942de4fa269647dfd8014075144a2bf564e198fc5aa40f39d527516",
+    "input-value.inc": "cf2668de1da2429b748502cb4c33c2a02184450e82e75131bd648e0074448a3f",
+    "input-store.inc": "3db623c1a6a8670d747be10f7cf1fe21f304358b89eb94f784368e0f38f63bc2",
+    "input-end.inc": "d6638114ae7a77dece0befa90e387d0ec6b318088e6807fb0eae52b7277e3261",
+    "abi.inc": "c00170b81021535c58f965033f8122280694a233b9b6c57224949ca19f7aba9b",
+    "arrays.inc": "6ca5410e575ce124c6ab80dda5a1a7fd1d1017158a5b04efbb94837ea69147ab",
+    "basic.asm": "b4d0c970fe27646384582d21e67e56cf5adc6c9d95420f0973c4a7552c0fa688",
+    "commands.inc": "5326b4d94051fe4a0a7bfb8e2e5485d9bafe7cb44d6d61e916a4ee699360212b",
+    "control.inc": "93f55f2050c99dcc273a2fa7e0e80029e5fad8c34054b72d9615b89154ece6eb",
+    "data.inc": "ddf7ea5c2605f136c328fa3d6ab683d6661e8c0e1329714f593b8eee6e2dd5c5",
+    "devices.inc": "0bfdbaa3e81e9eef2f26f36b85bd9ffb33d86939a0fe2134fd3f4e5e232a627e",
+    "expression.inc": "f011f9ae6a96dfba9b8cdf7d6c512075b161439d84d77af94fdf8c971e83c9a3",
+    "extended-control.inc": "5b7df9c4d23158e60396d33d07c3e9f99982e5dab42e76668b81cd935b2785a1",
+    "format.inc": "6bf9877ea340740fe64f7029370056dd25d6e14e13c7d54f844cf2e0eb11bad9",
+    "fp-program.inc": "9090799add32018bb6dd4f5736868a6af510161f14de40c9b8a7909c9731671c",
+    "function-definitions.inc": "b9966183a95136ef72d860d5529174f4363529b154593e2c1572414abcc4baf6",
+    "function-call.inc": "9463b71611dcdc207865b33b7319d8f7a8e8b285b9a5fbdbb47b61446bb5b6ed",
+    "function-name.inc": "61de2eab5510ba8e84a1178bfaaa3e61eb7fba10fd02193d3393dde999bfd271",
+    "function-return.inc": "190f25dd141b0cf60d559287008f0efe0f5337935b6545bc9997c972c68cd3c2",
+    "unsigned.inc": "4b7e3228190e92385b7ea90b7a0dd92e655c1b2a5fe56fd99a78776f7d52b8a0",
+    "functions.inc": "e0817383ef5ff9a50a70504786368643d36c788052d0917fd5b0298f9c4b974f",
+    "graphics-box.inc": "5381dd26bf3e2a75e905a7a8b8cc537c64aecb6e87f407c17f1b88ba227e9716",
+    "graphics-fill-box.inc": "03d06964b06c86ae12d5d19a0658bf3dd2f6ba5f792f9cabc8e2d28c0f1e9e56",
+    "trace.inc": "aa1cf95b9ffc2038f89fc5ed1e71d3d42b12129e6dc3d69dda92fe91cc35d92f",
+    "graphics-cls.inc": "a4a8f266096dd9438b35812426600f47936f11636416348fa0da93bbfac98ca6",
+    "graphics-line.inc": "0acc9061e3cd3a524ac80ab1e26775398e94762f229bc655b0b595727bfaa3bd",
+    "graphics-line-core.inc": "b8339e4652f1598f11c5c03c4878ac7f3d7f669e4299f89fef130612d5a4daab",
+    "graphics-low.inc": "7f4aeffcb358b20f5dacc03a99449560ad8d5ba1f729c6b46a565edc0b74c406",
+    "graphics-mode.inc": "2004e5754f416b17ca03f21910c82d330eb474a56359a0a1f5e888cf5edcd391",
+    "graphics-point.inc": "115cafc73aefcb8378ca21fe4da2f4e37ecf2bb89e0956223cdbb688cb49abd7",
+    "graphics-screen.inc": "476bb0310bbffc310b2da496a940bc7fda1ac3d5f499b1bac5ba6e52ce3e00f6",
+    "math.inc": "8e95ea49cdb4b4c133eb1e01adfa94c1c0b8f29fe1bf3264cf938e40b108d466",
+    "number.inc": "ec5c76d891e8be34dfff4445c0b7d9a05829ac9aed3bc0ea621ea7d396cd00ea",
+    "numeric.inc": "892e76484adc61925067d75740a40dea2ee9dfa0c9887ceb5e3c80d9eafe0d75",
+    "random.inc": "ea26389e8ebd401d2f59b2168acdcdb159485c5c3541296f7d475bf1863e180e",
+    "random-init.inc": "c3ceb863787952de6e734ff09a1497add4682fb93ced132e03087bc79c04b697",
+    "scanner.inc": "5b3b17654d0dd4b2147f05acff9133cb123787dd0f2b2b96d571873e5fbf4ec3",
+    "storage.inc": "ba43a53245563708f5086c5c0c6f7cda33fb98dd3d026662c92dbbf094f64c8a",
+    "sound.inc": "b14d5388eb123dd3a37a5887860a7be657ee5f03ee9d87873a40941610d6aca3",
+    "string-functions.inc": "3860b9c97cf428eab4daf4a0d083bcf2927efc50e2629367f7a98a1f6c748a49",
+    "strings-gc.inc": "992e9cf8fa887b95ed93b4b3dc48a61cbb1788af8f63b022b547d322c6f35bb9",
+    "strings-roots.inc": "804512d01185797fda37881665fd9416c83957c4a21f1f3a95b7856358487a1a",
+    "strings.inc": "09f641970515d7111c572a3627953a3261df3f73efd0299bc3694e7043d00dcd",
+    "tape-write.inc": "52539d8c81d9fd9d5684c8ec0bc75132faf3f9008df7b145cf3b2abff0ba7aa0",
+    "tape-read.inc": "d91be8a376fbb4c0de71dfefc3c7a9e95a180e342d80e506c015146115293d33",
+    "tape-block-out.inc": "5f8d8acb3ae917ef1837916cbe38fc78342a436094ae8de51577d020746835d1",
+    "tape-block-in.inc": "4b8d636539f1c93013e9abddb8ee6613145c64706b96c3c955e5dd04858dc180",
+    "tokenise.inc": "bfba21e0d14e64f5a6fee73dac914b69fd9c76a40f8eebeffff2b6cc378454e8",
+    "value-functions.inc": "a21cb688ab645a29a03f11b98063fd4d2f57cea701b48efd848e6b1be1cd49a6",
+    "keywords.inc": "f24490cbf19a93bd9972e09a34eff751d1fdb69dda8ea1da04b45329e1e46172",
+    "../../dialects/dragon32-basic/tokens.toml": "f6661b6d1fa1b99a2435c9be154d9351e4e3cfb111b65549d5586f8e6c7449e6"
+  },
+  "symbolsSha256": "fca26d42b52ee2c1e60a69d94e0dc95c03a58c650e0babdc7802993e66c77694",
+  "layout": {
+    "freeBytes": 21,
+    "usedBytes": 16363,
+    "largestGapBytes": 18,
+    "gaps": [
+      {
+        "start": 34006,
+        "bytes": 0
+      },
+      {
+        "start": 35629,
+        "bytes": 0
+      },
+      {
+        "start": 35895,
+        "bytes": 0
+      },
+      {
+        "start": 40942,
+        "bytes": 18
+      },
+      {
+        "start": 46004,
+        "bytes": 0
+      },
+      {
+        "start": 46410,
+        "bytes": 0
+      },
+      {
+        "start": 47422,
+        "bytes": 0
+      },
+      {
+        "start": 47513,
+        "bytes": 0
+      },
+      {
+        "start": 47936,
+        "bytes": 0
+      },
+      {
+        "start": 48053,
+        "bytes": 0
+      },
+      {
+        "start": 48056,
+        "bytes": 3
+      },
+      {
+        "start": 48101,
+        "bytes": 0
+      },
+      {
+        "start": 48466,
+        "bytes": 0
+      },
+      {
+        "start": 48549,
+        "bytes": 0
+      },
+      {
+        "start": 48557,
+        "bytes": 0
+      },
+      {
+        "start": 48658,
+        "bytes": 0
+      },
+      {
+        "start": 48746,
+        "bytes": 0
+      },
+      {
+        "start": 49136,
+        "bytes": 0
+      }
+    ]
+  },
+  "romSha256": "187d66f60d9f5c227a8a8eb74e3f11ca5d24a887430975496edca735c05963a9"
+}

@@ -87,6 +87,11 @@ fn help_assembly_examples_obey_native_source_contract() {
     for (index, source) in listings.iter().enumerate() {
         eightbit_source::build::validate_assembly(source, 24576)
             .unwrap_or_else(|error| panic!("Help assembly listing {}: {error:?}", index + 1));
+        let built = assemble_original(&TARGETS[1], source, "src/asm/main.asm", &"a".repeat(64))
+            .unwrap_or_else(|error| {
+                panic!("Original assembler Help listing {}: {error:?}", index + 1)
+            });
+        assert_eq!(tape_blocks(&built.media).len(), 4);
     }
 }
 

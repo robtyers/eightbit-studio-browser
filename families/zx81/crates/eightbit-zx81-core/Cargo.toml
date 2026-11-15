@@ -13,7 +13,10 @@ native = []
 eightbit-source-core = { path = "../../../../crates/eightbit-source-core" }
 eightbit-targets = { path = "../../../../crates/eightbit-targets" }
 eightbit-sinclair-basic = { path = "../../../../cpu/z80/eightbit-sinclair-basic" }
+eightbit-zx81-emulator = { path = "../eightbit-zx81-emulator" }
+eightbit-z80-core = { path = "../../../../cpu/z80/eightbit-z80-core" }
 [dev-dependencies]
 tempfile = "=3.27.0"
+sha2.workspace = true
 [lints]
 workspace = true

@@ -7,17 +7,22 @@ const MAX_JSON = 7 * 1024 * 1024;
 export const projectId = () => crypto.randomUUID();
 export const projectTarget = (project: ProjectSnapshot) => project.target ?? "dragon32";
 export function snapshot(value: unknown): ProjectSnapshot {
-  if (!record(value) || !["kind,manifest,name,schemaVersion,source", "kind,manifest,name,schemaVersion,source,supportFiles", "kind,manifest,name,schemaVersion,source,supportFiles,target"].includes(Object.keys(value).sort().join()) || (value.schemaVersion !== 1 && value.schemaVersion !== 2) || (value.schemaVersion === 1 && value.target !== undefined) || (value.schemaVersion === 2 && (typeof value.target !== "string" || !["dragon32", "c64-pal", "bbc-model-b", "spectrum16", "spectrum48", "spectrum128", "spectrum-plus2", "zx81-1k", "zx81-16k"].includes(value.target))) || typeof value.name !== "string" || value.name.length < 1 || value.name.length > 64 || (value.kind !== "basic" && value.kind !== "assembly") || typeof value.source !== "string" || new TextEncoder().encode(value.source).length > MAX_SOURCE_BYTES || !(value.manifest === null || typeof value.manifest === "string" && new TextEncoder().encode(value.manifest).length <= 65_536)) throw new Error("Invalid project snapshot.");
+  if (!record(value) || !["kind,manifest,name,schemaVersion,source", "kind,manifest,name,schemaVersion,source,supportFiles", "kind,manifest,name,schemaVersion,source,supportFiles,target"].includes(Object.keys(value).sort().join()) || (value.schemaVersion !== 1 && value.schemaVersion !== 2) || (value.schemaVersion === 1 && value.target !== undefined) || (value.schemaVersion === 2 && (typeof value.target !== "string" || !["vectrex", "dragon32", "dragon64", "dragon64-native", "c64-pal", "bbc-model-b", "spectrum16", "spectrum48", "spectrum128", "spectrum-plus2", "zx81-1k", "zx81-16k"].includes(value.target))) || typeof value.name !== "string" || value.name.length < 1 || value.name.length > 64 || (value.kind !== "basic" && value.kind !== "assembly") || typeof value.source !== "string" || new TextEncoder().encode(value.source).length > MAX_SOURCE_BYTES || !(value.manifest === null || typeof value.manifest === "string" && new TextEncoder().encode(value.manifest).length <= 65_536)) throw new Error("Invalid project snapshot.");
   const files = value.supportFiles ?? {};
-  if (!record(files) || Object.keys(files).length > 32 || Object.entries(files).some(([path, text]) => path.length > 256 || typeof text !== "string" || new TextEncoder().encode(text).length > 65_536)) throw new Error("Invalid project support files.");
-  const supportFiles: Record<string, string> = {};
+  if (!record(files) || Object.keys(files).length > (value.kind === "assembly" ? 96 : 32) || Object.entries(files).some(([path, text]) => path.length > 256 || typeof text !== "string" || new TextEncoder().encode(text).length > (value.kind === "assembly" ? MAX_SOURCE_BYTES : 65_536) || typeof text === "string" && text.includes("\0"))) throw new Error("Invalid project support files.");
+  if (Object.values(files).reduce<number>((total, text) => total + new TextEncoder().encode(String(text)).length, 0) > 1536 * 1024) throw new Error("Project source files exceed their limit.");
+  const supportFiles: Record<string, string> = Object.create(null) as Record<string, string>;
   for (const [path, text] of Object.entries(files)) supportFiles[path] = String(text);
   return { supportFiles, schemaVersion: value.schemaVersion, ...(value.schemaVersion === 2 ? { target: String(value.target) } : {}), name: value.name, kind: value.kind, source: value.source, manifest: value.manifest };
 }
-export function projectResult(value: unknown): { project: ProjectSnapshot; entryPath: string } {
+export function projectResult(value: unknown): { project: ProjectSnapshot; entryPath: string; sourcePaths: string[] } {
   const data = result(value);
   if (typeof data.entryPath !== "string" || data.entryPath.length > 4096) throw new Error("Invalid project response.");
-  return { project: snapshot(data.project), entryPath: data.entryPath };
+  const sourcePaths = data.sourcePaths === undefined ? [data.entryPath] : data.sourcePaths;
+  if (!Array.isArray(sourcePaths) || sourcePaths.length < 1 || sourcePaths.length > 64 || sourcePaths[0] !== data.entryPath || sourcePaths.some(path => typeof path !== "string" || path.length > 4096) || new Set(sourcePaths).size !== sourcePaths.length) throw new Error("Invalid project source paths.");
+  const project = snapshot(data.project);
+  if (sourcePaths.slice(1).some(path => !Object.hasOwn(project.supportFiles, String(path)))) throw new Error("Missing project source file.");
+  return { project, entryPath: data.entryPath, sourcePaths: sourcePaths.map(String) };
 }
 export async function importProject(engine: BrowserEngine, bytes: Uint8Array, signal: AbortSignal) {
   return projectResult(await engine.request({ schemaVersion: 1, operation: "import-project" }, bytes, signal));

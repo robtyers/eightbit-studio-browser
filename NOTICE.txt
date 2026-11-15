@@ -1229,6 +1229,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
+Original C64 PAL CPU, digital board, BASIC/KERNAL/editor and independently drawn character firmware: Apache-2.0, ADR 0062; source, build manifest and builder included. Explicit development selection retains chips and VICE alternatives.
+
 MAME 0.289, GPL-2.0-or-later with BSD-licensed components. All original notices and source are supplied in mame0289.tar.gz on the matching GitHub source release. Local changes are scripts/browser/mame-browser.patch.
 C64 chips core, commit 9e88298ce56319953ac7a43213a1120359f7a3a6, zlib/libpng licence. Original source and notices are included in .cache/mame-web/chips-9e88298.tar.gz.
 MAME toolchain: Emscripten 6.0.2, MIT/NCSA, licence texts included. Linked SDL2, SDL2_ttf, FreeType, HarfBuzz and zlib port source archives with their original notices are in third-party/.

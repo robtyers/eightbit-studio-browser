@@ -1,6 +1,7 @@
 //! Portable source-project contracts, defaults and immutable family policies.
 #![allow(missing_docs)]
 pub mod adapter;
+pub mod source_map;
 use eightbit_targets::{FamilyDefinition, TargetDefinition};
 use serde::{Deserialize, Serialize};
 #[derive(Debug, thiserror::Error, Serialize)]
@@ -28,9 +29,17 @@ pub fn digest(bytes: &[u8]) -> String {
 pub const MAX_SOURCE: usize = 128 * 1024;
 pub const GITIGNORE: &str = ".studio/\n.DS_Store\n";
 pub type DebugSnapshotBuilder = fn(&[u8]) -> Result<Vec<u8>>;
+pub type OriginalAssembler = fn(&TargetDefinition, &str, &str, &str) -> Result<AssemblyBuild>;
+pub struct AssemblyBuild {
+    pub code: Vec<u8>,
+    pub media: Vec<u8>,
+    pub map: source_map::SourceMap,
+    pub tool_version: &'static str,
+}
 #[derive(Clone, Copy)]
 pub struct Profile {
     pub adapter: Option<&'static adapter::Adapter>,
+    pub original_assembler: Option<OriginalAssembler>,
     pub target: &'static TargetDefinition,
     pub boot_command: &'static str,
     pub rom_names: &'static [&'static str],

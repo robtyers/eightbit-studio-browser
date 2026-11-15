@@ -105,9 +105,26 @@ async function repo(access: string, name: string): Promise<string> {
   return data.default_branch;
 }
 function snapshot(value: unknown): Record<string, unknown> {
-  if (!object(value) || !["kind,manifest,name,schemaVersion,source", "kind,manifest,name,schemaVersion,source,supportFiles", "kind,manifest,name,schemaVersion,source,supportFiles,target"].includes(Object.keys(value).sort().join()) || (value.schemaVersion !== 1 && value.schemaVersion !== 2) || (value.schemaVersion === 1 && value.target !== undefined) || (value.schemaVersion === 2 && (typeof value.target !== "string" || !["dragon32", "c64-pal", "bbc-model-b", "spectrum16", "spectrum48", "spectrum128", "spectrum-plus2", "zx81-1k", "zx81-16k"].includes(value.target))) || typeof value.name !== "string" || !/^[A-Za-z0-9][A-Za-z0-9 _-]{0,63}$/.test(value.name) || (value.kind !== "basic" && value.kind !== "assembly") || typeof value.source !== "string" || new TextEncoder().encode(value.source).length > 1024 * 1024 || (value.kind === "basic" ? typeof value.manifest !== "string" || new TextEncoder().encode(value.manifest).length > 65_536 : value.manifest !== null)) throw new Failure(400, "Invalid project snapshot. Only source and project settings can be saved.");
+  if (!object(value) || !["kind,manifest,name,schemaVersion,source", "kind,manifest,name,schemaVersion,source,supportFiles", "kind,manifest,name,schemaVersion,source,supportFiles,target"].includes(Object.keys(value).sort().join()) || (value.schemaVersion !== 1 && value.schemaVersion !== 2) || (value.schemaVersion === 1 && value.target !== undefined) || (value.schemaVersion === 2 && (typeof value.target !== "string" || !["vectrex", "dragon32", "c64-pal", "bbc-model-b", "spectrum16", "spectrum48", "spectrum128", "spectrum-plus2", "zx81-1k", "zx81-16k"].includes(value.target))) || typeof value.name !== "string" || !/^[A-Za-z0-9][A-Za-z0-9 _-]{0,63}$/.test(value.name) || (value.kind !== "basic" && value.kind !== "assembly") || typeof value.source !== "string" || new TextEncoder().encode(value.source).length > 1024 * 1024 || (value.kind === "basic" ? typeof value.manifest !== "string" || new TextEncoder().encode(value.manifest).length > 65_536 : (value.manifest !== null && (typeof value.manifest !== "string" || new TextEncoder().encode(value.manifest).length > 65_536)))) throw new Failure(400, "Invalid project snapshot. Only source and project settings can be saved.");
+  if (value.kind === "assembly" && value.target !== undefined && value.target !== "dragon32" && value.target !== "vectrex") throw new Failure(400, "Browser assembly projects require Dragon 32.");
   const files = value.supportFiles ?? {};
-  if (!object(files) || Object.keys(files).length > 32 || Object.entries(files).some(([path, content]) => !["AGENTS.md", "CLAUDE.md", "README.md", "tests/README.md", ".gitignore"].includes(path) && !/^tests\/[A-Za-z0-9._-]{1,100}\.dragon-test\.toml$/.test(path) || typeof content !== "string" || new TextEncoder().encode(content).length > 65_536) || Object.values(files).reduce<number>((total, item) => total + new TextEncoder().encode(String(item)).length, 0) > 512 * 1024) throw new Failure(400, "Invalid project support files.");
+  if (!object(files) || Object.keys(files).length > (value.kind === "assembly" ? 96 : 32)) throw new Failure(400, "Invalid project support files.");
+  // Source-only transport envelope. Rust validates exact manifest membership when
+  // opening, building and exporting; the Worker does not implement a TOML parser.
+  let assemblyCount = 0, basicCount = 0, guidanceCount = 0, sourceBytes = new TextEncoder().encode(value.source).length, guidanceBytes = 0;
+  for (const [path, content] of Object.entries(files)) {
+    if (typeof content !== "string" || content.includes("\0")) throw new Failure(400, "Invalid project text.");
+    const size = new TextEncoder().encode(content).length;
+    const guidance = ["AGENTS.md", "CLAUDE.md", "README.md", "tests/README.md", ".gitignore"].includes(path) || /^tests\/[A-Za-z0-9._-]{1,100}\.dragon-test\.toml$/.test(path);
+    if (guidance) { guidanceCount++; guidanceBytes += size; if (size > 65_536) throw new Failure(400, "Project guidance exceeds its limit."); }
+    else if (value.kind === "assembly" && path.length <= 256 && path.split("/").every(part => /^[A-Za-z0-9._-]+$/.test(part) && part !== "." && part !== "..")) {
+      if (/\.asm$/i.test(path) && value.manifest !== null) assemblyCount++;
+      else if (/\.bas$/i.test(path)) basicCount++;
+      else throw new Failure(400, "Only assembly and BASIC source files can be saved.");
+      sourceBytes += size;
+    } else throw new Failure(400, "Invalid project support path.");
+  }
+  if (value.source.includes("\0") || typeof value.manifest === "string" && value.manifest.includes("\0") || assemblyCount > 63 || basicCount > 1 || guidanceCount > 32 || sourceBytes > 1024 * 1024 || guidanceBytes > 512 * 1024) throw new Failure(400, "Project source/support files exceed their limits.");
   if (new TextEncoder().encode(JSON.stringify(value)).length > MAX_PROJECT) throw new Failure(413, "Project snapshot exceeds its limit.");
   return value;
 }

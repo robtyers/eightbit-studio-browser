@@ -10,6 +10,9 @@ default = []
 native = []
 
 [dependencies]
+eightbit-commodore-machine = { path = "../eightbit-commodore-machine" }
+serde.workspace = true
+serde_json.workspace = true
 eightbit-source-core = { path = "../../../../crates/eightbit-source-core" }
 eightbit-targets = { path = "../../../../crates/eightbit-targets" }
 [lints]

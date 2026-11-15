@@ -6,13 +6,14 @@ source revision, tool versions and actual observations. Leave unperformed checks
 pending and keep ROM contents, secrets and private paths out of evidence.
 
 1. Save all configured sources and Build. The BASIC starter should build without
-   tools or firmware. The mixed starter requires LWTOOLS 4.25. Inspect Problems
+   tools or firmware. The Dragon 32 mixed starter also builds without external tools; other assembly targets retain their LWTOOLS 4.25 requirement. Inspect Problems
    and the current Build Results; a previous successful build may be stale.
 2. Add a `build.dragon-test.toml` using the root README's example and choose
    Project → Run Tests. Definitions check the same current-project build; they
    do not run independent BASIC programmes or assert emulator state.
-3. With authorised XRoar and lawful configured ROMs, Run on the selected Dragon
-   model/mode. Expect HELLO, DRAGON and, for mixed source, ASSEMBLY RETURNED.
+3. Run Dragon 32 RAM programmes with the built-in runtime, or use authorised
+   XRoar and lawful configured ROMs for cartridges, Dragon 64 or an explicit
+   compatibility run. Expect HELLO, DRAGON and, for mixed source, ASSEMBLY RETURNED.
    D64 native loading needs the supported primary/alternate ROM pair. Replace
    these expectations as code changes and exercise controls and input boundaries.
 4. Stop, edit a visible result, Save All and Run again. Check that the old owned
@@ -24,5 +25,5 @@ pending and keep ROM contents, secrets and private paths out of evidence.
    using the root README's mode-specific loading instructions. Native D64 BASIC
    cannot use cartridge export. Check that existing destinations are preserved.
 
-Add repeatable regression steps for each fix. Build tests, observed XRoar behaviour,
+Add repeatable regression steps for each fix. Build tests, observed emulator behaviour,
 physical Dragon operation and cassette-transfer checks are separate evidence.

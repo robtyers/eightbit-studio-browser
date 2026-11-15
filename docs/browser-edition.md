@@ -1,9 +1,136 @@
 # Eightbit Studio browser edition
 
+## Original Spectrum 128K and grey +2 — ADR 0059
+
+UK 128K and original grey UK +2 now use the same original Rust/WASM runtime and
+shared browser workbench as 48K. BASIC and single-source Z80 assembly can build,
+Play and Debug without supplied firmware. The existing selector retains explicit
+MAME with supplied ROMs. Empty-machine boot also honours the selected model.
+The same frame/session guards, local cassette handling and source packaging apply;
+no browser BASIC, PLAY or RAM-disc evaluator is added. [Scope and
+qualification](spectrum128-original-specification.md) do not constitute a public
+deployment or physical-device acceptance.
+
+
+## Expanded original BASIC profile
+
+The approved Studio profile uses an original 32 KiB ROM while retaining 32 KiB
+RAM, published BASIC interfaces and existing project/media formats. It needs no
+third-party firmware. **Built-in Dragon 32** is the default for BASIC and RAM
+machine code. Cartridges are unsupported on the website; use the desktop edition
+with separately configured XRoar and third-party firmware. The workbench and emulator controls
+are unchanged. Normal project Run/Debug admission is bound to the exact expanded
+source, image, symbols and memory-map receipt. Use Check & build and Play or Debug.
+Normal startup loads the current build through guest cassette I/O. The console
+accepts up to 249 characters and supports local CAS/WAV mounting and recording.
+The earlier 19 October BASIC native/WASM check passed 1,466 identical requests, including
+source debugging, INPUT, graphics, music and a recorded data tape read by a fresh
+guest. The actual browser Play journey also saved and reloaded that same
+446-byte tape, printing `DATA OK 64 SURVEY 64`. See [testing](testing.md) for
+exact evidence and release limits. The earlier checkpoints below describe the
+retained 16 KiB development profile, not the expanded profile's delivery target.
+
+## Original assembler and linker
+
+Dragon 32 RAM projects use the original shared assembler/linker without a tool
+installation. Import retains the exact manifest, ordered list of up to 64 assembly
+files and any declared unused BASIC entry. The Explorer edits each declared
+source; diagnostics and debugging identify the corresponding file. File-local
+symbols, `EXPORT`/`EXTERN`, consecutive code sections and absolute constants cover
+the unchanged DragonDoom and Battlezone projects. Both games build to the same
+machine code as their established LWTOOLS builds and pass actual native/WASM
+guest checks. This is a bounded source toolchain: macros, includes, arbitrary
+linker scripts and object archives are unsupported. Desktop retains explicit
+LWTOOLS compatibility; website cartridge development remains unsupported.
+
+## Original Dragon monitor and retained development checkpoints
+
+These earlier checkpoints describe the monitor/development actions. Statements
+that project Play uses only XRoar are superseded by the expanded profile above.
+
+For Dragon 32, Computer setup offers **Start original monitor**. This boots the
+bundled original Eightbit firmware, using Rust/WebAssembly in a disposable
+worker, without selecting a Dragon ROM. The existing Game panel presents its
+screen and labelled keyboard-command field. Type `H` for help. Stop or page
+suspension destroys the session; no RAM, input or firmware state is persisted.
+Existing BASIC Play remains the explicit XRoar/selected-ROM workflow.
+
+ADR 0057 adds **Start original BASIC (development)** beside the monitor action.
+It uses the same bounded Worker/session core and labelled console, with Shift
+chords, case, empty replies and a 251-character input limit. The ROM is visibly
+unqualified; project Play still uses XRoar. This does not establish the remaining
+graphics/music/file commands, full ABI compatibility or BASIC project integration.
+The compacted development image additionally executes LIST/LLIST ranges, DEL
+CIRCLE ellipses/arcs and MID$ assignment in guest code. A full ellipse now executes in the
+shared native/WASM acceptance corpus; compact FN names and ELSE endings share
+the Rust/guest contract. These commands do not change the shell,
+the explicit XRoar path or the outstanding qualification and integration gates.
+
+The development console's **Cassette** controls mount a checked `.cas` tape,
+including tokenised/ASCII BASIC, machine code, opaque gapped data records and
+multiple files. Limits are 1 MiB, 256 files and 8,192 blocks, including the
+framing of a full 64 KiB memory capture. Rust streams physical cassette pulses
+from the original bytes; it does not inject programme memory. Enter `CLOAD` then
+`RUN` for BASIC, or `CLOADM` then `EXEC` for machine code. **Rewind cassette**
+returns to the beginning; Reset retains the current position. Invalid replacement
+files preserve the previous attachment, and Stop releases it. Cassette contents
+stay volatile and are excluded from project recovery and GitHub saves.
+Guest-pin recording also retains complete multi-file/data tapes; damage in any
+file rejects the recording. Data-file transport does not add the staged
+`OPEN`/`PRINT#`/`INPUT#` implementation to the current development ROM. Source
+import and ordinary WAV recovery retain their single-programme contracts.
+
+After a fresh Dragon 32 build, **Mount built cassette in original BASIC
+(development)** starts that explicit development session with a copy of the
+current CAS. It types no command and does not replace Play's selected-ROM/XRoar
+route. Editing or replacing the project invalidates that build and stops its
+session. Native Dragon 32 BASIC-only projects also provide **Build and mount in
+original BASIC (development)** in the existing emulator controls. This explicit
+action saves current source, prepares a fresh checked CAS and opens the separate
+window after the source revision is rechecked. **Cancel development launch**,
+project closure, timeout and stale results discard preparation. A failed current
+build cannot launch an older cassette. The native development window retains
+manual CAS selection as well.
+**Record cassette output** starts a bounded capture of guest cassette pins.
+Enter `CSAVE` or `CSAVEM`, wait for the guest to return, then choose **Finish
+recording**. Rust drains each execution slice, converts the physical levels to
+9.6 kHz PCM and validates a recovered CAS through the existing media decoder.
+**Save recorded cassette** downloads that checked file in the browser; the native
+window opens a restricted Save dialogue and creates only a new `.cas` file.
+Cancelling Save retains the recording. Only one native Save dialogue may be
+pending; Reset, discard or session replacement invalidates its recording
+revision before any destination is created. Incomplete signals, capture loss and the
+15-minute signal limit fail visibly; **Discard recording** resets capture state.
+Reset cancels an active recording, while Stop releases all volatile recordings.
+No microphone or host BASIC evaluator is involved. Multi-file tapes, data-device
+records and WAV mounting/export are not exposed by these development controls.
+Normal original-ROM project
+Run/Debug, complete language/ABI qualification and packaged browser/native
+acceptance remain separate work.
+
+The monitor and BASIC consoles remain experimental; complete BASIC and
+historical-program compatibility remain open. See [ADR 0056](adr/0056-original-dragon32-monitor.md) and the
+[specification](dragon32-monitor-specification.md). The original firmware source,
+image, symbols and receipt are included in corresponding source. Source packaging
+allows only the verified original monitor and development BASIC images with
+their complete source receipts; all third-party firmware exclusions remain.
+
+Local monitor build/check commands, using the pinned wasm-bindgen tool and
+separately installed LWASM:
+
+```sh
+python3 scripts/build-dragon-monitor.py --check
+bash scripts/browser/build-core.sh
+node scripts/browser/monitor-parity.mjs
+pnpm --dir apps/eightbit-studio-web/ui build
+```
+
 ADR 0052 adds an experimental GPL-3.0-or-later browser edition alongside the
 desktop products. ADR 0053 adds C64 PAL, Spectrum 16K/48K/128K UK/+2 UK and ZX81 1K/16K alongside Dragon 32 BASIC. ADR 0055 adds BBC Micro Model B BASIC II. The existing workbench
 shell is shared; the browser editor uses a native text area for touch/keyboard
-input. Terminal, AI, debugging and assembly compilation remain outside scope.
+input. ADR 0057 adds original Dragon 32 BASIC and machine debugging and assembly
+compilation. Terminal and AI remain outside browser scope; these Dragon additions
+do not extend the other computers' capabilities.
 The optional GitHub service saves project snapshots through a separate Worker;
 there is no browser terminal or general Git command interface.
 
@@ -11,14 +138,14 @@ The **Get Started** welcome uses the shared chip-and-eight mark and wordmark
 from the desktop applications and website. Choose **Create new project**,
 **Load existing project**, or a **Recent project**.
 Creation asks for a name, a computer grouped under 6809/6502/Z80, and a blank
-BASIC or original sample template. Projects contain one editable source and the
+BASIC, original sample or Dragon 32 assembly template. BASIC projects contain one editable source; Dragon 32 assembly projects support 1–64 explicitly declared source files. They retain the
 same family-owned manifest, source folder, AGENTS, CLAUDE, README, ignore file
 and tests guidance as that computer's desktop Basic template. Shared pure Rust
 scaffolds prevent the defaults drifting between editions.
 
 | Computer | Desktop manifest | BASIC game file | System firmware |
 | --- | --- | --- | --- |
-| Dragon 32 | dragon.toml (schema 1–3 import, schema 3 creation) | CAS; CAS/WAV recovery | 16 KiB, exact Dragon 32 SHA-256 |
+| Dragon 32 | dragon.toml (schema 1–3 import, schema 3 creation) | BASIC/machine CAS and loading-audio WAV export; CAS/WAV recovery | Bundled original 32 KiB; optional XRoar uses exact third-party 16 KiB firmware |
 | C64 PAL | c64.toml (schema 1) | PRG at $0801 | BASIC/KERNAL/character ROMs, 20 KiB, existing desktop CRC revisions |
 | BBC Model B 32K | bbc.toml (schema 1) | 200 KiB DFS SSD; canonical BASIC subset recovery | OS1.2/BASIC II/DNFS120/speech/characters, 66,496 bytes, existing desktop CRC revisions |
 | Spectrum 16K/48K UK | spectrum.toml (schema 1) | BASIC TAP | 16 KiB, exact model SHA-256 |
@@ -31,6 +158,17 @@ viewable in Explorer and preserved; edit them in the desktop edition. The shared
 The sidebar initially closes below 701 px and Explorer reopens it. The native
 editor retains conservative, cancellable Rust-supplied colouring. Assembly,
 non-ASCII and sources above 64 KiB use plain text; source is limited to 1 MiB.
+
+For Dragon 32, **Save work → Save cassette loading audio** renders the current
+checked BASIC or assembly build as `game.wav`. Play the uncompressed file through
+the stock Dragon cassette input: `CLOAD`, then `RUN` for BASIC; `CLOADM`, then
+`EXEC` for machine code. Audio is deterministic 44.1 kHz, signed 16-bit mono PCM
+using the shared Rust codec, with a 64 MiB output bound. A disposable worker
+transfers binary samples; cancellation, changed source and late results cannot
+download stale output. Input retains its 8 MiB limit, so larger WAV downloads
+can use desktop import. Our expanded ROM is not a dependency on the physical
+machine. Real cassette loading, audio levels, controls and timing still require
+physical acceptance. Browser cartridges remain unsupported.
 
 Projects recover automatically after a 350 ms pause in editing. **Saved on this
 device** means the current snapshot was written to this browser's local storage,
@@ -56,11 +194,12 @@ manifest files override stale browser metadata. Imported AGENTS, CLAUDE, README,
 ignore files, tests/README and bounded tests/*.dragon-test.toml files are preserved
 exactly; the browser does not execute project-test definitions.
 
-Imports support one BASIC source and the profiles above; Dragon inspection-only
-assembly snapshots remain readable. Reject mixed manifests, unknown assets,
-multiple sources, symlinks, unsafe paths and corrupt/duplicate ZIP entries rather
+Imports support one BASIC source and the profiles above, or a Dragon 32 RAM
+machine-code project with 1–64 declared assembly sources and its unchanged, unused
+BASIC entry. Legacy assembly snapshots remain readable. Reject mixed machine manifests,
+unknown assets, browser BASIC-loader mixed programmes, symlinks, unsafe paths and corrupt/duplicate ZIP entries rather
 than losing files. Project names use 1–64 ASCII letters/numbers/spaces/underscores/
-hyphens and become portable desktop names. Archive size is capped at 8 MiB and 64
+hyphens and become portable desktop names. Archive size is capped at 8 MiB and 128
 entries, total decoded text at 9 MiB, support files at 32 (64 KiB each, 512 KiB total).
 Dragon source/manifest limits are 1 MiB/64 KiB; the C64/Sinclair native contracts
 retain 128 KiB source/8 KiB manifest limits and their own programme RAM budgets.
@@ -75,8 +214,36 @@ gameplay check. **Recover source…** opens a BASIC listing or conservative 6809
 assembly preview from Dragon CAS/WAV, or BASIC from C64 PRG, Spectrum TAP and ZX81 P. Sinclair recovery accepts representable canonical BASIC without saved variables; C64 rejects machine-code tails. Unsupported graphics/control codes are rejected with an actionable result. Raw binary import is under **Advanced import**
 with an explicit decimal load/start address; addresses are never guessed. Original
 symbols/comments cannot be recovered. Imports stay inert until explicitly used;
-original files are never overwritten. Assembly can be inspected and exported,
-then built using the desktop tools.
+original files are never overwritten. Original machine-code media can run without
+reassembly; its bytes and declared load/start addresses are checked again at each
+launch. Recovered assembly becomes editable source when creating a project, and
+Check & build then assembles that current source rather than reusing imported bytes.
+
+Dragon 32 assembly projects use the bundled original 6809 assembler, with no
+tool installation or firmware selection. It supports documented instructions,
+addressing modes, file-local labels, explicit `EXPORT`/`EXTERN` linking, checked
+expressions and common data/layout directives. Declared files link in manifest
+order into one contiguous RAM image. `SECTION code` and the absolute, EQU-only
+`_constants` section are supported. Includes, macros, arbitrary link sections and
+standalone object/archive formats receive explicit diagnostics; desktop LWTOOLS
+remains an explicit compatibility choice. No unsupported input silently invokes
+an external tool. All assembly files together are limited to 1 MiB.
+See the [assembler contract](../cpu/m6809/eightbit-m6809-core/README.md). A new
+project defaults to load address `$7000` and entry symbol `START`; its schema-3
+`dragon.toml` retains these settings and `run.boot = "machine-code"` in ZIP/GitHub
+exports. New projects use `10 END` for the required desktop BASIC entry; imports
+preserve the existing entry contents without running them for machine boot.
+Explorer edits each declared assembly file, and source Debug uses file-specific,
+assembler-derived current-build positions;
+imported media uses an address breakpoint. Registers, disassembly and memory are
+valid only while stopped. Editing, failed builds, Stop and stale replies cannot
+silently launch an older executable.
+
+Machine images and their entry must lie in `$0400–$7FFF`. Programmes owning most
+of RAM use an original guest cassette bootstrap and enter with stack `$0300`;
+initialise a safe stack before making calls. A programme replacing BASIC's
+workspace cannot assume it can return to BASIC. Small routines which preserve
+that workspace retain the ordinary BASIC `EXEC`/`RTS` route.
 
 **Save work** offers project ZIP, explicit **Save to GitHub**, editable listing,
 current playable game file and a separate local recovery copy. Ctrl/Cmd+S opens
@@ -111,7 +278,27 @@ media and build results are never stored in the session service. The Worker
 relays explicit project requests; it does not build or execute code. Local work
 and downloads remain available when GitHub is disconnected or unconfigured.
 
-**Play** requires a current checked BASIC build and user-selected firmware matching
+For Spectrum 48K, **Play** and **Debug** use the original emulator and guest BASIC
+firmware without user-supplied tools or ROMs. BASIC and single-source Z80 assembly
+use the original Rust build engine; project ZIPs preserve the desktop manifest.
+Computer setup retains an explicit MAME/supplied-ROM choice for BASIC. Other
+Spectrum/ZX81 models retain their existing setup. The original 48K implementation
+is still undergoing compatibility qualification under ADR 0058. Its guest editor
+supports native keyword keys and literal command input, graphics, beeper and
+standard cassette operations. The Cassette controls mount bounded TAP/PCM WAV and
+record guest SAVE output to a checked TAP before requesting a download.
+
+C64 PAL additionally offers **Original C64 (development)** in Project emulator
+under ADR 0062. Selection is explicit; chips remains the initial choice. A current
+checked BASIC build is recompiled and source/PRG hashes are checked before one
+owned Rust/WASM guest session starts. The bundled original firmware supplies
+BASIC, editor, KERNAL and character graphics. Reset cold-boots, Stop disposes the
+worker and hidden-page handling releases input/audio. There is no host BASIC
+execution, C64 debugger, attached drive or browser C64 assembler. Compatibility
+limits are listed in the C64 specification. Corresponding source includes the
+original firmware, build manifest, builder and this session adapter.
+
+The retained external **Play** route requires a current checked BASIC build and user-selected firmware matching
 the selected family’s existing revision fingerprints. The ROM dialogue lists the
 required filenames and total size. Select individual files together or one combined
 file in the displayed order. C64 uses the compact zlib-licensed chips core;
@@ -200,7 +387,7 @@ pnpm --dir apps/eightbit-studio-web/ui preview
 ```
 
 Open `http://127.0.0.1:1425/studio/`. The build scripts use pinned tools and source digests. XRoar is built with the checked-in patch disabling missing-file network
-fetches. No ROM or upstream programme catalogue is copied. On a source-only
+fetches. No third-party ROM or upstream programme catalogue is copied. On a source-only
 rebuild, run build-core, contract check, package-source and UI build again. Any
 XRoar source/patch change also requires build-xroar. MAME source/patch changes
 require rebuilding both restricted cores. The SDL canvas uses its required
@@ -385,3 +572,31 @@ entry from the GitHub Worker config and run its deployment command above. Do not
 delete the static `eightbit-studio` Worker or its assets. Restoring the approved
 route/config and deploying re-enables the service; rotating `SESSION_KEY` also
 invalidates pending OAuth requests and needs its own planned credential handling.
+
+## Original Vectrex development — ADR 0063
+
+New Project offers Vectrex assembly and the original Vector, sound and controls
+starter. Check & build uses the original 6809 assembler; Play uses the same
+family-owned guest executive/board as native, without a firmware upload. Download
+stock `.bin` cartridges and ZIPs containing schema-1 vectrex.toml. The build receipt
+validates cartridge structure; it does not claim a BASIC listing round trip.
+See docs/vectrex-original-specification.md for the exact executive subset, input
+keys and qualification limits. Corresponding source includes that crate, original
+executive and project templates. Local changes do not publish the browser edition.
+
+Original Vectrex profile 0.3 adds bounded packet-list guest services. Native/WASM
+qualification covers the optional `packet-demo.asm` alongside the unchanged
+starter and text/counted-list example; public distribution still requires a
+matching new corresponding-source archive and explicit publication authority.
+
+Original Vectrex profile 0.4 adds two bounded text-list formats. Its optional
+`text-list-demo.asm` joins the native/WASM parity fixtures; it does not replace
+the starter or imply the neighbouring $F38A entry or historical font/timing support.
+The same corresponding-source and explicit publication boundaries apply.
+
+
+Original Vectrex profile 0.5 adds three bounded patterned-vector services. The
+optional `pattern-demo.asm` joins native/WASM parity, including malformed-pattern
+failure. The same guest executive and source-bound identity are used; Play stays
+explicit and local. Public release/source-archive publication and physical,
+Linux graphical and Windows acceptance remain separate gates.

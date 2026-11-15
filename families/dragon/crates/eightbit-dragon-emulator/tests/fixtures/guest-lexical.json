@@ -1,0 +1,466 @@
+{
+  "schemaVersion": 1,
+  "referenceSha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
+  "romInstructionsInspected": false,
+  "method": "One original source line per isolated machine; only its bounded token payload is retained.",
+  "observations": [
+    {
+      "source": "cloadm\"FILE\",-1",
+      "line": 10,
+      "tokens": [
+        99,
+        108,
+        111,
+        97,
+        100,
+        109,
+        34,
+        70,
+        73,
+        76,
+        69,
+        34,
+        44,
+        196,
+        49
+      ]
+    },
+    {
+      "source": "CLOADME=1:CSAVEMX=2",
+      "line": 10,
+      "tokens": [
+        153,
+        77,
+        69,
+        203,
+        49,
+        58,
+        154,
+        77,
+        88,
+        203,
+        50
+      ]
+    },
+    {
+      "source": "IF A THENPRINT1 ELSEPRINT2",
+      "line": 10,
+      "tokens": [
+        133,
+        32,
+        65,
+        32,
+        191,
+        135,
+        49,
+        32,
+        58,
+        132,
+        135,
+        50
+      ]
+    },
+    {
+      "source": "A1PRINT=1",
+      "line": 10,
+      "tokens": [
+        65,
+        49,
+        80,
+        82,
+        73,
+        78,
+        84,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "A_PRINT=1",
+      "line": 10,
+      "tokens": [
+        65,
+        95,
+        135,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "AB$PRINT=1",
+      "line": 10,
+      "tokens": [
+        65,
+        66,
+        36,
+        135,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "aPRINT=1",
+      "line": 10,
+      "tokens": [
+        97,
+        135,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "a PRINT A",
+      "line": 10,
+      "tokens": [
+        97,
+        32,
+        135,
+        32,
+        65
+      ]
+    },
+    {
+      "source": ":REM A",
+      "line": 10,
+      "tokens": [
+        58,
+        130,
+        32,
+        65
+      ]
+    },
+    {
+      "source": "PRINT1' X",
+      "line": 10,
+      "tokens": [
+        135,
+        49,
+        58,
+        131,
+        32,
+        88
+      ]
+    },
+    {
+      "source": "PRINTA",
+      "line": 10,
+      "tokens": [
+        135,
+        65
+      ]
+    },
+    {
+      "source": "PRINTA=1",
+      "line": 10,
+      "tokens": [
+        135,
+        65,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "FORWARD=1",
+      "line": 10,
+      "tokens": [
+        128,
+        87,
+        65,
+        82,
+        68,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "BORDER=1",
+      "line": 10,
+      "tokens": [
+        66,
+        79,
+        82,
+        68,
+        69,
+        82,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "XPRINT=1",
+      "line": 10,
+      "tokens": [
+        88,
+        80,
+        82,
+        73,
+        78,
+        84,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "GOTO20",
+      "line": 10,
+      "tokens": [
+        129,
+        188,
+        50,
+        48
+      ]
+    },
+    {
+      "source": "GOSUB20",
+      "line": 10,
+      "tokens": [
+        129,
+        189,
+        50,
+        48
+      ]
+    },
+    {
+      "source": "GO TO20",
+      "line": 10,
+      "tokens": [
+        129,
+        32,
+        188,
+        50,
+        48
+      ]
+    },
+    {
+      "source": "GO SUB20",
+      "line": 10,
+      "tokens": [
+        129,
+        32,
+        189,
+        50,
+        48
+      ]
+    },
+    {
+      "source": "CLOADM\"FILE\"",
+      "line": 10,
+      "tokens": [
+        153,
+        77,
+        34,
+        70,
+        73,
+        76,
+        69,
+        34
+      ]
+    },
+    {
+      "source": "CSAVEM\"FILE\",1,2,3",
+      "line": 10,
+      "tokens": [
+        154,
+        77,
+        34,
+        70,
+        73,
+        76,
+        69,
+        34,
+        44,
+        49,
+        44,
+        50,
+        44,
+        51
+      ]
+    },
+    {
+      "source": "DEF FNF(X)=X*X",
+      "line": 10,
+      "tokens": [
+        152,
+        32,
+        190,
+        70,
+        40,
+        88,
+        41,
+        203,
+        88,
+        197,
+        88
+      ]
+    },
+    {
+      "source": "PRINTSINA",
+      "line": 10,
+      "tokens": [
+        135,
+        255,
+        136,
+        65
+      ]
+    },
+    {
+      "source": "PRINTSIN(A)",
+      "line": 10,
+      "tokens": [
+        135,
+        255,
+        136,
+        40,
+        65,
+        41
+      ]
+    },
+    {
+      "source": "PRINT\"PRINTA GOTO\"",
+      "line": 10,
+      "tokens": [
+        135,
+        34,
+        80,
+        82,
+        73,
+        78,
+        84,
+        65,
+        32,
+        71,
+        79,
+        84,
+        79,
+        34
+      ]
+    },
+    {
+      "source": "DATA PRINTA,GOTO:SIN=1",
+      "line": 10,
+      "tokens": [
+        134,
+        32,
+        80,
+        82,
+        73,
+        78,
+        84,
+        65,
+        44,
+        71,
+        79,
+        84,
+        79,
+        58,
+        255,
+        136,
+        203,
+        49
+      ]
+    },
+    {
+      "source": "REM PRINTA GOTO",
+      "line": 10,
+      "tokens": [
+        130,
+        32,
+        80,
+        82,
+        73,
+        78,
+        84,
+        65,
+        32,
+        71,
+        79,
+        84,
+        79
+      ]
+    },
+    {
+      "source": "' PRINTA GOTO",
+      "line": 10,
+      "tokens": [
+        58,
+        131,
+        32,
+        80,
+        82,
+        73,
+        78,
+        84,
+        65,
+        32,
+        71,
+        79,
+        84,
+        79
+      ]
+    },
+    {
+      "source": "print a",
+      "line": 10,
+      "tokens": [
+        112,
+        114,
+        105,
+        110,
+        116,
+        32,
+        97
+      ]
+    },
+    {
+      "source": "A=1E-2",
+      "line": 10,
+      "tokens": [
+        65,
+        203,
+        49,
+        69,
+        196,
+        50
+      ]
+    },
+    {
+      "source": "PRINT?",
+      "line": 10,
+      "tokens": [
+        135,
+        135
+      ]
+    },
+    {
+      "source": "A$=\"HELLO\"",
+      "line": 10,
+      "tokens": [
+        65,
+        36,
+        203,
+        34,
+        72,
+        69,
+        76,
+        76,
+        79,
+        34
+      ]
+    },
+    {
+      "source": "A=1 AND B=2",
+      "line": 10,
+      "tokens": [
+        65,
+        203,
+        49,
+        32,
+        200,
+        32,
+        66,
+        203,
+        50
+      ]
+    }
+  ]
+}

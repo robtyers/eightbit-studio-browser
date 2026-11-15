@@ -2,6 +2,7 @@
 #![allow(missing_docs)]
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used, clippy::panic))]
 mod tokens;
+pub mod zx80;
 use eightbit_source_core::{Family, Profile, Result, error};
 use eightbit_targets::{Capability, FamilyDefinition, ProjectTemplate, TargetDefinition};
 const TEMPLATES: &[ProjectTemplate] = &[
@@ -60,6 +61,7 @@ pub static DEFINITION: FamilyDefinition = FamilyDefinition {
 pub static PROFILES: &[Profile] = &[
     Profile {
         adapter: None,
+        original_assembler: None,
         target: &TARGETS[0],
         machine: "zx81",
         boot_command: "j\"\"{ENTER}",
@@ -81,6 +83,7 @@ pub static PROFILES: &[Profile] = &[
     },
     Profile {
         adapter: None,
+        original_assembler: None,
         target: &TARGETS[1],
         machine: "zx81",
         boot_command: "j\"\"{ENTER}",
@@ -140,6 +143,7 @@ fn dialect() -> eightbit_sinclair_basic::Dialect {
     eightbit_sinclair_basic::Dialect {
         tokens: tokens::TOKENS,
         extra_tokens: &[],
+        extra_statements: &[],
         escaped_quote: Some(192),
         encode,
         number_marker: 126,
@@ -235,6 +239,97 @@ pub fn package_assembly(target: &TargetDefinition, code: &[u8]) -> Result<Vec<u8
     )?);
     image(target, &program)
 }
+/// Portable original assembly build. Default profile admission follows runtime qualification.
+pub fn assemble_original(
+    target: &TargetDefinition,
+    source: &str,
+    source_path: &str,
+    revision: &str,
+) -> Result<eightbit_source_core::AssemblyBuild> {
+    if !matches!(target.id, "zx81-1k" | "zx81-16k")
+        || target.family != "zx81"
+        || source.len() > eightbit_source_core::MAX_SOURCE
+    {
+        return Err(error(
+            "DSS1100",
+            "Original assembly requires a ZX81 1K/16K source up to 128 KiB",
+        ));
+    }
+    let mut origins = 0;
+    for line in source.lines() {
+        let code = line.split(';').next().unwrap_or("").trim();
+        let code = code.split_once(':').map_or(code, |(_, rest)| rest.trim());
+        let mut parts = code.split_ascii_whitespace();
+        if parts
+            .next()
+            .is_some_and(|op| op.eq_ignore_ascii_case("ORG"))
+        {
+            origins += 1;
+            let value = parts.next().unwrap_or("");
+            let value = value
+                .strip_prefix('$')
+                .map_or_else(|| value.parse::<u16>(), |hex| u16::from_str_radix(hex, 16));
+            if value != Ok(16514) || parts.next().is_some() {
+                return Err(error("DSS1100", "Use exactly one ORG 16514 ($4082)"));
+            }
+        }
+        if line.len() > 4096 {
+            return Err(error(
+                "DSS1100",
+                "Assembly lines must not exceed 4096 bytes",
+            ));
+        }
+    }
+    if origins != 1 {
+        return Err(error("DSS1100", "Use exactly one ORG 16514 ($4082)"));
+    }
+    let assembled =
+        eightbit_z80_core::assembler::assemble(source, 16514, None).map_err(|error| {
+            eightbit_source_core::error(
+                "ZXASM1001",
+                format!(
+                    "Line {}, column {}: {}",
+                    error.line, error.column, error.message
+                ),
+            )
+        })?;
+    if assembled.load_address != 16514 || assembled.entry_address != 16514 {
+        return Err(error(
+            "DSS1100",
+            "The ZX81 REM/USR loader requires origin and entry 16514 ($4082)",
+        ));
+    }
+    let media = package_assembly(target, &assembled.bytes)?;
+    let end = usize::from(assembled.load_address) + assembled.bytes.len();
+    let symbols = assembled
+        .symbols
+        .into_iter()
+        .filter_map(|(name, value)| u16::try_from(value).ok().map(|value| (name, value)))
+        .filter(|(_, value)| *value >= assembled.load_address && usize::from(*value) <= end)
+        .collect();
+    let map = eightbit_source_core::source_map::SourceMap::from_instructions(
+        source,
+        source_path,
+        revision,
+        assembled.load_address,
+        &assembled.bytes,
+        assembled
+            .lines
+            .into_iter()
+            .map(|line| eightbit_source_core::source_map::Instruction {
+                line: line.source_line,
+                address: line.address,
+            })
+            .collect(),
+        symbols,
+    )?;
+    Ok(eightbit_source_core::AssemblyBuild {
+        code: assembled.bytes,
+        media,
+        map,
+        tool_version: "Eightbit Z80 assembler 1",
+    })
+}
 /// Recover the representable BASIC area from a bounded ZX81 P image.
 pub fn decompile_basic(target: &TargetDefinition, bytes: &[u8]) -> Result<String> {
     if bytes.len() < 142 || bytes.len() > 16384 || bytes.last() != Some(&128) {
@@ -253,6 +348,30 @@ pub fn decompile_basic(target: &TargetDefinition, bytes: &[u8]) -> Result<String
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn original_assembler_preserves_native_loader_and_maps_only_instructions() {
+        let source = "ORG $4082\nentry: LD BC,42\nRET\ntable: DB 118,0,255\n";
+        for target in TARGETS {
+            let build =
+                assemble_original(target, source, "src/asm/main.asm", &"a".repeat(64)).unwrap();
+            assert_eq!(build.code, [1, 42, 0, 201, 118, 0, 255]);
+            assert_eq!(build.media, package_assembly(target, &build.code).unwrap());
+            assert_eq!(build.tool_version, "Eightbit Z80 assembler 1");
+            assert_eq!(build.map.instructions.len(), 2);
+            assert_eq!(build.map.instructions[0].address, 16514);
+        }
+        for source in [
+            "ORG 16515\nRET\n",
+            "ORG 16514\nNOP\nORG 16514\nRET\n",
+            "ORG 16514\nINCLUDE \"x.asm\"\n",
+            "ORG 16514\nLD HL,unknown\n",
+            "ORG 16514\nDS 257\n",
+        ] {
+            assert!(
+                assemble_original(&TARGETS[0], source, "src/main.asm", &"a".repeat(64)).is_err()
+            );
+        }
+    }
     #[test]
     fn every_template_has_target_guidance_and_preserves_legacy_projects() {
         static TEMPLATE_ENGINE: eightbit_source::Engine = eightbit_source::Engine {

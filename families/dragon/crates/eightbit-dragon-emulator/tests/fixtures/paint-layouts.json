@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Original synthetic programmes; non-copyrightable graphics output observations only. No OEM instructions or firmware bytes.",
+  "referenceRomSha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
+  "cases": [
+    {
+      "name": "paint-gap-4",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PSET(4,2,2):PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "4090d2354896befa0f4dd6fdabd02055448d6d8a29e5a16c1915d816d4a3eadd"
+    },
+    {
+      "name": "paint-gap-6",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PSET(6,2,2):PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "900b0c8e0ffb04496173798af5cc1308f5b2919e0bc68c14061e65d32c98e4f6"
+    },
+    {
+      "name": "paint-gap-8",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PSET(8,2,2):PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "e5fb7e5b67e6b79397fcad6d1c4e8b2a031a8dc7b46f272fd566ec57c054dd1a"
+    },
+    {
+      "name": "paint-gap-10",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PSET(10,2,2):PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "f296d3aba2c0f326a6c6f56244593be98ac13c43a31256febedca53bc173dbf9"
+    },
+    {
+      "name": "paint-gap-28",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PSET(28,2,2):PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "9d0c3607f9e55138f44502aa866ad741aa60ba883af03c54e61de095a215a6d2"
+    },
+    {
+      "name": "paint-colour-1-vertical",
+      "commands": [
+        "PMODE1,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(10,2)-(10,24),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 1,
+      "bytes": 3072,
+      "sha256": "75a56d5bb5f7abc41bb22208e7b04d3a7f127df7d46d6966047392bf611a4a31"
+    },
+    {
+      "name": "paint-colour-1-horizontal",
+      "commands": [
+        "PMODE1,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(2,10)-(30,10),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 1,
+      "bytes": 3072,
+      "sha256": "ea56929ae1cc4d148d6d3d0e6dc7f349270160af127c899932883802fb1ba453"
+    },
+    {
+      "name": "paint-colour-1-interior-row",
+      "commands": [
+        "PMODE1,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(4,10)-(28,10),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 1,
+      "bytes": 3072,
+      "sha256": "1d6925ede2107f8916d838b39078e289f00de1859dc25ad1fb5cf61f7e07945c"
+    },
+    {
+      "name": "paint-colour-1-top-row",
+      "commands": [
+        "PMODE1,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(2,2)-(30,2),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 1,
+      "bytes": 3072,
+      "sha256": "646cad79d9c1313b440a95899878355a22e9057cdc45cb10e49cc8466bfeac2d"
+    },
+    {
+      "name": "paint-colour-3-vertical",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(10,2)-(10,24),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "e38dc296d291072c39d78cb8e42a78c0f654ea9e8550b492ed4f373eec6af69c"
+    },
+    {
+      "name": "paint-colour-3-horizontal",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(2,10)-(30,10),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "9b90228562f7c81ea42c6ca4d05f09e5d50f61e3eefaa401069b19f84180c001"
+    },
+    {
+      "name": "paint-colour-3-interior-row",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(4,10)-(28,10),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "e75076b894d2cd929a438226c03f984f1b92fc3672c9b8f9c59fb3a82d2d3dcd"
+    },
+    {
+      "name": "paint-colour-3-top-row",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(2,2)-(30,2),PSET:PAINT(5,5),2,4"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "f9534c06cdfcdaf50e6425c500f681cba0f6da17217ad05a972783929f88eb6e"
+    },
+    {
+      "name": "paint-before-vertical",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(10,2)-(10,24),PSET"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "76da5dcf53ca6d41208c1319bb32d7d1f3d95e1d59166f6de2ae86c4cc4997a6"
+    },
+    {
+      "name": "paint-before-horizontal",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(2,10)-(30,10),PSET"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "847f54fdcc240ef6ca773372b0d07a27195da9be006cfdc8ed0723c9c02e6ac2"
+    },
+    {
+      "name": "paint-mode-0",
+      "commands": [
+        "PMODE0,1:PCLS0:LINE(2,2)-(30,24),PSET,B:PAINT(5,5),1,1",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 0,
+      "bytes": 1536,
+      "sha256": "4f65ce8ed7bb2b6b443d2737492c99eab3d1ab2317aa21cb6d2594380b6c4d5e"
+    },
+    {
+      "name": "paint-mode-1",
+      "commands": [
+        "PMODE1,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PAINT(5,5),2,4",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 1,
+      "bytes": 3072,
+      "sha256": "ab0c68347c310e02a010934a39bc07bfaeee1dec8bcf8d51201ab5f67416ea76"
+    },
+    {
+      "name": "paint-mode-2",
+      "commands": [
+        "PMODE2,1:PCLS0:LINE(2,2)-(30,24),PSET,B:PAINT(5,5),1,1",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 2,
+      "bytes": 3072,
+      "sha256": "f3db688e4cf36f28761f6aea158248569a30562ea180ecea40aeb80631ddfea2"
+    },
+    {
+      "name": "paint-mode-3",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PAINT(5,5),2,4",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "0339f3f22a8777d24c9ddab25177f83a615e79858c1dd337cbf475354801b5ce"
+    },
+    {
+      "name": "paint-mode-4",
+      "commands": [
+        "PMODE4,1:PCLS0:LINE(2,2)-(30,24),PSET,B:PAINT(5,5),1,1",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 4,
+      "bytes": 6144,
+      "sha256": "155f641b52d21c5c4e9e5d35911ad81d7b7a00e38d6896e29834ac95c5574cbe"
+    },
+    {
+      "name": "paint-horizontal",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(2,10)-(30,10),PSET:PAINT(5,5),2,4",
+        "A=PPOINT(5,5):B=PPOINT(20,20):C=PPOINT(10,10):D=PPOINT(0,0)"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "9b90228562f7c81ea42c6ca4d05f09e5d50f61e3eefaa401069b19f84180c001"
+    },
+    {
+      "name": "paint-seed-painted",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PSET(5,5,2):PAINT(5,5),2,4",
+        "A=PPOINT(5,5):B=PPOINT(20,20):C=PPOINT(2,2):D=PPOINT(0,0)"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "0339f3f22a8777d24c9ddab25177f83a615e79858c1dd337cbf475354801b5ce"
+    },
+    {
+      "name": "paint-zero",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PAINT(5,5),0,4",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "5e87daeaea7ff4893dd7d171b59112a715018170f27356387dd9ffabe19e8fba"
+    },
+    {
+      "name": "paint-zero-border",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:PAINT(5,5),2,0",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "0339f3f22a8777d24c9ddab25177f83a615e79858c1dd337cbf475354801b5ce"
+    },
+    {
+      "name": "pcls-zero-1",
+      "commands": [
+        "PMODE1,1:PCLS0",
+        "A=PPOINT(0,0):B=PPOINT(255,191)"
+      ],
+      "mode": 1,
+      "bytes": 3072,
+      "sha256": "1a7493ff2f2bde5f78405d46eb01abfeaea9b0a95fa5b6cec211b05faa0cf1d3"
+    },
+    {
+      "name": "pcls-zero-3",
+      "commands": [
+        "PMODE3,1:PCLS0",
+        "A=PPOINT(0,0):B=PPOINT(255,191)"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "884929e08ec0c709c085488ca1b0c61bb9749b0f38bd253c97c073657116f5be"
+    },
+    {
+      "name": "paint-default",
+      "commands": [
+        "PMODE4,1:PCLS0:LINE(2,2)-(30,24),PSET,B:PAINT(5,5)",
+        "A=PPOINT(5,5):B=PPOINT(0,0):C=PPOINT(2,2):D=PPOINT(29,23)"
+      ],
+      "mode": 4,
+      "bytes": 6144,
+      "sha256": "155f641b52d21c5c4e9e5d35911ad81d7b7a00e38d6896e29834ac95c5574cbe"
+    },
+    {
+      "name": "paint-existing",
+      "commands": [
+        "PMODE3,1:PCLS1:LINE(2,2)-(30,24),PSET,B:COLOR2:LINE(10,2)-(10,24),PSET:PAINT(5,5),2,4",
+        "A=PPOINT(5,5):B=PPOINT(20,10):C=PPOINT(10,10):D=PPOINT(0,0)"
+      ],
+      "mode": 3,
+      "bytes": 6144,
+      "sha256": "e38dc296d291072c39d78cb8e42a78c0f654ea9e8550b492ed4f373eec6af69c"
+    }
+  ]
+}

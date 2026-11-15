@@ -1,8 +1,8 @@
 //! Non-destructive BASIC-media detection and opaque disk-image validation.
 
 use crate::{
-    CassetteBlockInfo, CassetteMetadata, MAX_WAV_BYTES, WavCassetteMetadata, decode_wav_cassette,
-    read_tokenised_basic,
+    CassetteBlockInfo, CassetteMetadata, DecodedWavCassette, MAX_WAV_BYTES, WavCassetteMetadata,
+    decode_wav_cassette, read_ascii_basic, read_tokenised_basic,
 };
 use eightbit_dragon_basic_core::{Dialect, Severity, TokenWarning, analyse, detokenise, tokenise};
 use serde::{Deserialize, Serialize};
@@ -26,6 +26,10 @@ pub enum MediaFormatHint {
     CassetteBasic,
     /// PCM WAV containing one tokenised BASIC cassette image.
     WavCassetteBasic,
+    /// ASCII/gapped BASIC cassette image.
+    CassetteAsciiBasic,
+    /// PCM WAV containing one ASCII/gapped BASIC cassette image.
+    WavCassetteAsciiBasic,
 }
 
 /// Detected supported BASIC-media format.
@@ -40,6 +44,10 @@ pub enum BasicMediaFormat {
     CassetteBasic,
     /// PCM WAV containing one tokenised BASIC cassette image.
     WavCassetteBasic,
+    /// ASCII/gapped BASIC cassette image.
+    CassetteAsciiBasic,
+    /// PCM WAV containing one ASCII/gapped BASIC cassette image.
+    WavCassetteAsciiBasic,
 }
 
 impl BasicMediaFormat {
@@ -51,6 +59,8 @@ impl BasicMediaFormat {
             Self::LinkedBasic => "dragon-basic-linked",
             Self::CassetteBasic => "dragon-cassette-tokenised-basic",
             Self::WavCassetteBasic => "dragon-wav-cassette-tokenised-basic",
+            Self::CassetteAsciiBasic => "dragon-cassette-ascii-basic",
+            Self::WavCassetteAsciiBasic => "dragon-wav-cassette-ascii-basic",
         }
     }
 }
@@ -234,16 +244,24 @@ pub fn inspect_basic_media_for_dialect(
         return Err(MediaInspectionError::TooLarge);
     }
     if hint != MediaFormatHint::Auto {
-        return inspect_as(bytes, hint, &dialect).map_err(MediaInspectionError::Invalid);
+        return inspect_as(bytes, hint, &dialect, None).map_err(MediaInspectionError::Invalid);
     }
+    // The tokenised and ASCII candidates share one bounded audio decode.
+    let wav = if wav_shaped {
+        Some(decode_wav_cassette(bytes).map_err(|_| MediaInspectionError::Unsupported)?)
+    } else {
+        None
+    };
     let candidates = [
         MediaFormatHint::AsciiBasic,
         MediaFormatHint::LinkedBasic,
         MediaFormatHint::CassetteBasic,
         MediaFormatHint::WavCassetteBasic,
+        MediaFormatHint::CassetteAsciiBasic,
+        MediaFormatHint::WavCassetteAsciiBasic,
     ]
     .into_iter()
-    .filter_map(|candidate| inspect_as(bytes, candidate, &dialect).ok())
+    .filter_map(|candidate| inspect_as(bytes, candidate, &dialect, wav.as_ref()).ok())
     .collect::<Vec<_>>();
     match candidates.len() {
         0 => Err(MediaInspectionError::Unsupported),
@@ -336,6 +354,7 @@ fn inspect_as(
     bytes: &[u8],
     hint: MediaFormatHint,
     dialect: &Dialect,
+    wav_cache: Option<&DecodedWavCassette>,
 ) -> Result<BasicMediaInspection, String> {
     let (
         format,
@@ -408,7 +427,7 @@ fn inspect_as(
             )
         }
         MediaFormatHint::WavCassetteBasic => {
-            let decoded = decode_wav_cassette(bytes).map_err(|error| error.to_string())?;
+            let decoded = cached_wav(bytes, wav_cache)?;
             let cassette =
                 read_tokenised_basic(&decoded.cassette).map_err(|error| error.to_string())?;
             let recovered =
@@ -420,8 +439,33 @@ fn inspect_as(
                 Some(cassette.filename),
                 Some(cassette.metadata),
                 cassette.blocks,
-                Some(decoded.metadata),
+                Some(decoded.metadata.clone()),
                 warnings(recovered.warnings),
+            )
+        }
+        MediaFormatHint::CassetteAsciiBasic | MediaFormatHint::WavCassetteAsciiBasic => {
+            let decoded = if hint == MediaFormatHint::WavCassetteAsciiBasic {
+                Some(cached_wav(bytes, wav_cache)?)
+            } else {
+                None
+            };
+            let cassette = read_ascii_basic(decoded.as_ref().map_or(bytes, |wav| &wav.cassette))
+                .map_err(|error| error.to_string())?;
+            let (source, recovered_tokens, warnings) =
+                recover_ascii_cassette(&cassette.text, dialect)?;
+            (
+                if decoded.is_some() {
+                    BasicMediaFormat::WavCassetteAsciiBasic
+                } else {
+                    BasicMediaFormat::CassetteAsciiBasic
+                },
+                source,
+                recovered_tokens,
+                Some(cassette.filename),
+                Some(cassette.metadata),
+                cassette.blocks,
+                decoded.map(|wav| wav.metadata.clone()),
+                warnings,
             )
         }
         MediaFormatHint::Auto => return Err("automatic selection is not a format".to_owned()),
@@ -455,6 +499,85 @@ fn inspect_as(
         wav_metadata,
         warnings,
     })
+}
+
+fn cached_wav<'a>(
+    bytes: &[u8],
+    cached: Option<&'a DecodedWavCassette>,
+) -> Result<std::borrow::Cow<'a, DecodedWavCassette>, String> {
+    match cached {
+        Some(wav) => Ok(std::borrow::Cow::Borrowed(wav)),
+        None => decode_wav_cassette(bytes)
+            .map(std::borrow::Cow::Owned)
+            .map_err(|error| error.to_string()),
+    }
+}
+
+fn recover_ascii_cassette(
+    text: &[u8],
+    dialect: &Dialect,
+) -> Result<(String, Vec<u8>, Vec<MediaWarning>), String> {
+    if text.len() > MAX_BASIC_SOURCE_BYTES {
+        return Err("ASCII BASIC input exceeds 1 MiB".to_owned());
+    }
+    // CLOAD applies complete CR-terminated lines in order. Replacements and
+    // deletion lines are resolved before the existing project parser validates
+    // the recovered programme. LF is ignored by the guest line input routine.
+    let mut lines = std::collections::BTreeMap::new();
+    let mut line = Vec::new();
+    let mut last_cr = 0;
+    for (offset, byte) in text.iter().copied().enumerate() {
+        if byte == b'\n' {
+            continue;
+        }
+        if byte != b'\r' {
+            line.push(byte);
+            continue;
+        }
+        last_cr = offset + 1;
+        let source = std::str::from_utf8(&line).map_err(|_| "cassette text is not ASCII")?;
+        let source = source.trim_start_matches(' ');
+        if !source.is_empty() {
+            let digits = source.bytes().take_while(u8::is_ascii_digit).count();
+            let number = source[..digits]
+                .parse::<u16>()
+                .ok()
+                .filter(|number| *number > 0 && *number <= dialect.maximum_line_number)
+                .ok_or("cassette line number is outside the project dialect")?;
+            let body = source[digits..].trim_start_matches(' ');
+            if body.is_empty() {
+                lines.remove(&number);
+            } else {
+                lines.insert(number, body.to_owned());
+            }
+        }
+        line.clear();
+    }
+    let mut source = String::new();
+    for (number, body) in lines {
+        use std::fmt::Write;
+        writeln!(source, "{number} {body}").map_err(|_| "cannot recover cassette listing")?;
+    }
+    let analysis = analyse(&source, dialect);
+    if analysis
+        .diagnostics
+        .iter()
+        .any(|item| item.severity == Severity::Error)
+    {
+        return Err("cassette ASCII listing has source errors".to_owned());
+    }
+    let tokenised = tokenise(&analysis.program, dialect).map_err(|error| error.to_string())?;
+    let recovered = detokenise(&tokenised.bytes, dialect).map_err(|error| error.to_string())?;
+    let warnings = if line.is_empty() {
+        Vec::new()
+    } else {
+        vec![MediaWarning {
+            code: "DSM2010".to_owned(),
+            offset: last_cr,
+            message: "Unterminated final cassette text was discarded, as by CLOAD.".to_owned(),
+        }]
+    };
+    Ok((recovered.source, tokenised.bytes, warnings))
 }
 
 fn warnings(warnings: Vec<TokenWarning>) -> Vec<MediaWarning> {

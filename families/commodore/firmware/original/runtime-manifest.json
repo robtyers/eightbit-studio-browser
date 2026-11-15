@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "identity": "eightbit-c64-original-development-0.5",
+  "qualification": "original guest BASIC V2, editor and KERNAL; named qualification and compatibility limits apply",
+  "sourceSha256": "77a1e8ca4a2649a96fc0fd5586258e2d3a031ff65f1d8f5e607999d31b3559e8",
+  "builderSha256": "0b5868b7528e4fdc6ee86cdfa8012036cb667b2d231aa15cdecb34b0b1610920",
+  "imageSha256": "b764439ff1b65bc8677b93ab84860686bfee34a1da2a7531f3562037ad347ba8",
+  "imageBytes": 37260,
+  "pageCount": 3,
+  "layoutSha256": "058f6a85a20d5b8e8ef364c31f78805b15a097cd4274ba8afbda6c67928ccc08",
+  "segments": {
+    "PAGE0": {
+      "start": 40960,
+      "bytes": 7736
+    },
+    "PAGE1": {
+      "start": 40960,
+      "bytes": 351
+    },
+    "PAGE2": {
+      "start": 40960,
+      "bytes": 5438
+    },
+    "FONT": {
+      "start": 53248,
+      "bytes": 4096
+    },
+    "CODE": {
+      "start": 57344,
+      "bytes": 5718
+    },
+    "GATES": {
+      "start": 63488,
+      "bytes": 278
+    },
+    "RODATA": {
+      "start": 63776,
+      "bytes": 941
+    },
+    "EDITOR": {
+      "start": 64768,
+      "bytes": 512
+    },
+    "JUMPS": {
+      "start": 65409,
+      "bytes": 117
+    },
+    "VECTORS": {
+      "start": 65530,
+      "bytes": 6
+    }
+  },
+  "sources": [
+    {
+      "path": "families/commodore/firmware/original/arrays.inc",
+      "sha256": "2206d98ef73c5424e2774c65b8e725a568ac26c8dcbab54e9c3bb0e9c57196ee"
+    },
+    {
+      "path": "families/commodore/firmware/original/basic.s",
+      "sha256": "683c3d4deedf5dece38d304204c4537ff4c41db3771c3805b9a6b3b41a0efe0a"
+    },
+    {
+      "path": "families/commodore/firmware/original/branches.inc",
+      "sha256": "d3cbae3bc4a013f4312a80e1e228e8d40c539c648194ad5bce53ec74558493b2"
+    },
+    {
+      "path": "families/commodore/firmware/original/characters.json",
+      "sha256": "a9a83e3809de189311432441dd661d8014c20c0a1b97684d6e2c764bd008e3de"
+    },
+    {
+      "path": "families/commodore/firmware/original/channels.inc",
+      "sha256": "dd920028eab07ddedc5a07afe77684e8ab2305dbd3595c68e498a10c98872eb4"
+    },
+    {
+      "path": "families/commodore/firmware/original/control.inc",
+      "sha256": "977fda435c4937bdb6e232b60d5e87001702d78fdd4fa4ab492773a931ac83ba"
+    },
+    {
+      "path": "families/commodore/firmware/original/continue.inc",
+      "sha256": "b6f95704c8bb669c08886795d4aab0133da5b73a458911b9f107e5d5fad2cf85"
+    },
+    {
+      "path": "families/commodore/firmware/original/data.inc",
+      "sha256": "98e3540a6fe29db7de43d7511ea75c509e7a6c9d2f8da34bf630a5337bfb7e74"
+    },
+    {
+      "path": "families/commodore/firmware/original/editor.inc",
+      "sha256": "99a896f489f5a97b4ac523994245087ef77e64400b683eb174fce724cd2cbcfe"
+    },
+    {
+      "path": "families/commodore/firmware/original/expressions.inc",
+      "sha256": "283dc037debe7a21cf9eaec4262328eb0a0fc7903bc22024ebd269d8d2c86654"
+    },
+    {
+      "path": "families/commodore/firmware/original/files.inc",
+      "sha256": "dc30e8e63553a8413b606aa788f6447b8090dddb6dc5f70d7b2589f10b0b30b0"
+    },
+    {
+      "path": "families/commodore/firmware/original/functions.inc",
+      "sha256": "a2f1b1632002560186433f39ac38faee4b39651b9732b408b5688749b478035d"
+    },
+    {
+      "path": "families/commodore/firmware/original/input.inc",
+      "sha256": "5f204dd28a2741b8c65124be7036f07356bbd836c9315df195b86a558b50b344"
+    },
+    {
+      "path": "families/commodore/firmware/original/kernal.s",
+      "sha256": "39a8dd935887f3f7d12cf6582bbc270cd6df0e4ab304b51c7a8392293481105d"
+    },
+    {
+      "path": "families/commodore/firmware/original/linker.cfg",
+      "sha256": "dd5e127c5fbbebd06275d65a0b7ca62f9101dd2d6730c95ce77b7308f429544d"
+    },
+    {
+      "path": "families/commodore/firmware/original/loops.inc",
+      "sha256": "c42ca3745198110b79c770cd158973955d19dd476631e312b9edd97eb4aff5a0"
+    },
+    {
+      "path": "families/commodore/firmware/original/math-constants.inc",
+      "sha256": "4a677cb559679ecff40e8051bcee221e48fd641df71907802287d55ec5dc447c"
+    },
+    {
+      "path": "families/commodore/firmware/original/memory.inc",
+      "sha256": "58d5135fab8452850568ac0b27ab7b37410ad66c60ca405e3aa340e5256b17a7"
+    },
+    {
+      "path": "families/commodore/firmware/original/numbers.s",
+      "sha256": "636bd5e48551a1d297a3a8b02064c150e9d4b7c3afd62169f02aad6b913b5a53"
+    },
+    {
+      "path": "families/commodore/firmware/original/pages.s",
+      "sha256": "91d2a11a74cc0a0f545a89de08ba46c9b8663fc1be0beb424b1d4299fcaf5f5e"
+    },
+    {
+      "path": "families/commodore/firmware/original/square-root.inc",
+      "sha256": "6a74437a6083d649bff6b270acb1686933b39b8ab13253b13a35890c4c7c6464"
+    },
+    {
+      "path": "families/commodore/firmware/original/strings.inc",
+      "sha256": "8742306311e107f461b0e7fc0307925d7c2e6cb95b4dc06b997b8410da9dc338"
+    },
+    {
+      "path": "families/commodore/firmware/original/time.inc",
+      "sha256": "549d378e4763545509c0d3afaa27a647df5bde42d58ad83b5690358ff81ea27f"
+    },
+    {
+      "path": "families/commodore/firmware/original/transcendentals.inc",
+      "sha256": "6b463c2f2b3ad374f0b1a747aa43d434eece9092c4a676a7624a3f8374bce8c9"
+    },
+    {
+      "path": "families/commodore/crates/eightbit-commodore-core/tests/fixtures/basic-v2-keywords.txt",
+      "sha256": "6d4c935816ae49506a76a797b96d1544dc553fd5bfd82018c75d2cf05976cf5c"
+    }
+  ],
+  "tools": {
+    "ca65": {
+      "version": "ca65 V2.18 - N/A",
+      "sha256": "578f1d38f8162b500d539fe9da27d3db5d307c96fcd627adc9fa49435d0fef49"
+    },
+    "ld65": {
+      "version": "ld65 V2.18 - N/A",
+      "sha256": "e34d4e47b038b2b57240790575acf36da55db35076b7c487d44cead9fcb6cd5a"
+    }
+  },
+  "windows": [
+    {
+      "name": "basic0",
+      "bytes": 8192,
+      "sha256": "b84ce75d032d10d01992e8091a8debbbeb99f4bb967092ddf643dd9240dd4c1d"
+    },
+    {
+      "name": "basic1",
+      "bytes": 8192,
+      "sha256": "7e3d8e9a5bfce06ea02c5764aecd750ef4ac35c5e3140469b62ba7ff0ed783e2"
+    },
+    {
+      "name": "basic2",
+      "bytes": 8192,
+      "sha256": "beb5931e8bac37d505fbe5f060622420867c4710619bfa11d4ba21f2a921a25d"
+    },
+    {
+      "name": "kernal",
+      "bytes": 8192,
+      "sha256": "d46f15f1a5e2f14827daccd8e966e3bb6180aae5288d944486ddb14fd80a8f0b"
+    },
+    {
+      "name": "characters",
+      "bytes": 4096,
+      "sha256": "9a66233bbf5dc280e285b3544b2bf87dff13c90b9db95fa759773efb3e30fd22"
+    }
+  ],
+  "gates": [
+    {
+      "entry": 63488,
+      "target": 41216,
+      "page": 1,
+      "kind": "call"
+    },
+    {
+      "entry": 63520,
+      "target": 57638,
+      "page": 0,
+      "kind": "interrupt"
+    },
+    {
+      "entry": 63552,
+      "target": 57669,
+      "page": 0,
+      "kind": "interrupt"
+    },
+    {
+      "entry": 63584,
+      "target": 59093,
+      "page": 0,
+      "kind": "recovery"
+    },
+    {
+      "entry": 63616,
+      "target": 41216,
+      "page": 2,
+      "kind": "call"
+    },
+    {
+      "entry": 63648,
+      "target": 46222,
+      "page": 2,
+      "kind": "call"
+    },
+    {
+      "entry": 63680,
+      "target": 46302,
+      "page": 2,
+      "kind": "call"
+    },
+    {
+      "entry": 63712,
+      "target": 46338,
+      "page": 2,
+      "kind": "call"
+    },
+    {
+      "entry": 63744,
+      "target": 46367,
+      "page": 2,
+      "kind": "call"
+    }
+  ],
+  "publicBasicRanges": [
+    {
+      "address": 40960,
+      "length": 4
+    }
+  ],
+  "limits": [
+    "Development runtime; not universal historical software or silicon compatibility",
+    "Decimal literals bounded to 80 mantissa digits; real CPU expression/loop/call stack guarded",
+    "Conservative stack capacity differs from the historical interpreter",
+    "Original transcendental approximations and random sequence; named tolerance corpus",
+    "TI$ assignment requires six digits; undocumented nondigit conversions unsupported",
+    "Independent character drawings preserve symbol roles, not original pixel shapes",
+    "No attached peripheral, cartridge, NTSC or host filesystem",
+    "Studio/package acceptance is recorded separately; no public release or default promotion"
+  ]
+}

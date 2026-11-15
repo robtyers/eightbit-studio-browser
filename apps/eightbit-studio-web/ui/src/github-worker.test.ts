@@ -146,3 +146,34 @@ it("preserves schema-2 machine profiles in explicit cloud copies and rejects uns
   }
   expect(writes).toHaveLength(3);
 });
+
+it("preserves bounded assembly settings and its BASIC support file without accepting binary data", async () => {
+  const env = environment(), cookie = await login(env);
+  const assembly = { ...PROJECT, schemaVersion: 2, target: "dragon32", kind: "assembly", source: "START\n rts\n", manifest: 'schema_version = 3\n[assembler]\nload_address = 28672\nentry_symbol = "START"\n', supportFiles: { "src/basic/main.bas": "10 END\n" } };
+  for (const invalid of [{ ...assembly, bytes: [0x39] }, { ...assembly, manifest: "x".repeat(65_537) }, { ...assembly, supportFiles: { "other.bin": "rts" } }]) {
+    expect((await worker.fetch(request("save", cookie, { repository: "me/private", id: ID, sha: remoteSha, project: invalid }), env)).status).toBe(400);
+  }
+  expect(writes).toHaveLength(0);
+  expect((await worker.fetch(request("save", cookie, { repository: "me/private", id: ID, sha: remoteSha, project: assembly }), env)).status).toBe(200);
+  expect(JSON.parse(atob(String(writes[0]?.body.content)))).toEqual(assembly);
+});
+
+it("transports bounded multi-source assembly text and rejects unsafe paths, assets and oversized sets", async () => {
+  const env = environment(), cookie = await login(env);
+  const project = { ...PROJECT, schemaVersion: 2, target: "dragon32", kind: "assembly", source: "START rts\n", manifest: 'schema_version = 3\n[assembler]\nsources = ["asm/main.asm", "asm/data.asm"]\n', supportFiles: { "asm/data.asm": "DATA fcb 1\n", "src/MAIN.BAS": "10 REM kept for desktop compatibility\n", "AGENTS.md": "User guidance" } };
+  for (const path of ["../escape.asm", "/root.asm", "asm/../escape.asm", "asm/./bad.asm", "asm//bad.asm", "C:/bad.asm", "asm\\bad.asm", "picture.png", "other.rom", "source.asm.bin"]) {
+    expect((await worker.fetch(request("save", cookie, { repository: "me/private", id: ID, sha: remoteSha, project: { ...project, supportFiles: { [path]: "text" } } }), env)).status).toBe(400);
+  }
+  for (const invalid of [
+    { ...project, source: "START\0rts" },
+    { ...project, manifest: "schema_version = 3\0" },
+    { ...project, supportFiles: { "asm/data.asm": "nul\0text" } },
+    { ...project, supportFiles: Object.fromEntries(Array.from({ length: 64 }, (_, index) => [`asm/file${index}.asm`, "rts"])) },
+    { ...project, supportFiles: { "src/ONE.BAS": "10 END", "src/TWO.BAS": "20 END" } },
+    { ...project, supportFiles: { "asm/data.asm": "x".repeat(1024 * 1024) } },
+    { ...project, supportFiles: { "AGENTS.md": "x".repeat(65_537) } },
+  ]) expect((await worker.fetch(request("save", cookie, { repository: "me/private", id: ID, sha: remoteSha, project: invalid }), env)).status).toBe(400);
+  expect(writes).toHaveLength(0);
+  expect((await worker.fetch(request("save", cookie, { repository: "me/private", id: ID, sha: remoteSha, project }), env)).status).toBe(200);
+  expect(JSON.parse(atob(String(writes[0]?.body.content)))).toEqual(project);
+});

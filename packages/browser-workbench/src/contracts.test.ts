@@ -1,6 +1,12 @@
-import { buildResult, decompiledSource, highlights, machineCatalog, result, verifiedFirmware } from "./contracts";
+import { buildResult, cassetteAudio, decompiledSource, highlights, machineCatalog, result, verifiedFirmware } from "./contracts";
 
 describe("Rust browser presentation boundary", () => {
+  it("accepts bounded binary cassette audio and rejects JSON sample arrays", () => {
+    const response = (audio: unknown) => ({ schemaVersion: 1, ok: true, result: { audio } });
+    const audio = new Uint8Array(44);
+    expect(cassetteAudio(response(audio))).toBe(audio);
+    for (const invalid of [[], Array(44).fill(0), new Uint8Array(43), new Uint8Array(64 * 1024 * 1024 + 1), null, "audio"]) expect(() => cassetteAudio(response(invalid))).toThrow();
+  });
   it("accepts the bounded BBC machine profile and rejects oversized ROM catalogues", () => {
     const machine = { id: "bbc-model-b", label: "BBC Micro Model B (32 KB)", cpu: "6502", extension: "ssd", manifest: "bbc.toml", runtime: "mame-bbc", romSize: 66496, romNames: ["os12.rom", "basic2.rom", "dnfs120.rom", "cm62024.bin", "saa5050"], sample: "10 END\n" };
     const value = (item: unknown) => ({ schemaVersion: 1, ok: true, result: { machines: [item] } });
@@ -31,4 +37,19 @@ describe("Rust browser presentation boundary", () => {
     ]) expect(() => highlights(value(ranges), "10 END")).toThrow();
     expect(() => highlights(value([{ start: 0, end: 2, kind: "number" }]), "10 £")).toThrow();
   });
+});
+
+it("validates imported identities and assembly build addresses without accepting runtime authority", () => {
+  const identity = { schemaVersion: 1, input: { format: "raw", loadAddress: 28672, executionAddress: 28672 }, inputSha256: "a".repeat(64), cassetteSha256: "b".repeat(64) };
+  const response = (machineCode: unknown) => ({ schemaVersion: 1, ok: true, result: { kind: "assembly", source: "START\n rts\n", warnings: [], machineCode, preview: { loadAddress: 28672, executionAddress: 28672 } } });
+  expect(decompiledSource(response(identity)).machineCode).toEqual(identity);
+  for (const bad of [{ ...identity, input: { format: "cartridge" } }, { ...identity, input: { ...identity.input, command: "run" } }, { ...identity, inputSha256: "x" }, { ...identity, schemaVersion: 2 }, { ...identity, input: { ...identity.input, loadAddress: 65536 } }, { ...identity, bytes: [0x39] }]) expect(() => decompiledSource(response(bad))).toThrow();
+});
+
+it("distinguishes the original Vectrex cartridge receipt from a BASIC round trip", () => {
+  const response = (cartridgeVerified: unknown) => ({ schemaVersion: 1, ok: true, result: { summary: { tokenBytes: 204, cassetteSha256: "a".repeat(64) }, cassette: [103, 32], roundTripVerified: false, cartridgeVerified } });
+  expect(buildResult(response(true))).toMatchObject({ cartridgeVerified: true, roundTripVerified: false });
+  for (const bad of ["true", 1, {}, null]) expect(() => buildResult(response(bad))).toThrow();
+  const machine = { id: "vectrex", label: "Vectrex", cpu: "6809", extension: "bin", manifest: "vectrex.toml", runtime: "original-vectrex", romSize: 8192, romNames: ["executive.rom"], sample: " org 0\n", assemblySample: " org 0\n" };
+  expect(machineCatalog({ schemaVersion: 1, ok: true, result: { machines: [machine] } })[0]).toEqual(machine);
 });

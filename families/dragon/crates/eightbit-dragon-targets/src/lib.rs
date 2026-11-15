@@ -24,7 +24,7 @@ pub const DRAGON32: TargetDefinition = TargetDefinition {
         ProjectTemplate {
             id: "basic-assembly",
             name: "BASIC + 6809 Assembly",
-            description: "Includes a BASIC launcher and assembly entry point. Requires LWTOOLS to build.",
+            description: "Includes a BASIC launcher and assembly entry point.",
         },
     ],
     capabilities: &[

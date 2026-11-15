@@ -1,0 +1,20 @@
+[package]
+name = "eightbit-spectrum-emulator"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+eightbit-z80-core = { path = "../../../../cpu/z80/eightbit-z80-core" }
+
+[build-dependencies]
+eightbit-z80-core = { path = "../../../../cpu/z80/eightbit-z80-core" }
+sha2.workspace = true
+
+[dev-dependencies]
+sha2.workspace = true
+
+[lints]
+workspace = true

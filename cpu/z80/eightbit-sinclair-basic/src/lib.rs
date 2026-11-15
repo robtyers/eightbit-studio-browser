@@ -4,6 +4,7 @@
 use eightbit_source_core::{Result, error};
 pub struct Dialect {
     pub tokens: &'static [(&'static str, u8)],
+    pub extra_statements: &'static [&'static str],
     pub extra_tokens: &'static [(&'static str, u8)],
     pub escaped_quote: Option<u8>,
     pub encode: fn(u8) -> Option<u8>,
@@ -64,6 +65,13 @@ fn encode(d: &Dialect, byte: u8) -> Result<u8> {
 }
 /// Each source line has an explicit ascending native BASIC line number.
 pub fn program(source: &str, d: &Dialect) -> Result<Vec<u8>> {
+    program_with(source, d, false)
+}
+/// ZX80 line records omit the length and hidden floating-point literal bytes.
+pub fn integer_program(source: &str, d: &Dialect) -> Result<Vec<u8>> {
+    program_with(source, d, true)
+}
+fn program_with(source: &str, d: &Dialect, integer: bool) -> Result<Vec<u8>> {
     if source.len() > 128 * 1024 || !source.is_ascii() {
         return Err(error("DSS1110", "Use ASCII BASIC source up to 128 KiB"));
     }
@@ -92,10 +100,12 @@ pub fn program(source: &str, d: &Dialect) -> Result<Vec<u8>> {
             return Err(bad());
         }
         previous = line_number;
-        let body = body(line[split..].trim(), d)
+        let body = body_with(line[split..].trim(), d, integer)
             .map_err(|e| error(e.code, format!("Source line {}: {}", index + 1, e.message)))?;
         out.extend(line_number.to_be_bytes());
-        out.extend(u16::try_from(body.len()).map_err(|_| bad())?.to_le_bytes());
+        if !integer {
+            out.extend(u16::try_from(body.len()).map_err(|_| bad())?.to_le_bytes());
+        }
         out.extend(body);
         if out.len() > 60000 {
             return Err(error("DSS1111", "BASIC program exceeds supported memory"));
@@ -110,6 +120,19 @@ pub fn program(source: &str, d: &Dialect) -> Result<Vec<u8>> {
     Ok(out)
 }
 pub fn body(source: &str, d: &Dialect) -> Result<Vec<u8>> {
+    body_with(source, d, false)
+}
+/// Encode the original integer dialect without changing existing float dialects.
+pub fn integer_body(source: &str, d: &Dialect) -> Result<Vec<u8>> {
+    body_with(source, d, true)
+}
+fn body_with(source: &str, d: &Dialect, integer: bool) -> Result<Vec<u8>> {
+    if source.len() > 4096 || !source.is_ascii() {
+        return Err(error(
+            "DSS1110",
+            "Use an ASCII BASIC line up to 4096 characters",
+        ));
+    }
     let text = source.as_bytes();
     let mut i = 0;
     let mut out = Vec::new();
@@ -144,7 +167,10 @@ pub fn body(source: &str, d: &Dialect) -> Result<Vec<u8>> {
             continue;
         }
         if b == b':' && !d.statements {
-            return Err(error("DSS1110", "ZX81 permits one statement per line"));
+            return Err(error(
+                "DSS1110",
+                "The selected BASIC dialect permits one statement per line",
+            ));
         }
         if b == b':' {
             first = true;
@@ -172,6 +198,12 @@ pub fn body(source: &str, d: &Dialect) -> Result<Vec<u8>> {
             })
             .max_by_key(|(word, _)| word.len());
         if let Some((word, code)) = token {
+            if integer && matches!(*word, "BIN" | "DEF FN") {
+                return Err(error(
+                    "DSS1110",
+                    "The integer dialect has no BIN or DEF FN form",
+                ));
+            }
             if first
                 && !matches!(
                     *word,
@@ -232,19 +264,17 @@ pub fn body(source: &str, d: &Dialect) -> Result<Vec<u8>> {
                         | "VERIFY"
                         | "DEF FN"
                 )
+                && !d.extra_statements.contains(word)
             {
                 return Err(error("DSS1110", "Expected a supported BASIC statement"));
-            }
-            if *word == "DEF FN" {
-                return Err(error(
-                    "DSS1110",
-                    "DEF FN parameter encoding is not supported yet",
-                ));
             }
             out.push(*code);
             i += word.len();
             first = false;
             rem = *word == "REM";
+            if *word == "DEF FN" {
+                i = definition_parameters(text, i, d, &mut out)?;
+            }
             if *word == "BIN" {
                 while text.get(i) == Some(&b' ') {
                     out.push(encode(d, b' ')?);
@@ -289,14 +319,31 @@ pub fn body(source: &str, d: &Dialect) -> Result<Vec<u8>> {
                 }
             }
             let literal = &source[start..i];
-            let value = literal
-                .parse::<f64>()
-                .map_err(|_| error("DSS1110", "Invalid numeric literal"))?;
+            let value = if integer {
+                if !literal.bytes().all(|byte| byte.is_ascii_digit()) {
+                    return Err(error(
+                        "DSS1110",
+                        "ZX80 literals must be decimal integers from 0 to 32767",
+                    ));
+                }
+                let value = literal
+                    .parse::<u16>()
+                    .ok()
+                    .filter(|value| *value <= 32767)
+                    .ok_or_else(|| error("DSS1110", "ZX80 literal exceeds 32767"))?;
+                f64::from(value)
+            } else {
+                literal
+                    .parse::<f64>()
+                    .map_err(|_| error("DSS1110", "Invalid numeric literal"))?
+            };
             for b in literal.bytes() {
                 out.push(encode(d, b.to_ascii_uppercase())?);
             }
-            out.push(d.number_marker);
-            out.extend(number(value)?);
+            if !integer {
+                out.push(d.number_marker);
+                out.extend(number(value)?);
+            }
             continue;
         }
         if b.is_ascii_alphabetic() {
@@ -321,8 +368,94 @@ pub fn body(source: &str, d: &Dialect) -> Result<Vec<u8>> {
     out.push(d.newline);
     Ok(out)
 }
+
+fn definition_parameters(
+    text: &[u8],
+    mut position: usize,
+    d: &Dialect,
+    out: &mut Vec<u8>,
+) -> Result<usize> {
+    use std::collections::BTreeSet;
+    fn spaces(text: &[u8], position: &mut usize, d: &Dialect, out: &mut Vec<u8>) -> Result<()> {
+        while text.get(*position).is_some_and(u8::is_ascii_whitespace) {
+            out.push(encode(d, b' ')?);
+            *position += 1;
+        }
+        Ok(())
+    }
+    fn name(
+        text: &[u8],
+        position: &mut usize,
+        d: &Dialect,
+        out: &mut Vec<u8>,
+    ) -> Result<(u8, bool)> {
+        spaces(text, position, d, out)?;
+        let letter = text
+            .get(*position)
+            .copied()
+            .filter(u8::is_ascii_alphabetic)
+            .ok_or_else(|| {
+                error(
+                    "DSS1110",
+                    "DEF FN names and parameters must be single letters with an optional $",
+                )
+            })?;
+        out.push(encode(d, letter.to_ascii_uppercase())?);
+        *position += 1;
+        let string = text.get(*position) == Some(&b'$');
+        if string {
+            out.push(encode(d, b'$')?);
+            *position += 1;
+        }
+        Ok((letter.to_ascii_uppercase(), string))
+    }
+    let invalid = || error("DSS1110", "Use DEF FN name(parameters)=expression");
+    name(text, &mut position, d, out)?;
+    spaces(text, &mut position, d, out)?;
+    if text.get(position) != Some(&b'(') {
+        return Err(invalid());
+    }
+    out.push(encode(d, b'(')?);
+    position += 1;
+    spaces(text, &mut position, d, out)?;
+    let mut parameters = BTreeSet::new();
+    if text.get(position) != Some(&b')') {
+        loop {
+            let parameter = name(text, &mut position, d, out)?;
+            if parameters.len() >= 255 || !parameters.insert(parameter) {
+                return Err(invalid());
+            }
+            out.push(d.number_marker);
+            out.extend([0; 5]);
+            spaces(text, &mut position, d, out)?;
+            if text.get(position) == Some(&b')') {
+                break;
+            }
+            if text.get(position) != Some(&b',') {
+                return Err(invalid());
+            }
+            out.push(encode(d, b',')?);
+            position += 1;
+        }
+    }
+    out.push(encode(d, b')')?);
+    position += 1;
+    spaces(text, &mut position, d, out)?;
+    if text.get(position) != Some(&b'=') {
+        return Err(invalid());
+    }
+    out.push(encode(d, b'=')?);
+    Ok(position + 1)
+}
 /// Recover only the representable native BASIC subset, retaining numeric and token integrity.
 pub fn listing(bytes: &[u8], dialect: &Dialect) -> Result<String> {
+    listing_with(bytes, dialect, false)
+}
+/// Recover only canonical, representable ZX80 integer line records.
+pub fn integer_listing(bytes: &[u8], dialect: &Dialect) -> Result<String> {
+    listing_with(bytes, dialect, true)
+}
+fn listing_with(bytes: &[u8], dialect: &Dialect, integer: bool) -> Result<String> {
     if bytes.is_empty() || bytes.len() > 60000 {
         return Err(error("DSS1120", "Invalid BASIC programme size"));
     }
@@ -330,16 +463,25 @@ pub fn listing(bytes: &[u8], dialect: &Dialect) -> Result<String> {
     let mut pos = 0usize;
     let mut previous = 0;
     while pos < bytes.len() {
+        let header_bytes = if integer { 2 } else { 4 };
         let header = bytes
-            .get(pos..pos + 4)
+            .get(pos..pos + header_bytes)
             .ok_or_else(|| error("DSS1120", "Truncated BASIC line"))?;
         let line = u16::from_be_bytes([header[0], header[1]]);
-        let length = usize::from(u16::from_le_bytes([header[2], header[3]]));
+        let length = if integer {
+            bytes[pos + 2..]
+                .iter()
+                .position(|byte| *byte == dialect.newline)
+                .map(|length| length + 1)
+                .ok_or_else(|| error("DSS1120", "Missing BASIC line terminator"))?
+        } else {
+            usize::from(u16::from_le_bytes([header[2], header[3]]))
+        };
         if line <= previous || line > dialect.max_line || length == 0 || length > 4096 {
             return Err(error("DSS1120", "Invalid BASIC line number or length"));
         }
         previous = line;
-        pos += 4;
+        pos += header_bytes;
         let body = bytes
             .get(pos..pos + length)
             .ok_or_else(|| error("DSS1120", "Truncated BASIC body"))?;
@@ -352,7 +494,7 @@ pub fn listing(bytes: &[u8], dialect: &Dialect) -> Result<String> {
         let mut index = 0;
         while index + 1 < body.len() {
             let byte = body[index];
-            if !quoted && !rem && byte == dialect.number_marker {
+            if !integer && !quoted && !rem && byte == dialect.number_marker {
                 if index + 6 >= body.len() {
                     return Err(error("DSS1120", "Truncated numeric literal"));
                 }
@@ -396,7 +538,7 @@ pub fn listing(bytes: &[u8], dialect: &Dialect) -> Result<String> {
         }
         pos += length;
     }
-    if program(&source, dialect)? != bytes {
+    if program_with(&source, dialect, integer)? != bytes {
         return Err(error(
             "DSS1120",
             "Programme uses unsupported tokens or noncanonical numeric data",

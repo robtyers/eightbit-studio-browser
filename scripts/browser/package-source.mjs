@@ -5,8 +5,20 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { renderSourcePage } from './source-page.mjs';
 import { configuredSourceRelease } from './source-release.mjs';
+import { originalMonitorPath, verifyOriginalMonitor } from './original-monitor.mjs';
+import { originalBasicPath, verifyOriginalBasic } from './original-basic.mjs';
+import { originalBasicExtendedPath, originalBasicExtendedFiles, originalBasicExtendedSources, verifyOriginalBasicExtended } from './original-basic-extended.mjs';
+import { browserSharedFiles, browserSharedExport, excludedBrowserSource } from './source-workbench.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+verifyOriginalMonitor(root);
+verifyOriginalBasic(root);
+const basicReceipt = verifyOriginalBasicExtended(root);
+execFileSync('python3', ['scripts/build-dragon64-basic.py', '--verify'], { cwd: root, stdio: 'pipe', timeout: 30_000 });
+const basicSourceNotice = basicReceipt.status === 'qualified'
+  ? 'Verified original Apache-2.0 monitor and qualified expanded 32 KiB original Dragon 32 BASIC firmware/source are supplied under ADRs 0056/0057. Built-in Dragon 32 is the default for BASIC and RAM machine code, including browser assembly source builds. Website cartridges are unsupported; use the desktop edition with XRoar and your own supported firmware. The retained 16 KiB development image has its own identity.'
+  : 'Verified original Apache-2.0 monitor firmware and unqualified original BASIC development source/images are supplied under ADRs 0056/0057. The expanded image has not been qualified for normal Run or Debug; add your own supported historical firmware to play BASIC programmes.';
+execFileSync('python3', ['scripts/test_c64_original_build.py'], {cwd:root,stdio:'pipe',timeout:30_000});
 const output = join(root, 'apps/eightbit-studio-web/ui/public/generated');
 const cache = join(root, '.cache/xroar-web');
 const release = configuredSourceRelease();
@@ -18,27 +30,29 @@ const temporary = mkdtempSync(join(cache, 'source-'));
 const source = join(temporary, 'browser-source'); mkdirSync(source);
 const excluded = new Set(['node_modules', 'dist', 'target', 'generated', '.DS_Store', '.wrangler', '.dev.vars']);
 function copyTree(from, to) {
+  if (excludedBrowserSource(relative(root, from).replaceAll('\\', '/'))) return;
   const stat = lstatSync(from);
   if (stat.isSymbolicLink()) throw new Error('Source bundle refuses symlinks');
   if (stat.isDirectory()) {
     mkdirSync(to, { recursive: true });
     for (const name of readdirSync(from).sort()) if (!excluded.has(name) && !name.endsWith('.tsbuildinfo')) {
-      if ((name.startsWith('.env') || name.startsWith('.dev.vars')) || /\.(rom|cas|wav|bin|key|p12|pfx)$/i.test(name)) throw new Error('Unexpected private/binary input in first-party source');
+      const originalMonitor = [originalMonitorPath, originalBasicPath, originalBasicExtendedPath, "families/dragon/firmware/basic64/native.rom", "families/dragon/firmware/basic64/compatibility.rom", "families/commodore/firmware/original/runtime.c64rom"].includes(relative(root, join(from, name)).replaceAll('\\', '/'));
+      if ((name.startsWith('.env') || name.startsWith('.dev.vars')) || (/\.(rom|c64rom|cas|wav|bin|key|p12|pfx)$/i.test(name) && !originalMonitor)) throw new Error('Unexpected private/binary input in first-party source');
       copyTree(join(from, name), join(to, name));
     }
   } else if (stat.isFile()) { mkdirSync(dirname(to), { recursive: true }); cpSync(from, to); }
 }
-const rustMembers = ['crates/eightbit-targets', 'crates/eightbit-source-core', 'cpu/z80/eightbit-sinclair-basic', ...['targets', 'basic-core', 'media', 'mobile', 'project'].map((name) => `families/dragon/crates/eightbit-dragon-${name}`), ...['commodore', 'acorn', 'spectrum', 'zx81'].map((name) => `families/${name}/crates/eightbit-${name}-core`), 'apps/eightbit-studio-web/core'];
-const components = ['WorkbenchShell', 'WorkbenchResizeHandle', 'WorkbenchPanelTabs', 'EditorToolbar', 'EditorTabs', 'Icons', 'WelcomeView', 'ProcessorLogo'];
-const sharedFiles = [
-  ...components.map((name) => `packages/workbench/src/components/${name}.tsx`),
-  'packages/workbench/src/services/recentProjects.ts', 'packages/workbench/src/services/editorCommands.ts', 'packages/workbench/src/services/commands.json',
-  'packages/workbench/src/services/workbenchLayout.ts', 'packages/workbench/src/styles.css', 'packages/workbench/src/macos.css',
-  'packages/workbench/branding/fonts/Silkscreen-Regular.ttf', 'packages/workbench/branding/fonts/OFL.txt',
-  'packages/workbench/branding/cpu.svg', 'packages/workbench/src/assets.d.ts',
-];
+const rustMembers = ['families/vectrex/crates/eightbit-vectrex-emulator','crates/eightbit-targets', 'crates/eightbit-source-core', 'cpu/m6809/eightbit-m6809-core', 'cpu/mos6502/eightbit-mos6502-core', 'families/commodore/crates/eightbit-commodore-machine', 'cpu/z80/eightbit-sinclair-basic', 'cpu/z80/eightbit-z80-core', 'families/spectrum/crates/eightbit-spectrum-emulator', 'families/zx81/crates/eightbit-zx81-emulator', ...['targets', 'basic-core', 'media', 'mobile', 'project', 'emulator'].map((name) => `families/dragon/crates/eightbit-dragon-${name}`), ...['commodore', 'acorn', 'spectrum', 'zx81'].map((name) => `families/${name}/crates/eightbit-${name}-core`), 'apps/eightbit-studio-web/core'];
+const sharedFiles = browserSharedFiles;
 // This allow-list is the public source boundary; no checkout-wide copy or Git archive.
-const paths = [...rustMembers, 'families/dragon/dialects/dragon32-basic', 'families/dragon/templates', ...['commodore', 'acorn', 'spectrum', 'zx81'].map((name) => `families/${name}/templates`), 'templates/project-CLAUDE.md', 'packages/browser-workbench', 'apps/eightbit-studio-web/ui', 'apps/eightbit-studio-web/github-worker/index.ts', 'apps/eightbit-studio-web/github-worker/wrangler.jsonc', 'scripts/browser', 'docs/browser-edition.md', 'docs/adr/0052-static-browser-edition.md', 'docs/adr/0053-browser-6502-z80-basic.md', 'docs/adr/0054-bbc-model-b-source-support.md', 'docs/adr/0055-bbc-browser-platform-completion.md', 'LICENSE', 'Cargo.lock', 'pnpm-lock.yaml', 'rust-toolchain.toml', ...sharedFiles];
+const paths = [...rustMembers, 'families/vectrex/templates', 'families/vectrex/firmware/original', 'docs/vectrex-original-specification.md', 'docs/adr/0063-original-vectrex-runtime.md', 'families/dragon/dialects/dragon32-basic', 'families/dragon/templates', ...['commodore', 'acorn', 'spectrum', 'zx81'].map((name) => `families/${name}/templates`), 'templates/project-CLAUDE.md', 'packages/browser-workbench', 'apps/eightbit-studio-web/ui', 'apps/eightbit-studio-web/github-worker/index.ts', 'apps/eightbit-studio-web/github-worker/wrangler.jsonc', 'scripts/browser', 'docs/browser-edition.md', 'docs/adr/0052-static-browser-edition.md', 'docs/adr/0053-browser-6502-z80-basic.md', 'docs/adr/0054-bbc-model-b-source-support.md', 'docs/adr/0055-bbc-browser-platform-completion.md', 'LICENSE', 'Cargo.lock', 'pnpm-lock.yaml', 'rust-toolchain.toml', ...sharedFiles];
+paths.push('families/dragon/firmware/basic64', 'scripts/build-dragon64-basic.py', 'scripts/test_dragon64_basic_build.py', 'docs/dragon64-basic-specification.md', 'docs/adr/0060-original-dragon64-basic.md');
+paths.push(...originalBasicExtendedFiles, ...originalBasicExtendedSources(basicReceipt), 'scripts/build-dragon-basic-extended.py', 'scripts/qualify-dragon-basic.py', 'families/dragon/firmware/monitor', 'families/dragon/firmware/basic', 'scripts/build-dragon-basic.py', 'scripts/dragon32-original-reference.py', 'scripts/dragon32-lawful-abi.py', 'scripts/test_dragon32_lawful_abi.py', 'docs/adr/0057-original-dragon32-hardware-basic.md', 'docs/dragon32-basic-specification.md', 'scripts/build-dragon-monitor.py', 'docs/adr/0056-original-dragon32-monitor.md', 'docs/dragon32-monitor-specification.md');
+paths.push('families/zx81/firmware/original', 'docs/adr/0061-original-zx80-zx81-toolchain.md', 'docs/zx80-zx81-original-specification.md', 'docs/evidence/zx80-zx81-development-20261020.json');
+paths.push('docs/adr/0059-original-spectrum128-plus2.md', 'docs/spectrum128-original-specification.md', 'families/spectrum/firmware/original', 'docs/adr/0058-original-spectrum48-toolchain.md', 'docs/spectrum48-original-specification.md', 'docs/evidence/spectrum48-development-acceptance-20261019.json');
+// Retained portable Rust tests embed these first-party Help documents.
+paths.push('families/commodore/firmware/original', 'scripts/build-c64-original.py', 'scripts/test_c64_original_build.py', 'scripts/generate-c64-numeric-fixtures.py', 'scripts/test_c64_numeric_fixtures.py', 'docs/adr/0062-c64-reference-qualification-and-original-runtime-plan.md', 'docs/c64-original-specification.md');
+paths.push('families/commodore/help/GUIDE.html', 'families/acorn/help/GUIDE.html', 'families/spectrum/help/GUIDE.html', 'cpu/z80/help/GUIDE.html', 'cpu/z80/firmware/original');
 function inventory(directory, base = directory, files = {}) {
   for (const name of readdirSync(directory).sort()) {
     const path = join(directory, name); const stat = lstatSync(path);
@@ -57,7 +71,7 @@ try {
   for (const member of rustMembers) {
     const path = join(source, member, 'Cargo.toml');
     let manifest = readFileSync(path, 'utf8');
-    manifest = manifest.replace(/^.*optional = true.*\n/gm, '').replace(/^eightbit-test-support = .*\n/gm, '').replace(/^default = \["native"\]$/m, 'default = []').replace(/^native(?:-acceptance)? = .*$/gm, (line) => `${line.split('=')[0]}= []`);
+    manifest = manifest.replace(/^.*optional = true.*\n/gm, '').replace(/^eightbit-(?:test-support|process) = .*\n/gm, '').replace(/^default = \["native"\]$/m, 'default = []').replace(/^native(?:-acceptance)? = .*$/gm, (line) => `${line.split('=')[0]}= []`);
     writeFileSync(path, manifest);
   }
   rmSync(join(source, 'families/commodore/crates/eightbit-commodore-core/src/vice.rs'));
@@ -73,7 +87,7 @@ try {
   shared.dependencies = { react: shared.dependencies.react, 'react-dom': shared.dependencies['react-dom'] };
   shared.devDependencies = Object.fromEntries(Object.entries(shared.devDependencies).filter(([name]) => ['@types/react', '@types/react-dom', 'typescript'].includes(name)));
   shared.scripts = {};
-  shared.exports = Object.fromEntries(Object.entries(shared.exports).filter(([name]) => name === './styles.css' || name === './macos.css' || name === './services/editorCommands' || components.some((component) => name === `./components/${component}`)));
+  shared.exports = Object.fromEntries(Object.entries(shared.exports).filter(([name]) => browserSharedExport(name)));
   writeFileSync(join(source, 'packages/workbench/package.json'), `${JSON.stringify(shared, null, 2)}\n`);
   writeFileSync(join(source, 'pnpm-workspace.yaml'), 'packages:\n  - apps/eightbit-studio-web/ui\n  - packages/browser-workbench\n  - packages/workbench\n');
   writeFileSync(join(source, 'package.json'), `${JSON.stringify({ name: 'eightbit-studio-browser-source', private: true, license: 'GPL-3.0-or-later', packageManager: 'pnpm@11.5.0' }, null, 2)}\n`);
@@ -102,6 +116,7 @@ try {
     const full = join(sdk, 'upstream/emscripten', path);
     if (existsSync(full)) { copyTree(full, join(source, 'third-party/emscripten', path)); notice += `\nEmscripten ${path}\n${readFileSync(full, 'utf8')}\n`; }
   }
+  notice += '\nOriginal C64 PAL CPU, digital board, BASIC/KERNAL/editor and independently drawn character firmware: Apache-2.0, ADR 0062; source, build manifest and builder included. Explicit development selection retains chips and VICE alternatives.\n';
   notice += '\nMAME 0.289, GPL-2.0-or-later with BSD-licensed components. All original notices and source are supplied in mame0289.tar.gz on the matching GitHub source release. Local changes are scripts/browser/mame-browser.patch.\nC64 chips core, commit 9e88298ce56319953ac7a43213a1120359f7a3a6, zlib/libpng licence. Original source and notices are included in .cache/mame-web/chips-9e88298.tar.gz.\nMAME toolchain: Emscripten 6.0.2, MIT/NCSA, licence texts included. Linked SDL2, SDL2_ttf, FreeType, HarfBuzz and zlib port source archives with their original notices are in third-party/.\n';
   notice += `\nSDL 2.32.0 licence\n${readFileSync(join(sdk, 'upstream/emscripten/cache/ports/sdl2/SDL-release-2.32.0/LICENSE.txt'), 'utf8')}\n`;
   notice += `\nSilkscreen font (SIL Open Font Licence 1.1)\n${readFileSync(join(root, 'packages/workbench/branding/fonts/OFL.txt'), 'utf8')}\n`;
@@ -117,8 +132,8 @@ try {
   const gpl = execFileSync('tar', ['-xOf', archive, 'xroar-1.12.1/COPYING.GPL']);
   writeFileSync(join(source, 'COPYING'), gpl);
   writeFileSync(join(source, 'NOTICE.txt'), notice);
-  writeFileSync(join(source, 'README.md'), `# Eightbit Studio · Browser edition\n\nBuild, edit and play BASIC programmes for Dragon 32, Commodore 64 PAL, BBC Micro Model B, ZX Spectrum and ZX81 in your browser.\n\n[Open Studio](https://eightbitstudio.com/studio/) · [Matching source release](${release.url}) · [Build guide](docs/browser-edition.md)\n\n## Source and downloads\n\nThis repository contains the browser edition and its required shared source. The matching release supplies complete browser-source.tar.gz and mame0289.tar.gz archives, build-receipt.json and SHA256SUMS. Download the MAME archive into .cache/mame-web/ before building Sinclair or BBC emulation. The browser archive also contains pinned XRoar/chips/SDL sources, JavaScript package sources and vendored Rust dependencies. No system ROMs are supplied; add your own supported firmware to play.\n\nSee docs/browser-edition.md for exact tool versions, build commands, verification and local preview instructions. SOURCE-MANIFEST.json identifies this source snapshot. Each deployed version links to its corresponding tagged release.\n\n## Licences\n\nThe browser application is **GPL-3.0-or-later**; see [COPYING](COPYING). Reused Eightbit Studio libraries/components retain [Apache-2.0](LICENSE). Third-party attribution and licence texts remain in [NOTICE.txt](NOTICE.txt), vendor/ and third-party/. MAME retains its original GPL/BSD notices in its separate archive.\n\nThis is a curated browser workspace. Its Git history starts with the public source snapshot. Desktop hosts, firmware, credentials and user projects are excluded.\n`);
-  writeFileSync(join(source, 'AGENTS.md'), '# Eightbit Studio browser source\n\nFollow docs/browser-edition.md and ADRs 0052/0053/0055. Preserve the reduced browser workspace and existing shared workbench. Retain GPL, Apache and third-party notices. Never add firmware, private user projects, credentials or desktop hosts. Keep dependencies pinned and test changes at their owning layer. Publish a new tagged source release before deploying matching runtime changes; publishing requires explicit authorisation.\n');
+  writeFileSync(join(source, 'README.md'), `# Eightbit Studio · Browser edition\n\nBuild, edit and play BASIC programmes for Dragon 32, Commodore 64 PAL, BBC Micro Model B, ZX Spectrum and ZX81 in your browser.\n\n[Open Studio](https://eightbitstudio.com/studio/) · [Matching source release](${release.url}) · [Build guide](docs/browser-edition.md)\n\n## Source and downloads\n\nThis repository contains the browser edition and its required shared source. The matching release supplies complete browser-source.tar.gz and mame0289.tar.gz archives, build-receipt.json and SHA256SUMS. Download the MAME archive into .cache/mame-web/ before building Sinclair or BBC emulation. The browser archive also contains pinned XRoar/chips/SDL sources, JavaScript package sources and vendored Rust dependencies. ${basicSourceNotice}\n\nSee docs/browser-edition.md for exact tool versions, build commands, verification and local preview instructions. SOURCE-MANIFEST.json identifies this source snapshot. Each deployed version links to its corresponding tagged release.\n\n## Licences\n\nThe browser application is **GPL-3.0-or-later**; see [COPYING](COPYING). Reused Eightbit Studio libraries/components retain [Apache-2.0](LICENSE). Third-party attribution and licence texts remain in [NOTICE.txt](NOTICE.txt), vendor/ and third-party/. MAME retains its original GPL/BSD notices in its separate archive.\n\nThis is a curated browser workspace. Its Git history starts with the public source snapshot. Desktop hosts, third-party firmware, credentials and user projects are excluded.\n`);
+  writeFileSync(join(source, 'AGENTS.md'), '# Eightbit Studio browser source\n\nFollow docs/browser-edition.md and ADRs 0052/0053/0055/0056/0057/0058/0059/0062/0063. Preserve the reduced browser workspace and existing shared workbench. Retain GPL, Apache and third-party notices. Only verified original Dragon 32/64, Spectrum 48K/128K/original +2 and source-bound original C64 and Vectrex development firmware is permitted. Development firmware status does not establish compatibility. Never add third-party firmware, private user projects, credentials or desktop hosts. Keep dependencies pinned and test changes at their owning layer. Publish a new tagged source release before deploying matching runtime changes; publishing requires explicit authorisation.\n');
   writeFileSync(join(source, '.gitignore'), 'node_modules/\ntarget/\ndist/\n*.tsbuildinfo\n.DS_Store\n/apps/eightbit-studio-web/ui/public/generated/\n/.cache/browser-tools/\n/.cache/xroar-web/github-release/\n/.cache/xroar-web/source-*/\n/.cache/xroar-web/browser-source.tar.gz\n/apps/eightbit-studio-web/github-worker/.dev.vars*\n/apps/eightbit-studio-web/github-worker/.wrangler/\n');
   const manifest = inventory(source);
   const sourceManifest = `${JSON.stringify({ schemaVersion: 1, files: manifest }, null, 2)}\n`;

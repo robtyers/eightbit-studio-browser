@@ -64,3 +64,37 @@ break_on_runtime_error = false
 "#
     ))
 }
+
+/// Generate the existing D64 schema-4/schema-5 contract using shared defaults.
+pub fn dragon64_manifest(name: &str, native: bool) -> Result<String, super::ProjectError> {
+    let source = manifest(name, false)?;
+    let source = source
+        .replace(
+            "schema_version = 3",
+            if native {
+                "schema_version = 5"
+            } else {
+                "schema_version = 4"
+            },
+        )
+        .replace("model = \"dragon32\"", "model = \"dragon64\"")
+        .replace("ram_kib = 32", "ram_kib = 64")
+        .replace(
+            "rom_profile = \"dragon32-standard\"",
+            if native {
+                "mode = \"basic-64k\"\nrom_profile = \"dragon64-native\""
+            } else {
+                "mode = \"basic-32k\"\nrom_profile = \"dragon64-32k\""
+            },
+        );
+    let source = if native {
+        source.replace(
+            "dialect = \"dragon32-basic\"",
+            "dialect = \"dragon64-basic\"",
+        )
+    } else {
+        source
+    };
+    super::parse_project_config(&source)?;
+    Ok(source)
+}

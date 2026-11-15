@@ -1,0 +1,1623 @@
+{
+  "schemaVersion": 1,
+  "referenceSha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
+  "romInstructionsInspected": false,
+  "method": "Original synthetic DRAW commands on an isolated lawfully provisioned Dragon 32. Only success markers, public cursor/graphics fields and digests of the generated graphics planes are retained. No firmware instructions or raw memory snapshots are retained.",
+  "cases": [
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R4\":Z=85",
+      "success": true,
+      "cursor": [
+        132,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "15d7dec4195e51f62bcd30d4204e92f0ee70aa1d118a23cbe5a9b2c681a12869"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"D4\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        100
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a13abf283863793590f7c2ee3278df7f90b53296e1f61fd62670dcd418a2db6f"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R4D4\":Z=85",
+      "success": true,
+      "cursor": [
+        132,
+        100
+      ],
+      "physical": [
+        132,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "9e19ac327aec5f0bca0fd45495e015339302b2e2c24174797178fe7a70718f21"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BM10,20R4D4\":Z=85",
+      "success": true,
+      "cursor": [
+        14,
+        24
+      ],
+      "physical": [
+        14,
+        20
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a3879e818f409dcbd72ae178f93a6ca9e25698d1c81cf5d8d66d40a8086c09ed"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"M10,20\":Z=85",
+      "success": true,
+      "cursor": [
+        10,
+        20
+      ],
+      "physical": [
+        10,
+        20
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "c8b4c03e8637dc4228f5ea04e86b890a55d70385e0337652f19d349d38997f32"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BM10,20M+2,-3\":Z=85",
+      "success": true,
+      "cursor": [
+        12,
+        17
+      ],
+      "physical": [
+        12,
+        17
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "c7d0836621b96068caf6d4afc84c72aa4e5e9d4a2f7863863e80a3a3d10defa2"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S5R3D3\":Z=85",
+      "success": true,
+      "cursor": [
+        131,
+        99
+      ],
+      "physical": [
+        131,
+        96
+      ],
+      "angle": 0,
+      "scale": 5,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "016654b80478464993f050aa0cb6d9c0f7dc50e761b3f7875c95d0e75b6f1ef6"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S1R3D3\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 1,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "6e0d77a70d16834f0b4ea91bf40451d59e9e8c18fec572953d5ed6338dd20cb9"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S5R1R1R1\":Z=85",
+      "success": true,
+      "cursor": [
+        131,
+        96
+      ],
+      "physical": [
+        130,
+        96
+      ],
+      "angle": 0,
+      "scale": 5,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b11360913a66768e17be00af3dcecd1bfef03a55fb4e6c2d3b469ee6dfa07998"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R-3\":Z=85",
+      "success": false,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A1R4\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        100
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 1,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a13abf283863793590f7c2ee3278df7f90b53296e1f61fd62670dcd418a2db6f"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A2R4\":Z=85",
+      "success": true,
+      "cursor": [
+        124,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 2,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "ba7afe8634a6c889c69b55817a8cfef3ea93f88f2d92201acabb80b79be00451"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A3R4\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        92
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 3,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "cf411fc2319e8a952a3c531bd918996cfa83c4271a0b949a247d3c1772fdf406"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"C2R4\":Z=85",
+      "success": true,
+      "cursor": [
+        132,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R\":Z=85",
+      "success": true,
+      "cursor": [
+        129,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fea95c684b194696473f4bcc03cedbf0939a0cae9cd5eea9676adb47cd925fd3"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R0\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "6e0d77a70d16834f0b4ea91bf40451d59e9e8c18fec572953d5ed6338dd20cb9"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S0R4\":Z=85",
+      "success": true,
+      "cursor": [
+        132,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "15d7dec4195e51f62bcd30d4204e92f0ee70aa1d118a23cbe5a9b2c681a12869"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S63R4\":Z=85",
+      "success": false,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A4R4\":Z=85",
+      "success": false,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BM255,191R9D9\":Z=85",
+      "success": true,
+      "cursor": [
+        255,
+        191
+      ],
+      "physical": [
+        255,
+        191
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "2a04e996923f008ad5b09d3ed08e624346af319e76f92bbe83780235295e448b"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BM1,1L9U9\":Z=85",
+      "success": true,
+      "cursor": [
+        0,
+        0
+      ],
+      "physical": [
+        0,
+        1
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "d1b45786e7938af1bb5bf4f8105a032dddf6d6cad27fc6efd0e3ebc7369e56d0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"NR4D4\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        100
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "30a4f52fc29d1c6612010a20d656dace3838c74855e7ef6f57e36c1a461f51f1"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BR4D4\":Z=85",
+      "success": true,
+      "cursor": [
+        132,
+        100
+      ],
+      "physical": [
+        132,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b0b4d86bccda196b65757832a4a8a49f8cb2e4c958f540642bc1da4b13bc9b23"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R=Q;\":Z=85",
+      "success": true,
+      "cursor": [
+        131,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b11360913a66768e17be00af3dcecd1bfef03a55fb4e6c2d3b469ee6dfa07998"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"XX$;\":Z=85",
+      "success": true,
+      "cursor": [
+        128,
+        100
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a13abf283863793590f7c2ee3278df7f90b53296e1f61fd62670dcd418a2db6f"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"XX$\":Z=85",
+      "success": false,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R256\":Z=85",
+      "success": false,
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BM10,20M-2,3\":Z=85",
+      "success": true,
+      "cursor": [
+        8,
+        23
+      ],
+      "physical": [
+        8,
+        23
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "499c08f34b2034f1bf4c89eeb6a3612e538742b58fc346022ffacd4c380fa78a"
+      }
+    },
+    {
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BM10,20M2,-3\":Z=85",
+      "success": true,
+      "cursor": [
+        2,
+        191
+      ],
+      "physical": [
+        2,
+        191
+      ],
+      "angle": 0,
+      "scale": 0,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "2498f5409fc41429c58beb2d916e287c48fdaf7f580bce0e0f48dc3198f8df30"
+      }
+    },
+    {
+      "source": "PMODE0,1:PCLS:Z=0:DRAW\"BM10,20C2R13D9L13U9E7G7H7F7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 0,
+        "bytes": 1536,
+        "sha256": "80422bc3d307b4a25bdafcc84ac7fb01cb55a09810e8b0f37bb12e0edb5c48ca"
+      },
+      "physical": [
+        5,
+        10
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        10,
+        20
+      ]
+    },
+    {
+      "source": "PMODE1,1:PCLS:Z=0:DRAW\"BM10,20C2R13D9L13U9E7G7H7F7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 1,
+        "bytes": 3072,
+        "sha256": "5b1403a25e667c53285ffde944eeac53cc32e920c74fd6d510513fad073a8639"
+      },
+      "physical": [
+        5,
+        10
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        10,
+        20
+      ]
+    },
+    {
+      "source": "PMODE2,1:PCLS:Z=0:DRAW\"BM10,20C2R13D9L13U9E7G7H7F7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 2,
+        "bytes": 3072,
+        "sha256": "e80232b4d18d0bb7e794be263ba937626f383f9917d4b8a737ba893a8f752293"
+      },
+      "physical": [
+        5,
+        20
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        10,
+        20
+      ]
+    },
+    {
+      "source": "PMODE3,1:PCLS:Z=0:DRAW\"BM10,20C2R13D9L13U9E7G7H7F7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 3,
+        "bytes": 6144,
+        "sha256": "3a665779b0d435f3fb9d8a9f3ef83b9d7efeb837decc1ba9bc5d02b0834dadf2"
+      },
+      "physical": [
+        5,
+        20
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        10,
+        20
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"R4\"+CHR$(0)+\"D4\":Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "15d7dec4195e51f62bcd30d4204e92f0ee70aa1d118a23cbe5a9b2c681a12869"
+      },
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        132,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"R+3\":Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        128,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"M,\":Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        128,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"M256,256\":Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        128,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:X$=\"R4D4\":DRAW\"BX X$;R2\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a0b19114f3ef7640ffbf5cfd62c38d5409fb137fbacda2cbfb950451398e5c8f"
+      },
+      "physical": [
+        132,
+        100
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        134,
+        100
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:X$=\"R4D4\":DRAW\"NX X$;R2\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "96ad5f6c1ebeab0e5fc0ae529e11cc9d5120be8cf7fd07f9ea1d928d27221f1a"
+      },
+      "physical": [
+        128,
+        100
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        130,
+        100
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:X$=\"R4D4\":DRAW\"BNX X$;R2\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "2e0ba6650eb5978f6b30465e2dd039546bd8a1efc727e65c5abfcd59b803e986"
+      },
+      "physical": [
+        128,
+        100
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        130,
+        100
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"RZ\":Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fea95c684b194696473f4bcc03cedbf0939a0cae9cd5eea9676adb47cd925fd3"
+      },
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        129,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM10,20S8M+2,+3\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a9ebab742d1c964a8f437f61f1d0c12e17cee9ecd7aedb301f00ed42d6a2fc14"
+      },
+      "physical": [
+        14,
+        26
+      ],
+      "angle": 0,
+      "scale": 8,
+      "cursor": [
+        14,
+        26
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM10,20A1M+2,+3\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "7154e7feb8961ec5af34f8488fb6e4464f9bb97cfc6e073536ce22e586ef635f"
+      },
+      "physical": [
+        7,
+        22
+      ],
+      "angle": 1,
+      "scale": 0,
+      "cursor": [
+        7,
+        22
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"S8A1BM10,20\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 1,
+      "scale": 8,
+      "cursor": [
+        10,
+        20
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96U7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "878d28995c1e698423f5814017bed7f4550d8f4027476da8bf030ec093cd2d5e"
+      },
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        128,
+        89
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96D7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a0f5fc794837b95345bf08df90606baf9729a95eb974559523ddf95646fd9f74"
+      },
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        128,
+        103
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96L7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "d78b18080e898fc83d211c87a9a3270a2254e67bc4d56a8b6ae9bc11344bb35e"
+      },
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        121,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96R7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "9ef3a585d47d91efdf27cd6a52118abc7c9965b37200992ef31ac6e7cacffbb5"
+      },
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        135,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96E7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "834a88e2ae1e6973a60fad7a6e7e500bcd56d664efacbfb4b0853319f9bef621"
+      },
+      "physical": [
+        135,
+        89
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        135,
+        89
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96F7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "f87f04b112ff413e0439374cf1f6e2cba1b856ef8a809a5cac371ec790603d21"
+      },
+      "physical": [
+        135,
+        103
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        135,
+        103
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96G7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "c41e574c12712d683f3c1450cc226c3d7cef60778cfdc78aa9572b866323ddab"
+      },
+      "physical": [
+        121,
+        103
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        121,
+        103
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM128,96H7\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "7551431d83ae2116ec28a598e6dc55dbbaae5b1b7ab3eba2cf71ece3969a213f"
+      },
+      "physical": [
+        121,
+        89
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        121,
+        89
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"bm 10,20; r 4;d 3\":Z=85",
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        128,
+        96
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"BM0,0L0U0\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "9c717b41600de8577b6deaaddf6d7c3d4b435b63e96f90df798def56093af5a1"
+      },
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "cursor": [
+        0,
+        0
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"S62E255\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "36d55bbad9dba7f6f5da7ebfb681f27158369d4b0ff24cb915391aea09fc0941"
+      },
+      "physical": [
+        255,
+        0
+      ],
+      "angle": 0,
+      "scale": 62,
+      "cursor": [
+        255,
+        0
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"A1S5F3\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "143f382b0b5febcab68fc803eb8f817da599418ab0235d0080def36a197c8c9c"
+      },
+      "physical": [
+        125,
+        99
+      ],
+      "angle": 1,
+      "scale": 5,
+      "cursor": [
+        125,
+        99
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"A2S5G3\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "8d5d0f5942c3afe03f792d29a4bdaee0bf2a3abca58731fc7bb87b2f4990b532"
+      },
+      "physical": [
+        131,
+        93
+      ],
+      "angle": 2,
+      "scale": 5,
+      "cursor": [
+        131,
+        93
+      ]
+    },
+    {
+      "source": "PMODE4,1:PCLS:Z=0:DRAW\"A3S5H3\":Z=85",
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "143f382b0b5febcab68fc803eb8f817da599418ab0235d0080def36a197c8c9c"
+      },
+      "physical": [
+        125,
+        99
+      ],
+      "angle": 3,
+      "scale": 5,
+      "cursor": [
+        125,
+        99
+      ]
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 1,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 1,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"C\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A;R4\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S;R4\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"C;R4\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        92
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 3,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "cf411fc2319e8a952a3c531bd918996cfa83c4271a0b949a247d3c1772fdf406"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A=Q;R4\":Z=85"
+    },
+    {
+      "cursor": [
+        131,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 3,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b11360913a66768e17be00af3dcecd1bfef03a55fb4e6c2d3b469ee6dfa07998"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S=Q;R4\":Z=85"
+    },
+    {
+      "cursor": [
+        132,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "15d7dec4195e51f62bcd30d4204e92f0ee70aa1d118a23cbe5a9b2c681a12869"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"C=Q;R4\":Z=85"
+    },
+    {
+      "cursor": [
+        131,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b11360913a66768e17be00af3dcecd1bfef03a55fb4e6c2d3b469ee6dfa07998"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R=Q;\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R=Q\":Z=85"
+    },
+    {
+      "cursor": [
+        3,
+        3
+      ],
+      "physical": [
+        3,
+        3
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a6c40115095bbc9b6eb9b2bc877582919fcc525c34d366a7fa855bcee1f4f906"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"M=Q;,=Q;\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        100
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a13abf283863793590f7c2ee3278df7f90b53296e1f61fd62670dcd418a2db6f"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"X X$;\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"X X$\":Z=85"
+    },
+    {
+      "cursor": [
+        131,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "b11360913a66768e17be00af3dcecd1bfef03a55fb4e6c2d3b469ee6dfa07998"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R3.5\":Z=85"
+    },
+    {
+      "cursor": [
+        255,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 62,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "912aeadbbdc10218dfe76fa9d8ce571b3050093a8cff60079b58104a0fd29770"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"S62R255\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A-1R4\":Z=85"
+    },
+    {
+      "cursor": [
+        129,
+        97
+      ],
+      "physical": [
+        129,
+        97
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "0b171fabb3a5b1ca3c79ef83d723634e4ac9554e21e9444b9db4f0a28b7b7e1f"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"M+1,+1\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"M+,+1\":Z=85"
+    },
+    {
+      "cursor": [
+        131,
+        93
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BE3\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        131,
+        93
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "8d5d0f5942c3afe03f792d29a4bdaee0bf2a3abca58731fc7bb87b2f4990b532"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"NE3\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"BNE3\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        96
+      ],
+      "physical": [
+        0,
+        0
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"M1.5,2\":Z=85"
+    },
+    {
+      "cursor": [
+        1,
+        2
+      ],
+      "physical": [
+        1,
+        2
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": false,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "2ac170bb3ba11e47cb3716a8ad4b81685bb2fd69dc64fea1f297d24903bdaff0"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"M1,2.5\":Z=85"
+    },
+    {
+      "cursor": [
+        128,
+        100
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 1,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "a13abf283863793590f7c2ee3278df7f90b53296e1f61fd62670dcd418a2db6f"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"A 1 R4\":Z=85"
+    },
+    {
+      "cursor": [
+        138,
+        96
+      ],
+      "physical": [
+        128,
+        96
+      ],
+      "angle": 0,
+      "scale": 0,
+      "success": true,
+      "graphics": {
+        "mode": 4,
+        "bytes": 6144,
+        "sha256": "15d24d7842746e82059eaa753f3b224390cc1ad00bc5b88cbbbccac9841bb13e"
+      },
+      "source": "PMODE4,1:PCLS:Q=3:X$=\"D4\":Z=0:DRAW\"R1 0\":Z=85"
+    }
+  ]
+}

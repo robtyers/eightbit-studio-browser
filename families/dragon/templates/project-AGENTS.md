@@ -7,7 +7,7 @@ This is an Eightbit Studio 6809 project targeting the exact machine and BASIC mo
 - **Dragon BASIC** — numbered Dragon BASIC source with `[assembler].enabled = false`.
 - **BASIC + 6809 Assembly** — numbered Dragon BASIC plus configured Motorola 6809 assembly with `[assembler].enabled = true`.
 
-Read `dragon.toml` to determine which archetype this project uses; do not infer it from which file is open. Eightbit Studio 6809 provides the editor, diagnostics, project build, XRoar run/debug integration, a user-operated terminal and bounded local Git tools.
+Read `dragon.toml` to determine which archetype this project uses; do not infer it from which file is open. Eightbit Studio 6809 provides the editor, diagnostics, project build, original and XRoar run/debug integration, a user-operated terminal and bounded local Git tools.
 
 For new source organisation, use `src/basic/` for BASIC and `src/asm/` for assembly. Preserve valid paths in existing projects. CLAUDE.md directs Claude to this file; keep project instructions here.
 
@@ -42,6 +42,7 @@ Never change target/schema as a workaround for a build error.
   image at `$C000`; its complete bytes and original size are preserved on import.
 - `run.boot = "basic"` executes BASIC (with the generated loader for a mixed
   project). `machine-code` starts linked assembly directly; the BASIC stub is inert.
+- Dragon 32 BASIC and RAM machine code default to the built-in emulator and original ROM. Cartridges select configured XRoar and a separately supplied ROM. Do not change the project adapter field to select the application runtime.
 - D64 requires two separate 16 KiB ROMs. Native Run enters `EXEC 48000` and loads
   the generated RAM image. Do not write a replacement bootstrap or embed firmware.
   BASIC debugging and native assembly startup need the exact verified ROM pair;
@@ -117,7 +118,7 @@ For example, a program with input, state updates and a display could use:
 ## 6809 assembly rules
 
 - Assembly participates only when `[assembler].enabled` is `true`. Every `.asm` or `.s` input must be listed explicitly in `assembler.sources`.
-- Eightbit Studio 6809 targets Motorola 6809 code for the declared Dragon target and uses user-installed LWTOOLS 4.25. The tool directory is user-level IDE state; never put an absolute tool path in `dragon.toml`.
+- Eightbit Studio 6809 targets Motorola 6809 code for the declared Dragon target. Dragon 32 RAM projects default to the built-in assembler/linker, with up to 64 explicit sources and 1 MiB combined ASCII source. Unsupported directives fail with source diagnostics and never silently invoke LWTOOLS. LWTOOLS 4.25 is an explicit compatibility option and remains required for cartridge and Dragon 64 assembly. The tool directory is user-level IDE state; never put an absolute tool path in `dragon.toml`.
 - Keep the complete linked binary, load address and entry symbol within the selected RAM window in the table above, or the explicitly configured cartridge window. A small load address does not make an overflowing image valid.
 - `INCLUDE`, `USE`, `INCLUDEBIN`, source globs, project-defined command hooks, custom linker scripts and arbitrary tool flags are not supported project inputs.
 - Export symbols that BASIC or the debugger must address, and keep BASIC `EXEC` calls consistent with the validated linked address. Do not guess ROM-specific or hardware addresses; use an authoritative reference for the selected Dragon mode and the configured runtime profile.
@@ -126,8 +127,8 @@ For example, a program with input, state updates and a display could use:
 
 1. Edit only project-contained source and configuration files. Save every changed configured source before validation or build.
 2. Review the Problems panel. Resolve configuration, syntax, duplicate-line and missing-target diagnostics rather than suppressing them.
-3. Use **Build** for the complete configured project. The active tab never changes the build target. An assembly-enabled build also needs a validated LWTOOLS 4.25 installation.
-4. Use **Run** only after a successful current build. Eightbit Studio 6809 performs a fresh build and will not silently launch an older successful artefact after a failure. XRoar and a lawfully supplied Dragon ROM are user-installed runtime requirements.
+3. Use **Build** for the complete configured project. The active tab never changes the build target. Dragon 32 RAM assembly builds need no external tool; explicitly selected LWTOOLS and other assembly targets require a validated 4.25 installation.
+4. Use **Run** only after a successful current build. Eightbit Studio 6809 performs a fresh build and will not silently launch an older successful artefact after a failure. Dragon 32 BASIC and RAM machine code use the built-in runtime by default. Cartridges, Dragon 64 and the explicit XRoar alternative retain their user-installed emulator and lawful ROM requirements.
 5. Use **Debug** with source breakpoints only where the configured ROM profile and generated source map support them. Treat runtime observations as separate evidence from a successful build.
 6. Write and maintain project tests as described below. Record a short, repeatable Run/Debug smoke journey for runtime behaviour that the test framework cannot assert. There is no generic project `test` CLI command.
 
@@ -139,7 +140,7 @@ dragon lint .
 dragon build .
 ```
 
-For an assembly-enabled project, pass the user-selected LWTOOLS directory to build commands, for example `dragon build . --lwtools <directory>`. Run and debug additionally require explicit XRoar and ROM paths. D64 CLI runs require `--machine dragon64 --rom <primary> --alt-rom <alternate>`; the project selects the mode. Standalone native conversion uses `--dialect dragon64-basic`. Do not store machine-local tool or ROM paths in the project.
+Dragon 32 RAM assembly builds use `dragon build .` without external tools. Pass `--lwtools <directory>` only for an explicit LWTOOLS compatibility build or another supported assembly target. Existing CLI XRoar Run/Debug commands require explicit XRoar and ROM paths; desktop built-in Run/Debug does not. D64 CLI runs require `--machine dragon64 --rom <primary> --alt-rom <alternate>`; the project selects the mode. Standalone native conversion uses `--dialect dragon64-basic`. Do not store machine-local tool or ROM paths in the project.
 
 ## Write tests alongside code
 
@@ -157,7 +158,7 @@ diagnostic_codes = []
 outputs = ["program.cas"]
 ```
 
-- Test definitions must not contain commands, executable paths, environment values, ROM settings or terminal input. Run tests only through an explicitly authorised Test Explorer action; assembly-enabled projects require the configured, validated LWTOOLS selection. Writing tests does not grant execution authority.
+- Test definitions must not contain commands, executable paths, environment values, ROM settings or terminal input. Run tests only through an explicitly authorised Test Explorer action; Dragon 32 RAM projects use the selected built-in or explicit LWTOOLS assembler; other assembly targets retain their validated LWTOOLS requirement. Writing tests does not grant execution authority.
 - This schema checks build outcomes, diagnostics and outputs only, not runtime behaviour, variables, memory, graphics, input or timing. Document repeatable Run/Debug checks for relevant success, boundary and failure cases that it cannot express, and report those as unverified until actually exercised. Never invent assertion fields or present a passing build test as proof of program correctness.
 
 ## Source control

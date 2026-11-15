@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="AppleTitle" content="com.eightbitstudio.vectrex.help" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Offline Vectrex project, operating and 6809 programming guide for Eightbit Studio 6809." />
+<title>Developing for Vectrex</title>
+<style>
+:root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; }
+body { max-width: 900px; margin: auto; padding: 24px; }
+a { color: light-dark(#1858a8, #90c3ff); } pre { overflow: auto; padding: 12px; background: light-dark(#f1f3f5, #25282b); }
+code { font-family: ui-monospace, monospace; } table { border-collapse: collapse; width: 100%; } th, td { text-align: left; vertical-align: top; padding: 8px; border-bottom: 1px solid #888; }
+section { margin-block: 32px; } h1, h2, h3 { line-height: 1.25; } :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@media print { body { max-width: none; } pre { white-space: pre-wrap; } }
+</style>
+</head>
+<body>
+<header><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="96" height="96" role="img" aria-label="Vectrex"><path d="M58 58L128 194L198 58M87 58L128 138L169 58" fill="none" stroke="#66e5da" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M45 211H211" stroke="#607e88" stroke-width="3"/><circle cx="58" cy="58" r="5" fill="#e4fffb"/><circle cx="198" cy="58" r="5" fill="#e4fffb"/></svg>
+<h1>Developing for Vectrex</h1><p>A practical offline guide to using Eightbit Studio 6809 and writing original Vectrex cartridges. Covers the implemented single-source target; playback and hardware acceptance are separate checks. The project includes no firmware or commercial game; Studio supplies an original development runtime and executive.</p></header>
+<nav aria-label="Guide contents"><ol>
+<li><a href="#getting-started">Create, build and run</a></li>
+<li><a href="#using-vectrex">Using Vectrex and the emulator</a></li>
+<li><a href="#project-files">Project files and source control</a></li>
+<li><a href="#machine-memory">Machine and memory map</a></li>
+<li><a href="#assembly">6809 programming foundations</a></li>
+<li><a href="#instructions">Instruction and directive reference</a></li>
+<li><a href="#header">Cartridge header and first program</a></li>
+<li><a href="#vectors">Frames, vectors and text</a></li>
+<li><a href="#input">Controllers and buttons</a></li>
+<li><a href="#sound">Sound programming</a></li>
+<li><a href="#demo">Understand and extend the demo</a></li>
+<li><a href="#bios">BIOS quick reference</a></li>
+<li><a href="#testing">Testing, export and hardware</a></li>
+<li><a href="#troubleshooting">Troubleshooting and supported limits</a></li>
+<li><a href="#references">References and provenance</a></li>
+</ol></nav>
+<main>
+<section id="getting-started"><h2>Create, build and run</h2>
+<p>Use Eightbit Studio 6809 for Vectrex development. The standalone macOS Vectrex compatibility wrapper is retained for compatibility testing; it has separate settings and credentials, with LWTOOLS and runtime selections together under Application Settings → Emulator.</p>
+<ol><li>Choose File → New Project. Select Target machine → Vectrex, then <strong>Vector, sound and controls</strong>. Choose a parent folder and a new child-folder name. The location picker starts in your home folder. Existing destinations are rejected intact.</li>
+<li>The opening screen contains project actions and recent projects. Inside the IDE, an empty editor displays the studio processor mark. Open <code>src/asm/main.asm</code>. New projects include README.md, AGENTS.md, CLAUDE.md, .gitignore, this GUIDE.html and tests/README.md. Opening remains offline and inert.</li>
+<li>In Application Settings → Build Tools, select a separately installed <strong>LWTOOLS 4.25</strong> folder containing both <code>lwasm</code> and <code>lwlink</code>. Select Validate and save. The cartridge uses raw assembly; the current tool adapter still validates the pair.</li>
+<li>Save, then select <strong>Build</strong>. Inspect Build Results and Output. Success publishes <code>.vectrex/build/cartridge.bin</code>, <code>cartridge.lst</code>, <code>symbols.txt</code> and <code>manifest.json</code>. Nothing starts automatically.</li>
+<li>For this starter, choose <strong>Run original (development)</strong> in Emulator. No external tools or third-party firmware are required. Focus the shared screen: arrows move, Z/X/C/V are buttons 1–4. Browser Play uses the same original runtime. Its executive is a documented development subset; music and unlisted BIOS services fail explicitly. Keep VecX for compatibility checks.</li>
+<li>For external playback, install and select RetroArch and its VecX core using the setup steps below, then validate and save in Application Settings → Emulators → Vectrex.</li>
+<li>Select <strong>Run Project</strong>. Saved source is freshly built before an external emulator window opens. Focus that window. Directional controls move the diamond; Vectrex button 1 controls a tone.</li>
+<li>Use <strong>Stop</strong> beside Run Project to end the session. <strong>Restart</strong> in Emulator stops, rebuilds and starts again. A failed build never launches the previous successful cartridge.</li></ol>
+<h3>Install and locate LWTOOLS</h3>
+<p>Default Build uses the original built-in 6809 assembler. <strong>Build with LWTOOLS</strong> is the explicit compatibility action and requires <strong>LWTOOLS 4.25</strong>. The Build Tools selection is shared with Dragon projects. For a Homebrew installation, with <a href="https://brew.sh/" target="_blank" rel="noreferrer">Homebrew</a> installed, enter these commands yourself in Terminal:</p>
+<pre><code>brew install lwtools
+lwasm --version
+lwlink --version
+brew --prefix</code></pre>
+<p>The <a href="https://formulae.brew.sh/formula/lwtools" target="_blank" rel="noreferrer">Homebrew LWTOOLS formula</a> supplies both tools. Check that both report 4.25; a future formula update may install a version this Studio release does not accept. Select the <code>bin</code> folder beneath the Homebrew prefix, normally <code>/opt/homebrew/bin</code> on Apple Silicon or <code>/usr/local/bin</code> on Intel. Choose the folder containing both executables, not an individual file. For a custom installation, use its actual tool folder. Select <strong>Validate and save</strong>; if validation fails, check both versions and the selected folder before retrying.</p>
+<h3>Install RetroArch and the VecX core</h3>
+<p><strong>macOS.</strong> Follow the <a href="https://docs.libretro.com/guides/install-macos/" target="_blank" rel="noreferrer">official RetroArch macOS installation guide</a>. Download the stable macOS build, open its disk image and copy <code>RetroArch.app</code> into Applications.</p>
+<ol>
+<li>Open RetroArch directly from Applications for setup. In its main menu, choose <strong>Online Updater → Core Downloader → GCE – Vectrex (vecx)</strong> and wait for installation to finish. If Core Downloader is hidden, enable <strong>Settings → User Interface → Menu Item Visibility → Show Core Downloader</strong>. See the <a href="https://docs.libretro.com/guides/download-cores/" target="_blank" rel="noreferrer">official core installation guide</a>.</li>
+<li>In RetroArch, open <strong>Settings → Directory → Cores</strong> (some versions label the menu <strong>Directories</strong>) and note the displayed folder. This is where to find <code>vecx_libretro.dylib</code>; use that actual location rather than assuming all installations store cores in the same place. See <a href="https://docs.libretro.com/guides/change-directories/" target="_blank" rel="noreferrer">RetroArch directory settings</a>.</li>
+<li>Return to Eightbit Studio 6809 → <strong>Application Settings → Emulators → Vectrex</strong>. For the RetroArch executable, select <code>/Applications/RetroArch.app/Contents/MacOS/RetroArch</code>. If you installed the app elsewhere, use the same path inside that app. In the macOS file chooser, press <strong>Command-Shift-G</strong>, paste <code>/Applications/RetroArch.app/Contents/MacOS</code>, press Return, then select <code>RetroArch</code>. Finder's <strong>Show Package Contents</strong> also lets you inspect the app bundle. The <a href="https://docs.libretro.com/guides/cli-intro/" target="_blank" rel="noreferrer">RetroArch command-line guide</a> identifies this executable.</li>
+<li>For the VecX core, use <strong>Command-Shift-G</strong> to visit the core folder you noted, then select <code>vecx_libretro.dylib</code>. Select the extracted file, not a download archive, folder or <code>.info</code> file. Select <strong>Validate and save</strong>, then build and run your project.</li>
+</ol>
+<p><strong>Linux (Eightbit Studio 6809).</strong> Eightbit Studio 6809 composes Vectrex (ADR 0043) and is the product to use for Vectrex on Linux. All three processor products support macOS and Linux; Windows release qualification is in progress. Install RetroArch from your distribution or build it from source, then obtain the VecX core (<code>vecx_libretro.so</code>) from your distribution's RetroArch core repository.</p>
+<ol>
+<li>Install RetroArch from your distribution's package manager or build it from source. Confirm the executable is available, for example <code>/usr/bin/retroarch</code>.</li>
+<li>Obtain the VecX core (<code>vecx_libretro.so</code>) from your distribution's RetroArch core repository. Select the extracted file, not a download archive, folder or <code>.info</code> file.</li>
+<li>Return to Eightbit Studio 6809 → <strong>Application Settings → Emulators → Vectrex</strong>. For the RetroArch executable, select the distribution's <code>retroarch</code> executable. For the VecX core, select <code>vecx_libretro.so</code>. Select <strong>Validate and save</strong>, then build and run your project.</li>
+</ol>
+<p>If the core file is missing, reopen RetroArch directly and complete its Core Downloader step, then check its Cores directory again. If RetroArch cannot load the core, use its downloader to install a core matching that RetroArch build and your system's architecture. Validation checks the executable and core file; confirm the picture, sound and controls after Run. VecX needs no separate BIOS file, as described in the <a href="https://docs.libretro.com/library/vecx/" target="_blank" rel="noreferrer">VecX reference</a>.</p>
+<p>These downloads are actions you perform in your browser, Terminal or standalone RetroArch. Eightbit Studio 6809 does not install these tools, and its managed emulator session disables the online updater. Re-select and validate paths if you later move the app or core.</p>
+<p>To play an existing cartridge, choose <strong>File → Open Cartridge…</strong> or use the Emulator panel. This needs RetroArch and VecX, but no project or assembler. Opening is inert and keeps the original unchanged. Only conventional unbanked, one-title <code>.bin</code>/<code>.vec</code> images of 20–32768 bytes are supported. The selection lasts for this app session.</p>
+<p>In <strong>Emulator</strong>, choose <strong>Opened cartridge</strong> or <strong>Current project</strong> under <strong>Run target</strong>, then <strong>Run</strong>. <strong>Run Project</strong> above the editor always builds saved source. <strong>Restart</strong> repeats the active target; <strong>Stop</strong> stops it or cancels launch. Stop before changing the selection. <strong>Change…</strong> chooses another cartridge; cancelling preserves the current selection. A file changed since opening must be opened again before Run or Restart.</p>
+<p><strong>Details</strong> identifies RetroArch, its executable and the VecX core file, plus the selected cartridge size and hash. Launch checks supply an observed RetroArch version and core hash. Core version is unavailable; the IDE does not load the core. Video, sound and controls remain in RetroArch’s external window, and a running process alone does not prove successful playback.</p>
+<p>Command-P reopens the configured source. Command-Shift-P opens the Command Palette for project and guide actions. The active Explorer or Source Control button toggles the shared sidebar. Drag the shared dividers to resize the sidebar and bottom panels. The Vectrex guide stays in the existing Emulator panel and guide command.</p>
+<p>Application Settings (Command-comma) uses the shared Studio modal: General chooses the opening screen, blank workspace or last project at startup; Appearance selects System, Light or Dark. Eightbit Studio 6809 preferences are shared by its Dragon and Vectrex workbenches. Reopening the last project never builds or runs it; an unavailable folder returns to the opening screen with an error.</p>
+<p>Open <strong>Help → Eightbit Studio 6809 User Guide</strong> for this searchable offline guide. It opens the Vectrex section, including shared Studio and 6809 references. Search stays within this section until you choose another section or All guide sections. The application menu also provides <strong>About Eightbit Studio 6809</strong>. Open a Dragon project in the same application to switch workbenches; its Help opens in the Dragon section.</p>
+<h3>Independence and your software</h3><p>Eightbit Studio is an independent project and is not affiliated with, sponsored by or endorsed by any original manufacturer, emulator project or other organisation whose names, products or marks appear here. Those names and marks identify compatibility and remain the property of their respective owners. You are responsible for obtaining and using ROMs, firmware, games and other software lawfully, with any required permissions or licences. Eightbit Studio does not supply ROMs or grant rights to third-party software.</p></section>
+<section id="using-vectrex"><h2>Using Vectrex and the emulator</h2>
+<p>Vectrex is a cartridge console with a built-in monochrome vector display, sound and two controller ports. It has no Dragon-style BASIC prompt, keyboard command language or cassette workflow. A cartridge begins through the machine's executive startup; your program maintains its own frame loop. Coloured overlays are physical artwork rather than pixel colours generated by the CPU.</p>
+<p>For an original console, follow its owner's instructions: switch off before changing cartridges, connect the controller, insert a compatible cartridge, then switch on and adjust normal user controls. This guide does not provide CRT servicing instructions. The IDE's Run action operates an emulator and does not program a flash cartridge.</p>
+<p>The original development executive supports the starter's Wait_Recal, direct-page setup, Read_Btns, Joy_Digital, Sound_Byte, intensity, Moveto_d, Reset0Ref and Draw_Line_d calls. Development profile 0.2 also supports single-string text ($F373/$F378/$F37A/$F495) with an independently drawn font, plus counted draw/move lists ($F3AD–$F3DF at the published entries). Text is limited to 256 characters in $20–$6F followed by $80. Development profile 0.3 adds packet lists ($F404/$F408/$F40C/$F40E/$F410): signed mode,Y,X triples, $00 blank move, $FF solid draw, $01 terminator, up to 256 vectors. X returns on the terminator; invalid modes or address wrapping fault. Development profile 0.4 adds TXTSIZ ($F385) and TXTPOS ($F38C) text lists: up to 64 messages of 256 characters, with a leading zero byte ending the list. U returns after that final zero; only published text size/pointer RAM changes. Empty lists are valid and pointer wrapping faults. Development profile 0.5 adds DSHDF ($F434), DASHDF ($F437) and DASHPK ($F46E): DASH/$C829 supplies the pattern; counted lists have 1–256 pairs, and patterned packets have up to 256 vectors with $00 blank, $02 solid, $FF patterned and $01 terminator. X returns after the final pair or packet terminator. Malformed modes, counts or wrapping fault; non-zero ZSKIP zeros after the list. Patterns use the original VIA shift model, not qualified historical phase/timing. The optional pattern-demo.asm exercises all three calls. $F38A, $F433/$F439, grid lists and music remain unavailable. Other services described below are reference contracts for compatibility development and may require VecX; they are not implemented merely because the guide describes them. The display uses idealised vectors rather than analogue/CRT simulation. No debugger or historical-game qualification is included.</p>
+<p>RetroArch supplies video, audio and input outside the IDE. Check its current input mapping for Vectrex button numbers and directional controls; do not assume a Mac key labelled “1” means button 1. The starter uses digital direction signs. Analogue sensitivity and physical-controller behaviour require separate observation. VecX documentation says no separate BIOS file is required; this says nothing about rights to redistribute firmware or games. See <a href="https://docs.libretro.com/library/vecx/" target="_blank" rel="noreferrer">the core's operating reference</a>.</p>
+<p>The IDE uses private configuration, cartridge, save, state and system directories, with online emulator features disabled. It does not inherit your ordinary RetroArch configuration; input changes made in an IDE session may need repeating next session. Stop/Restart replace the owned process and temporary state, so do not rely on emulator save states being retained. The session has a 12-hour safety limit. “Running” means a process is alive; confirm the picture, sound and controls yourself.</p>
+</section>
+<section id="project-files"><h2>Project files and source control</h2>
+<pre><code>schema_version = 1
+name = "My vector cartridge"
+target = "vectrex"
+source = "src/asm/main.asm"</code></pre>
+<p><code>vectrex.toml</code> accepts exactly these four fields. Names are non-empty, at most 80 UTF-8 bytes and contain no control characters. The single source must be a lowercase <code>.asm</code> path under <code>src/</code>, at most 128 KiB, without symlinks or path escape. The manifest is limited to 8 KiB. Do not add <code>dragon.toml</code> to this folder: two recognised manifests make the target ambiguous.</p>
+<p>The current Explorer edits the configured source only. The supporting files are also listed in Explorer: select one to reveal it in Finder, then open it in your preferred text editor, or open this standalone guide in a browser. Open Project in Finder reveals the whole project folder. Reopen after externally changing the manifest. A source changed on disk causes stale-save rejection; preserve your unsaved work before reloading.</p>
+<p>Use README.md for onboarding and AGENTS.md for coding conventions. Update tests/README.md alongside changes. None of these files executes commands or grants AI authority. The optional AI Agent uses the shared Studio provider settings, context preview and guarded editing workflow below. Existing projects open without new files being inserted; template updates apply only to newly created folders.</p>
+<h3>AI Agent</h3>
+<p>In Settings → AI Providers, add your own OpenAI, Anthropic or Gemini API key. Keys stay in the operating system credential store, shared with the Dragon workbench in Eightbit Studio 6809; viewing settings does not transmit source. Use Test and load models explicitly, then choose a saved model and supported reasoning level. Consumer chat subscriptions may not include API credits.</p>
+<p>Open your assembly source and select AI Agent in the activity bar or View menu. The resizable right-hand panel supports Ask, active-source patch suggestions and Propose project changes. Review the visible context before Send. Project context contains the saved manifest, configured assembly source, existing README.md/tests/README.md and bounded root AGENTS.md; other files are unavailable. Changed saved files or guidance require Refresh context. Cancel or closing the Agent stops generation.</p>
+<p>Project proposals appear in an inline review. Apply and save validates the configured assembly source and documentation, saves atomically, and shows a receipt with verified file hashes. Undo is available while the saved snapshot still matches. The manifest, source membership and AGENTS.md cannot be changed by AI. Save unsaved edits and stop the emulator before applying changes. Active-source patches enter the editor as explicit unsaved changes.</p>
+<p>YOLO — save source changes without review is off by default and applies only to requests made while enabled. It may save the existing configured assembly source after native validation; documentation needs manual review. No-op, cancelled or rejected proposals save nothing. The Agent cannot run builds, tests, terminal commands, Git or the emulator. Review and verify generated source explicitly.</p>
+
+<p>Git initialisation is an explicit Source Control action. Review, stage and commit only intended files. Remote actions require the user's destination review. The generated .gitignore excludes .vectrex/, a local roms/ folder, environment secrets and .DS_Store; inspect the actual diff as exclusions cannot detect all sensitive data. Do not commit computer-specific tool paths or claim Git was initialised merely because .gitignore exists. Use the Terminal only for commands you deliberately choose.</p>
+</section>
+<section id="machine-memory"><h2>Machine and memory map</h2>
+<table><thead><tr><th>Region</th><th>Purpose</th><th>Programming rule</th></tr></thead><tbody>
+<tr><td>$0000–$7FFF</td><td>Up to 32 KiB unbanked cartridge</td><td>Header, executable code and immutable tables; do not store mutable variables here.</td></tr>
+<tr><td>$C800–$CBFF</td><td>1 KiB physical RAM</td><td>Shared by executive workspace, game state and stack; not all available to your variables.</td></tr>
+<tr><td>$D000–$D00F</td><td>6522 VIA registers</td><td>Timing and analogue hardware; avoid casual writes while using BIOS services.</td></tr>
+<tr><td>$E000–$FFFF</td><td>Executive ROM</td><td>Call documented services; do not embed ROM bytes.</td></tr>
+</tbody></table>
+<p>These are the useful base regions, not an exhaustive decoding/mirroring map. Consult the <a href="https://www.vectrex.de/wp-content/uploads/2013/12/vecprogman_v1.pdf" target="_blank" rel="noreferrer">original programmer's manual</a> for hardware detail.</p>
+<p>The starter allocates X_POS, Y_POS and TICK at $C880–$C882 with EQU. Plan later variables explicitly and retain stack headroom at the top of RAM. EQU names an address; it neither emits storage nor clears RAM. Initialise every game variable before use. Keep BIOS scratch locations out of your persistent state.</p>
+<p>The 6809 hardware stack grows downwards. Nested calls and saved registers consume it. Avoid recursion, unbalanced pushes/pulls and large temporary buffers. Record a simple RAM allocation table in your source before adding objects; overlapping an object array with the stack can look like a random drawing or return-address bug.</p>
+</section>
+<section id="assembly"><h2>6809 programming foundations</h2>
+<p>A and B are 8-bit accumulators; together they form D, with A as the high byte. X/Y are 16-bit index registers, S the hardware stack and U a second pointer/stack. PC tracks execution; DP supplies the high byte for direct addressing. CC holds flags, including zero, negative, carry and signed overflow. Words are big-endian. See the <a href="https://www.maddes.net/m6809pm/sections.htm" target="_blank" rel="noreferrer">Motorola programming model</a>.</p>
+<pre><code>; Fragments to place within a program, not whole cartridges:
+        lda     #$18        ; Immediate: the value 24.
+        sta     &gt;$C880      ; Extended: store at this absolute RAM address.
+        ldx     #$C880      ; X receives an address.
+        ldb     ,x          ; Indexed: read the byte at X.
+        ldd     #$1818      ; A=24 (Y), B=24 (X) for a vector call.</code></pre>
+<p>The <code>#</code> is significant: <code>LDA #$18</code> loads a number, whereas <code>LDA $18</code> reads memory. Prefix <code>&gt;</code> forces an extended address in LWASM. Indexed forms include <code>,X</code>, <code>2,X</code>, <code>,X+</code> and <code>,X++</code>; choose the increment to match byte or word data. A bracketed indexed operand adds indirection through a pointer.</p>
+<p><code>SETDP $C8</code> only tells the assembler what to assume. Changing the CPU requires code such as <code>LDA #$C8</code> then <code>TFR A,DP</code>. BIOS calls often require $D0 instead; Wait_Recal establishes that page. An incorrect direct-page assumption can redirect an otherwise valid store. Use extended addresses for game RAM while learning.</p>
+<p>Separate calculation, comparison and branching. After <code>CMPA #limit</code>, use signed branches for signed positions and unsigned branches for byte counts. Test $7F/$80 boundaries. Declare each helper's inputs, output, clobbered registers and stack use; reload BIOS arguments immediately before calling. Do not assume A, B or X survives a BIOS call.</p>
+</section>
+<section id="instructions"><h2>Instruction and directive reference</h2>
+<p>This working reference groups the 6809 instructions admitted by the Vectrex source validator. Each instruction has its own valid operands and flag effects; use the <a href="https://www.maddes.net/m6809pm/appendix_a.htm" target="_blank" rel="noreferrer">Motorola instruction entries</a> for encoding and cycle detail.</p>
+<table><thead><tr><th>Group</th><th>Mnemonics and typical purpose</th></tr></thead><tbody>
+<tr><td>Transfer</td><td>LDA LDB LDD LDX LDY LDU LDS; STA STB STD STX STY STU STS; TFR EXG. Load, store, transfer and exchange.</td></tr>
+<tr><td>Arithmetic</td><td>ADDA ADDB ADDD ADCA ADCB SUBA SUBB SUBD SBCA SBCB; CMPA CMPB CMPD CMPX CMPY CMPU CMPS; INC INCA INCB DEC DECA DECB; NEG NEGA NEGB; MUL SEX DAA.</td></tr>
+<tr><td>Logic</td><td>ANDA ANDB ORA ORB EORA EORB BITA BITB; COM COMA COMB CLR CLRA CLRB TST TSTA TSTB; ANDCC ORCC.</td></tr>
+<tr><td>Shifts</td><td>ASL ASLA ASLB LSL LSLA LSLB ASR ASRA ASRB LSR LSRA LSRB; ROL ROLA ROLB ROR RORA RORB.</td></tr>
+<tr><td>Pointers and stacks</td><td>ABX LEAX LEAY LEAU LEAS PSHS PULS PSHU PULU.</td></tr>
+<tr><td>Control</td><td>JMP JSR RTS BSR LBSR BRA LBRA BRN LBRN NOP; RTI SWI SWI2 SWI3 CWAI SYNC. Interrupt/wait instructions need a deliberately designed system context.</td></tr>
+<tr><td>Conditions</td><td>BEQ/BNE for equality; BMI/BPL for sign; BCS/BCC (BLO/BHS aliases) and BHI/BLS for unsigned comparisons; BLT/BGE and BGT/BLE for signed comparisons; BVS/BVC for overflow. Long conditional forms add L, such as LBEQ.</td></tr>
+</tbody></table>
+<p>JSR/BSR save a return address; RTS returns. Pair pushes and pulls. BRA repeats without growing the stack. Short branches have limited displacement; use the matching long form when code growth puts a destination out of reach. Compare flags must be consumed before intervening instructions change them.</p>
+<table><thead><tr><th>Directive</th><th>Use in this target</th></tr></thead><tbody>
+<tr><td>ORG</td><td>Exactly once, at 0 ($0 or $0000 also accepted). No later RAM origin.</td></tr>
+<tr><td>EQU</td><td>Name constant values or RAM addresses without emitting bytes.</td></tr>
+<tr><td>FCB / FDB</td><td>Emit bytes / big-endian words into the cartridge.</td></tr>
+<tr><td>FCC / FCS</td><td>Emit string data / a string with the final character's high bit set. The starter uses FCC followed by an explicit $80 terminator.</td></tr>
+<tr><td>SETDP / END</td><td>Declare an assembler direct-page assumption / end assembly. Neither substitutes for runtime initialisation.</td></tr>
+</tbody></table>
+<p>Use colon-suffixed labels, indentation for instructions and semicolon comments. The source boundary rejects includes, INCBIN, macros, pragmas, sections, external linking and allocation directives such as RMB, even if LWASM itself supports them. Keep code and data in one file and allocate mutable RAM with EQU.</p>
+</section>
+<section id="header"><h2>Cartridge header and first program</h2>
+<p>Keep the starter header until you have a working frame loop. Its fields are the recognised <code>g GCE </code> prefix and text ending with $80, a music address word, four title-layout bytes, one title ending with $80, and a zero ending the title list. Executable code follows. The $FD0D word refers to an executive tune; it is an address, not copied music or BIOS bytes. Header recognition is a format convention, not a licence grant.</p>
+<p>This original complete example draws one short horizontal segment. Try it in a separate new project by replacing its source; keep the original demo in your first project. A successful assembly is only the first check—observe the line in your emulator.</p>
+<pre data-assembly="complete"><code>        org     0
+        fcc     "g GCE 2026"
+        fcb     $80
+        fdb     $FD0D
+        fcb     $F8,$50,$20,$C0
+        fcc     "FIRST VECTOR"
+        fcb     $80,0
+frame:  jsr     $F192
+        jsr     $F2A9
+        jsr     $F354
+        lda     #$60
+        sta     &gt;$D004
+        clr     &gt;$C823
+        ldd     #$0040
+        jsr     $F3DF
+        bra     frame</code></pre>
+<p>The supported validator accepts a 20–32768-byte cartridge, a copyright/header terminator within its initial 40 bytes, four title-layout bytes, one title terminated within 80 bytes, then zero and at least one code byte. It does not prove that pointers, opcodes or game logic are correct. Keep branch targets out of header and data bytes.</p>
+</section>
+<section id="vectors"><h2>Frames, vectors and text</h2>
+<p>A useful frame structure is: Wait_Recal → read input → update state → draw objects → update sound → branch back. Wait_Recal waits for the refresh timer and recalibrates the beam reference, leaving DP=$D0 and changing D/X. Call it once per frame; do not carry unsaved register values across it. See <a href="https://www.playvectrex.com/designit/chrissalo/wait_recal.htm" target="_blank" rel="noreferrer">Wait_Recal's contract</a>.</p>
+<p>Every visible object must be redrawn. Start modestly: excessive vector work per frame can reduce refresh stability. Keep gameplay loops bounded and avoid busy-wait delays for animation; use a frame counter. Separate persistent game positions from temporary drawing arguments.</p>
+<p>Reset0Ref establishes the origin. Set brightness and vector scale, then move with the beam blanked before drawing. For Moveto_d, A is signed Y and B signed X; establish the origin first when treating this as an object position. The routine changes D. See <a href="https://www.playvectrex.com/designit/chrissalo/moveto_d.htm" target="_blank" rel="noreferrer">Moveto_d</a>.</p>
+<p>Draw_Line_d uses relative signed Y/X displacements at the current scale and requires DP=$D0 and $C823=0 for one vector. It changes D and advances X by two. Reload each segment's arguments. See <a href="https://www.playvectrex.com/designit/chrissalo/draw_line_d.htm" target="_blank" rel="noreferrer">Draw_Line_d</a>. The demo's four pairs (24,24), (-24,24), (-24,-24), (24,-24) close a diamond. Larger scale or coordinates change its size; these are analogue vector units, not screen pixels.</p>
+<p>For a second object, reset/reposition independently instead of relying on the previous endpoint. For text, Print_Str_d at $F37A takes a string pointer in U and Y/X in A/B; use the documented high-bit terminator and text-size workspace conventions. Text costs frame time, so begin with one short label. See <a href="https://www.playvectrex.com/designit/chrissalo/print_str_d.htm" target="_blank" rel="noreferrer">Print_Str_d</a> for its inputs and clobbers. Do not substitute Dragon character-screen routines. Consult the BIOS reference before adopting vector-list formats: different routines interpret counts and terminators differently.</p>
+</section>
+<section id="input"><h2>Controllers and buttons</h2>
+<p>The starter sets $C81F=1 and $C820=3 to sample controller 1 horizontal/vertical axes, and clears $C821/$C822. Joy_Digital ($F1F8) writes corresponding values at $C81B/$C81C: negative for left/down, zero for neutral, positive for right/up. DP must be $D0; D/X are changed. Joy_Analog ($F1F5) is a distinct service needing resolution setup and controller acceptance. See <a href="https://www.playvectrex.com/designit/chrissalo/joy.htm" target="_blank" rel="noreferrer">joystick inputs</a>.</p>
+<p>Read_Btns ($F1BA) updates held-button bits at $C80F and press-transition bits at $C811. Controller 1 buttons 1–4 occupy masks $01/$02/$04/$08; controller 2 uses the upper four bits. Read once per frame. Use held state for continuous sound/movement, transitions for one-shot fire/menu actions. Its A result is the transition state; B/X change. See <a href="https://www.playvectrex.com/designit/chrissalo/read_btns_mask.htm" target="_blank" rel="noreferrer">button-state contracts</a>.</p>
+<pre><code>; After Read_Btns; fragment for a one-shot button-1 action:
+        lda     &gt;$C811
+        bita    #1
+        beq     no_press
+        inc     &gt;$C882
+no_press:</code></pre>
+<p>Keep this exercise separate from the demo's automatic TICK increment. First predict the result: holding the button should increment only once; releasing and pressing again should increment again. Verify neutral, diagonals, repeated presses and release. The starter's positions are signed bytes and wrap; a game may instead clamp them before increment/decrement. Choose that policy explicitly and test all four boundaries.</p>
+</section>
+<section id="sound"><h2>Sound programming</h2>
+<p>The demo writes channel A's fine/coarse period with Sound_Byte ($F256), then the mixer and volume. A selects the PSG register; B supplies its value; DP must be $D0. The routine updates the executive shadow and changes D/X. Reload both arguments each time. See <a href="https://www.playvectrex.com/designit/chrissalo/sound_byte.htm" target="_blank" rel="noreferrer">Sound_Byte</a>.</p>
+<table><thead><tr><th>Demo write</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Register 0 ← $A0; register 1 ← $01</td><td>Channel A tone period $1A0. Adjust the period to experiment with pitch.</td></tr>
+<tr><td>Register 7 ← $3E</td><td>Enable tone A and disable other tone/noise channels, retaining the demo's I/O-direction setting.</td></tr>
+<tr><td>Register 8 ← 8 or 0</td><td>Fixed channel A volume while button 1 is held; silence on release.</td></tr>
+</tbody></table>
+<p>These values come from the checked-in original demo. Extend them one change at a time: replace $A0 with another fine period, save/build/run and compare the audible result at a comfortable host volume. Do not reuse sound-chip registers as generic variables or alter mixer I/O bits casually, because controller reads share the hardware interface.</p>
+<p>For a bounded sound effect, add a duration counter to your RAM allocation and decrement it once per frame. Select the period/volume while the counter is non-zero and explicitly write silence when it expires. Test retriggering, release and state changes. Keep a simple direct-tone approach until you deliberately adopt the BIOS music-buffer/Do_Sound contract; mixing both approaches without ownership of the sound state can overwrite your changes.</p>
+</section>
+<section id="demo"><h2>Understand and extend the demo</h2>
+<ol><li><strong>Header:</strong> ORG 0 and the single title precede <code>start</code>. Change the title text conservatively while retaining its terminators.</li>
+<li><strong>Initial state:</strong> X_POS, Y_POS and TICK are cleared; controller 1 axes are enabled. These are RAM addresses, not cartridge storage.</li>
+<li><strong>Frame:</strong> Wait_Recal, Read_Btns and Joy_Digital establish timing and current input. Horizontal and vertical branches independently alter position.</li>
+<li><strong>Diamond:</strong> drawing starts from a reset reference, sets scale $60, moves to Y_POS/X_POS and draws four relative segments.</li>
+<li><strong>Moving line:</strong> a second reset makes it independent. <code>TICK &amp; $3F</code> then subtracting $20 supplies its repeating vertical offset. It continues moving while the joystick is neutral.</li>
+<li><strong>Tone:</strong> period/mixer writes are followed by a volume selected from held button 1. LBRA returns to the frame without adding a stack entry.</li></ol>
+<p>Build a learning sequence in separate source revisions:</p>
+<ul><li><strong>Geometry:</strong> halve all four diamond displacement pairs. Predict closure and size; check that independent line motion stays unchanged.</li><li><strong>Movement:</strong> clamp X/Y to chosen signed limits before each increment/decrement. Hold at every boundary, release and move back. Include corners.</li><li><strong>Input:</strong> assign a spare button's transition bit to reset the position. Holding must not repeatedly trigger if you selected one-shot behaviour.</li><li><strong>Sound:</strong> use a short countdown effect instead of continuous held sound. Verify expiry, retriggering and silence after Restart.</li><li><strong>Game structure:</strong> add title/play/game-over state bytes, a bounded object list and explicit collision rules. Keep update logic independent of drawing and record the RAM/stack budget.</li></ul>
+<p>These are exercises, not implemented starter features or claims of tested gameplay. Add expected outcomes to tests/README.md before changing code. Do not add a second assembly file: use labelled helpers and tables inside the configured source.</p>
+</section>
+<section id="bios"><h2>BIOS quick reference</h2>
+<p>Common calls used by the demo and early exercises are listed below. Unless stated otherwise, establish DP=$D0 and treat scratch registers as changed. This is a selected working reference, not a replacement for each routine's full contract.</p>
+<table><thead><tr><th>Routine / address</th><th>Purpose and call preparation</th></tr></thead><tbody>
+<tr><td>Wait_Recal / $F192</td><td>Once per frame; establishes DP=$D0, changes D/X.</td></tr>
+<tr><td>Read_Btns / $F1BA</td><td>Poll held and transition state; see controller section.</td></tr>
+<tr><td>Joy_Digital / $F1F8</td><td>Poll configured direction channels; changes D/X.</td></tr>
+<tr><td>Sound_Byte / $F256</td><td>A=PSG register, B=value; changes D/X.</td></tr>
+<tr><td>Intensity_7F / $F2A9</td><td>Select the demo's fixed intensity.</td></tr>
+<tr><td>Intensity_a / $F2AB</td><td>A=intensity, in the documented 0–$7F range.</td></tr>
+<tr><td>Moveto_d / $F312</td><td>A=Y, B=X, current scale; changes D.</td></tr>
+<tr><td>Reset0Ref / $F354</td><td>Reset the drawing reference before positioning an independent object.</td></tr>
+<tr><td>Print_Str_d / $F37A</td><td>U=terminated string, A=Y, B=X; verify text-size workspace first.</td></tr>
+<tr><td>Draw_Line_d / $F3DF</td><td>A=delta Y, B=delta X; $C823=0; changes D and advances X.</td></tr>
+</tbody></table>
+<p>Addresses are checked against the <a href="https://www.playvectrex.com/designit/chrissalo/appendixa.htm" target="_blank" rel="noreferrer">Vectrex API catalogue</a>. For an unfamiliar routine, read its entry conditions and side effects before use. Name addresses with EQU rather than scattering unexplained numbers through new code.</p>
+</section>
+<section id="testing"><h2>Testing, export and hardware</h2>
+<p>Use the generated tests/README.md as a repeatable checklist. No Vectrex Test Explorer schema or source-level debugger is implemented. Do not add Dragon .dragon-test.toml files or treat listing/symbol output as an integrated debug map.</p>
+<p>First check Build: syntax accepted, cartridge header valid, output within 32 KiB, stable SHA-256 for identical source/tools. Inspect cartridge.lst for instruction addresses and symbols.txt for labels. A symbol with a valid address can still point at the wrong logic. Then check runtime separately: visible geometry, refresh, all input directions, held/transition buttons, sound/silence and Restart/Stop recovery.</p>
+<p>For a regression, record the original failure, exact change, expected result and steps that distinguish fixed behaviour from the previous version. Exercise invalid source in a disposable copy and verify no old cartridge runs. Cancel an operation where possible and retry successfully. Record unperformed checks as pending, with source/tool/core versions; do not include sensitive paths or payloads.</p>
+<p>After a successful current Build, choose Export cartridge in Build Results. Select a new filename: the exporter rejects existing destinations and changed source/output. Keep the exported binary's hash, size and source revision in your release notes. Export is a local file operation and does not publish or transfer anything to hardware.</p>
+<p>Physical Vectrex acceptance needs separately provisioned, compatible hardware and a flash-cartridge-specific procedure approved by its owner. Emulator success does not establish timing, analogue behaviour, display calibration or physical safety. Bank switching, specialised peripherals, calibrated overlays and a physical deployment pipeline are outside this target's implemented contract.</p>
+</section>
+<section id="troubleshooting"><h2>Troubleshooting and supported limits</h2>
+<table><thead><tr><th>Symptom / code</th><th>What to check and how to recover</th></tr></thead><tbody>
+<tr><td>DSV1000 — project configuration</td><td>Use the four schema-1 fields, target vectrex and one src/*.asm source. Remove foreign/unknown manifest fields; do not convert a Dragon project in place.</td></tr>
+<tr><td>DSV1001 — file operation</td><td>Check the selected parent is writable and the destination new. Preserve existing files and retry with another folder/name.</td></tr>
+<tr><td>DSV1002 — bounds/path</td><td>Use regular files without symlinks, paths within the project and supported file sizes.</td></tr>
+<tr><td>DSV1003 — stale source</td><td>Source or manifest changed externally. Preserve unsaved text, reopen and reconcile before saving again.</td></tr>
+<tr><td>DSV1100 — source contract</td><td>Check ASCII, line length, one ORG 0 and allowed instructions/directives. Remove includes, macros and reservations.</td></tr>
+<tr><td>DSV1101 — cartridge header</td><td>Restore the starter header layout and terminators, with code following the single title and total size within 32768 bytes.</td></tr>
+<tr><td>DSV1102 — build process/tool</td><td>Validate LWTOOLS 4.25 and both executables. Cancellation, timeout or excess output also stops a build; correct the cause and retry.</td></tr>
+<tr><td>DSV1103 — assembly</td><td>Check the reported source lines, label spelling, operands and branch range. Save corrections and build again.</td></tr>
+<tr><td>DSV1200 / DSV1201 — runtime setup/session</td><td>Check selected executable/core and operation state; stop an owned session if necessary, correct setup and retry. Read the accompanying bounded message.</td></tr>
+<tr><td>DSV1104 — build publication/freshness</td><td>Check output-directory access and rebuild current saved source; publication failed or source/output no longer matches the selected result.</td></tr>
+<tr><td>Process runs but screen is blank</td><td>Focus/check the external window and core. Revert to the starter, then inspect header, frame loop, DP, intensity, scale and coordinate order. Process state is not rendering evidence.</td></tr>
+<tr><td>Distorted vectors or crashes</td><td>Check Wait_Recal, $C823 before single lines, independent object origins, register clobbers, signed overflow and stack/RAM overlap. Reduce to one object.</td></tr>
+<tr><td>No input or sound</td><td>Check external-window focus and current input mapping, channel-enable bytes, held/transition choice, host mute, PSG mixer and volume. Use the original demo as a baseline.</td></tr>
+</tbody></table>
+<p>Current limits: one source; up to 32 KiB unbanked cartridge; no BASIC, includes, macros, multi-object linking, Vectrex debugger. Tools and emulator remain separate installs. Success in ordinary mock tests, a real assembler, an external emulator, a packaged app and a physical console are distinct evidence layers.</p>
+</section>
+<section id="references"><h2>References and provenance</h2>
+<p>This guide, checklist and examples are independently written Apache-2.0 material. Technical references supply hardware, file-format and API facts only; no recovered BIOS implementation, commercial game, firmware bytes, emulator code, original diagrams or manual listings are reproduced. External resources are optional, explicitly opened links; the guide itself works offline.</p>
+<ul><li><a href="https://www.vectrex.de/wp-content/uploads/2013/12/vecprogman_v1.pdf" target="_blank" rel="noreferrer">Vectrex programmer's manual, volume I</a> — original hardware and executive documentation.</li>
+<li><a href="https://www.maddes.net/m6809pm/sections.htm" target="_blank" rel="noreferrer">Motorola MC6809/MC6809E programming manual</a> and <a href="https://www.maddes.net/m6809pm/appendix_a.htm" target="_blank" rel="noreferrer">instruction appendix</a> — archived primary CPU documentation.</li>
+<li><a href="https://www.playvectrex.com/designit/chrissalo/appendixa.htm" target="_blank" rel="noreferrer">Vectrex BIOS API catalogue</a> — call addresses; use the individual contract links in the programming sections. Do not follow implementation listings as a source of shipped code.</li>
+<li><a href="https://www.lwtools.ca/manual/" target="_blank" rel="noreferrer">LWTOOLS manual</a> — assembler syntax; the IDE intentionally accepts a narrower single-source subset.</li>
+<li><a href="https://docs.libretro.com/library/vecx/" target="_blank" rel="noreferrer">Libretro VecX documentation</a> — core setup, controls and BIOS requirements.</li>
+<li><a href="https://docs.libretro.com/guides/cli-intro/" target="_blank" rel="noreferrer">RetroArch command-line documentation</a> — external core/content selection; IDE invocation remains fixed and supervised.</li></ul>
+<p>The template source and native project/build contracts are authoritative for what this application implements. References to broader machine capabilities do not enable additional IDE features. Record actual emulator and hardware results separately from the guide's examples.</p>
+</section>
+</main>
+<h2>External emulator window</h2><p>Run opens the emulator in its own window and leaves your source editor visible. Use the Emulator panel for Run, Stop and Restart. Keyboard, controller input and audio stay with the external emulator. There are no embedded display or Split controls.</p><p>Rebuild on save defaults on after a project Run. Saving source builds and restarts the cartridge, resetting programme state. Turn off Rebuild on save in the Emulator panel to keep the current run. External cartridges, project opening, AI source writes and close-time saves do not auto-run. A failed build never launches old output.</p>
+</body>
+</html>

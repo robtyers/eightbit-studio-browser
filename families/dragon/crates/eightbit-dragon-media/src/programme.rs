@@ -4,6 +4,7 @@ use crate::{
     read_machine_code,
 };
 use serde::Serialize;
+use sha2::{Digest, Sha256};
 
 /// Read-only programme classification; never launches or writes source.
 #[derive(Debug, Serialize)]
@@ -16,6 +17,9 @@ pub enum ProgrammeInspection {
     },
     /// A machine-code recording suitable for a separate disassembly workflow.
     MachineCode {
+        /// Digest of the original CAS/WAV transport, before decoding.
+        #[serde(rename = "inputSha256")]
+        input_sha256: String,
         /// Validated name.
         filename: String,
         /// First payload address.
@@ -48,6 +52,7 @@ pub fn inspect_programme(bytes: &[u8]) -> Result<ProgrammeInspection, String> {
     };
     let machine = read_machine_code(&cassette).map_err(|error| error.to_string())?;
     Ok(ProgrammeInspection::MachineCode {
+        input_sha256: hex::encode(Sha256::digest(bytes)),
         filename: machine.filename,
         load_address: machine.load_address,
         execution_address: machine.execution_address,
@@ -68,6 +73,13 @@ mod tests {
                     ..
                 }
             ));
+        }
+        for bytes in [cas.clone(), crate::encode_cassette_wav(&cas).unwrap()] {
+            let inspected = inspect_programme(&bytes).unwrap();
+            let ProgrammeInspection::MachineCode { input_sha256, .. } = inspected else {
+                panic!("Expected machine recording");
+            };
+            assert_eq!(input_sha256, hex::encode(Sha256::digest(&bytes)));
         }
         assert!(inspect_programme(&cas[..cas.len() / 2]).is_err());
         assert!(inspect_programme(&[]).is_err());

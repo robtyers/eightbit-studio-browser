@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Original synthetic programmes; output and scalar success observed with lawful exact-SHA Dragon 32 firmware through separately installed XRoar. No firmware bytes or instructions retained.",
+  "referenceSha256": "fc0e900bfec6b52f0f80ba1e65a4712808d2a411b5b00496639ef1a2152351f1",
+  "cases": [
+    {
+      "source": "PRINT#-2,",
+      "output": "",
+      "success": false
+    },
+    {
+      "source": "PRINT#0,",
+      "output": "",
+      "success": false
+    },
+    {
+      "source": "PRINT#-2,\"\"",
+      "output": " \r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,CHR$(13);",
+      "output": " \r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,;",
+      "output": "",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,,",
+      "output": "                ",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,;\"X\"",
+      "output": "X\r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,,\"X\"",
+      "output": "                X\r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,\"X\";:PRINT#-2,\"\"",
+      "output": "X\r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,1\"X\"",
+      "output": " 1 X\r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,\"X\"\"Y\"",
+      "output": "XY\r",
+      "success": true
+    },
+    {
+      "source": "A=1:B=2:PRINT#-2,A B",
+      "output": " 0 \r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,1(2)",
+      "output": " 1  2 \r",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,1;",
+      "output": " 1 ",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,;,",
+      "output": "                ",
+      "success": true
+    },
+    {
+      "source": "PRINT#-2,:PRINT#-2,\"NEXT\"",
+      "output": "",
+      "success": false
+    },
+    {
+      "source": "PRINT#-2,1;:PRINT#-2,\"NEXT\"",
+      "output": " 1 NEXT\r",
+      "success": true
+    },
+    {
+      "source": "A B=3:PRINT#-2,AB",
+      "output": " 3 \r",
+      "success": true
+    },
+    {
+      "source": "A $=\"X\":PRINT#-2,A$",
+      "output": "X\r",
+      "success": true
+    },
+    {
+      "source": "A B(2)=5:PRINT#-2,AB(2)",
+      "output": " 5 \r",
+      "success": true
+    },
+    {
+      "source": "A B C=7:PRINT#-2,AB",
+      "output": " 7 \r",
+      "success": true
+    }
+  ]
+}

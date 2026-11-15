@@ -3,6 +3,7 @@
 #![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used, clippy::panic))]
 pub mod basic;
 pub mod firmware;
+pub mod original_session;
 #[cfg(feature = "native")]
 pub mod vice;
 use eightbit_source_core::{Family, Profile, Result, error};
@@ -43,6 +44,7 @@ pub static DEFINITION: FamilyDefinition = FamilyDefinition {
     targets: TARGETS,
 };
 pub static PROFILES: &[Profile] = &[Profile {
+    original_assembler: None,
     #[cfg(feature = "native")]
     adapter: Some(&vice::ADAPTER),
     #[cfg(not(feature = "native"))]

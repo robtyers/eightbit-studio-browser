@@ -1,4 +1,5 @@
-import { PROJECT_PREFIX, projectId, recentProjects, saveProject, snapshot } from "./projects";
+import { MAX_SOURCE_BYTES } from "./contracts";
+import { PROJECT_PREFIX, projectId, recentProjects, saveProject, snapshot, projectResult } from "./projects";
 const project = { schemaVersion: 1 as const, name: "Game", kind: "basic" as const, source: "10 END\n", manifest: "schema_version = 1", supportFiles: {} };
 beforeEach(() => localStorage.clear());
 it("keeps atomic versioned source-only copies, rejects a concurrent overwrite and recovers after a quota failure", async () => {
@@ -41,4 +42,14 @@ it("preserves exact schema-2 computer identity and rejects unknown or ambiguous 
   expect(snapshot(project).target).toBeUndefined();
   expect(() => snapshot({ ...project, target: "c64-pal" })).toThrow();
   expect(() => snapshot({ ...project, schemaVersion: 2, target: "unknown" })).toThrow();
+});
+
+it("keeps multi-source project transport bounded and verifies source-list metadata", () => {
+  const assembly = { ...project, kind: "assembly" as const, supportFiles: { "asm/other.asm": "x".repeat(70_000) } };
+  expect(snapshot(assembly).supportFiles["asm/other.asm"]).toHaveLength(70_000);
+  const result = { schemaVersion: 1, ok: true, result: { project: assembly, entryPath: "asm/main.asm", sourcePaths: ["asm/main.asm", "asm/other.asm"] } };
+  expect(projectResult(result).sourcePaths).toEqual(["asm/main.asm", "asm/other.asm"]);
+  for (const sourcePaths of [null, [], ["asm/main.asm", "missing.asm"], ["asm/main.asm", "asm/main.asm"], ["wrong.asm"], Array.from({ length: 65 }, (_, i) => `asm/${i}.asm`)]) expect(() => projectResult({ ...result, result: { ...result.result, sourcePaths } })).toThrow();
+  expect(() => snapshot({ ...assembly, supportFiles: { "asm/other.asm": "x".repeat(MAX_SOURCE_BYTES + 1) } })).toThrow();
+  expect(() => snapshot({ ...assembly, supportFiles: { "asm/other.asm": "bad\0text" } })).toThrow();
 });

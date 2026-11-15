@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "recordedOn": "2026-10-19",
+  "status": "local-development-acceptance",
+  "scope": "Original Spectrum 48K BASIC and single-source Z80 cassette development in the desktop and browser workbenches",
+  "sourceState": "uncommitted working tree; no publication or deployment",
+  "environment": {
+    "native": "macOS ARM64",
+    "rust": "1.92.0",
+    "node": "24.19.0",
+    "pnpm": "11.5.0",
+    "wasmBindgen": "0.2.127",
+    "referenceEmulator": "MAME 0.289"
+  },
+  "firmware": {
+    "schemaVersion": 1,
+    "id": "eightbit-spectrum48-original-dev-1",
+    "status": "development",
+    "licence": "Apache-2.0",
+    "bytes": 204800,
+    "sha256": "a9385b80d7bd0801bf0572aa8b5e33c1cf32e339093017d8f09cba351cf28186",
+    "sourceSha256": "821212552175177c6d3a1d0fde29e44c0d1bc2313d526536cc29bf71fb3b580b",
+    "builderSha256": "dab8fe7734ff46e14dbe7088bff7f6a7bf98cc71afc250202f1e111118ff94fc",
+    "assemblerSha256": "16bf60239a01ac248c55e35cb7f45394509dd1e8219e3039406e835cf5ce7f24",
+    "commonBytes": 8192,
+    "pageBytes": 8192,
+    "pages": 24
+  },
+  "frozenRuntimeInputs": {
+    "apps/eightbit-studio-web/core/src/lib.rs": "3debaa7d557481a53a8398ea78c1a268fe418228f5092ee7918d6aff639281b6",
+    "apps/eightbit-studio-web/core/src/machines.rs": "65b917b5f3bbb616bcdefa411639d0ca726958ae6d13625a72da40565411c706",
+    "apps/eightbit-studio-web/core/src/project.rs": "8ac503e835a5fdade7c05c1a6ac290e4fb1ca0c20e3d75654267b1643f52d96c",
+    "apps/eightbit-studio-web/ui/src/Monitor.tsx": "48c1b4e4ee365f940c36b1fa5b188b403041108fa1050b259dcf1ee97ef85d94",
+    "apps/eightbit-studio-web/ui/src/monitor-worker.ts": "aaa617c6f933bc7b63abca3966757b5ecfddb31e886762ae0be74ae07d30dcdb",
+    "apps/eightbit-studio-web/ui/src/monitorWorkerHost.ts": "ccee3636fc165ec406236028b6d65d1d19cc8da5cf129a372441f6d76247dd1b",
+    "apps/eightbit-studio-z80/desktop/src-tauri/src/original.rs": "26677759e6b346831a591c4bc5bfb763887eb5147360ce16ba2673f3dc3258a4",
+    "apps/eightbit-studio-z80/ui/src/App.tsx": "c177ccdb176ec6ab3eef2bf4c44f41b6710564afb6f3e031ebc09f7cefb53da3",
+    "apps/eightbit-studio-z80/ui/src/OriginalSpectrum.tsx": "fd0bdb0e9cccadadff1c5014a0daf3f776850e91fd118e3e32ec658a760bcfd7",
+    "apps/eightbit-studio-z80/ui/src/Panels.tsx": "0b5fbebb04a1611ca3733a27b7d7a88f2230ade5f2cfbb2cc46cc3b11cf76f25",
+    "cpu/z80/eightbit-sinclair-basic/src/lib.rs": "7eb651f8169dfc01ecc18604eabf32e5ff0a1328cf5168f0cac96fb1dc4168d1",
+    "cpu/z80/eightbit-z80-core/src/assembler.rs": "e5186f867a544c32f308e709af25e92c62e3e3b552f763af290658017c8d5cbf",
+    "cpu/z80/eightbit-z80-core/src/assembler/encode.rs": "abf82acd5638536aa3dc848f1fa85608a3ba20309d501dc0e21b7fbaae7618a8",
+    "cpu/z80/eightbit-z80-core/src/assembler/expression.rs": "2f38f77571ced37fc904148f1a1c19ddb05e7c66818868928f14f296ad9f9492",
+    "cpu/z80/eightbit-z80-core/src/instructions.rs": "6607e7a7acd824362fa65d130b7ecddf154dec340f564769527d6f30a9698a9a",
+    "cpu/z80/eightbit-z80-core/src/lib.rs": "85ed8abecd59044d8ea72e7328f417ce1e3f120db876f384cfc1e136754e30a5",
+    "crates/eightbit-desktop/src/source.rs": "40b25836242bfad65df133af1fab7868b1332bbe09590c773afcb36dea877e56",
+    "crates/eightbit-source-core/src/source_map.rs": "65a778c1996ad01ca1b65bd88206b45000fa585d50987bee608ef1db73459702",
+    "crates/eightbit-source/src/build.rs": "e821956dae4f5565801777000aa24f26170bbf28331b3eca586b1445ccc49348",
+    "families/spectrum/crates/eightbit-spectrum-core/src/lib.rs": "bcc975c7ec93b5c6fc7657dc5375a6cb335ace70bec9c9718f40f2b9ca63b7ad",
+    "families/spectrum/crates/eightbit-spectrum-core/src/original_session.rs": "348046dde6c400c4ff026481a48b217c0de382a8b1f225948512692a460a2bd8",
+    "families/spectrum/crates/eightbit-spectrum-emulator/build.rs": "dab8fe7734ff46e14dbe7088bff7f6a7bf98cc71afc250202f1e111118ff94fc",
+    "families/spectrum/crates/eightbit-spectrum-emulator/src/lib.rs": "1b22471ff8010f5495177e070621315f2c84da04bfee76d760da08e033802107",
+    "families/spectrum/crates/eightbit-spectrum-emulator/src/recording.rs": "8d8cef37986bc6e77df289ebd0aa0c2e703fe3f0cc5602399d8aa2d72444527e",
+    "families/spectrum/crates/eightbit-spectrum-emulator/src/tape.rs": "b0c0fcb44e7dabb7f2988aca2f608079e579cd51401b12a6f86568b1e7e86c03",
+    "families/spectrum/crates/eightbit-spectrum-emulator/src/wave.rs": "98bd7b9a22f82b409d6a08c7ad76162b8bab7eff9281f85090a5c93851b08180",
+    "families/spectrum/firmware/original/common.asm": "97db57b7624f1af64fbd006374f7d4b3219b614e460ee345f564053ba36031b6",
+    "families/spectrum/firmware/original/font.asm": "02ea47a6946f139a4948c5a0a5090b4d12955c0bfc45e0f69595cf52b7234b1c",
+    "families/spectrum/firmware/original/page-00.asm": "30bb9cfa7173e0be5208edfca8a2f2ec9ec4bfc98a0342d5f83e343f02ecfec3",
+    "families/spectrum/firmware/original/page-01.asm": "3921a6d3d83a554723e82c85c10bbda6b79a700384fe13fa759dc4ea082a1ff6",
+    "families/spectrum/firmware/original/page-02.asm": "943f1ffcbfb0b89a591a9917e94a2aef9e51bec5cfd561ec7d4404f5c3510e94",
+    "families/spectrum/firmware/original/page-03.asm": "9d72a5bdb3392cc873f3da6099280c0ac28b4b5a9ca5103c70da2407a83b2f4c",
+    "families/spectrum/firmware/original/page-04.asm": "878f534109776d2cf3d8e635e5efb6d6477893c8ab894d95ba7f0f7a6ef6a58e",
+    "families/spectrum/firmware/original/page-05.asm": "4cf52533fe827ce62c8cd41c7e6d242748914030d7bc106f1c6686d26d556225",
+    "families/spectrum/firmware/original/page-06.asm": "23234cbed4d71eaf2cde489aeb8d3a8c415e053e10bb672f1e63a3fbc8946fd0",
+    "families/spectrum/firmware/original/page-07.asm": "c9a69255fea7dc48f47df3128ce80fee54121c352fd1691743bb605321a1e0ec",
+    "families/spectrum/firmware/original/page-08.asm": "d4bf4a5d5137c1900b4501072b2bb6a38565219a478c7fcdf0e7a04a62892c6d",
+    "families/spectrum/firmware/original/page-09.asm": "ef41c1e5eb68b7897e773fbc450b24cbb4056d78305116b135598b014766adc7",
+    "families/spectrum/firmware/original/page-10.asm": "42e92fb253a1541b0c9f1f57398c435bd4d9f0399c5bd787035f45293d7a70c2",
+    "families/spectrum/firmware/original/page-11.asm": "7d676b971cf17dea26cdab67da9a537839e06bd56f7fbcd7742e6afef13dee16",
+    "families/spectrum/firmware/original/page-12.asm": "bd621bf34b335b197501f4fb5c168124e99f21f5f1cae87443959165990d95b7",
+    "families/spectrum/firmware/original/page-13.asm": "6ca135f086723e327625c448a1cb3f0f40a2380b2b99cd9330eeaba01396d93a",
+    "families/spectrum/firmware/original/page-14.asm": "70be8be9238741aa67da91448e60091983943e06d71248d4dab9b827699c65f1",
+    "families/spectrum/firmware/original/page-15.asm": "6f029bcf6d5a64852e488f44bd4a6afc1457de8d0f4d66732f4ad0c5aedf11c1",
+    "families/spectrum/firmware/original/page-16.asm": "575b717895002d3f80cbbc8e80746a77ef4213fb59f2cb2b8575da027955ac8c",
+    "families/spectrum/firmware/original/page-17.asm": "521dba384b4de74a8946aedaebc3b4bf6be50cfdbbb5d6a019048ae8e02fc7c1",
+    "families/spectrum/firmware/original/page-18.asm": "ee68f74849b6b49f77c36eb298901c21140b51ebb352c629ee721ebd1b6a50b6",
+    "families/spectrum/firmware/original/page-19.asm": "a3191b2f6d3f29176964cee69e8a780e06b2ff82149a69975b9d849b74083c20",
+    "families/spectrum/firmware/original/page-20.asm": "00454001bd3d681bd16a34e390db7bc918d58cddba8b4024e29c00f13e4b4b03",
+    "families/spectrum/firmware/original/page-21.asm": "155ed062996fe268db3c31bad3399b5acc000c8b42411e191a5d1b1a0ef10226",
+    "families/spectrum/firmware/original/page-22.asm": "9a02ff0d50482c773c4aed6139ab20fb26978f0afbb4f5c2b24e633bb2f20f74",
+    "families/spectrum/firmware/original/page-23.asm": "f6cf9969d2739e6a1246d18311d98ea495877f6fc4c97760177694f065773006",
+    "families/spectrum/firmware/original/tables.asm": "70498407bfbc8255dfc040d7ed4cd123f47c4f3486fb42c369341b38fd4fe9a9",
+    "packages/browser-workbench/src/BrowserWorkbench.tsx": "5ead0f30365b304817e150f9933f85f96fba4b85bdab899dc07c9a293a0a5ccb",
+    "packages/browser-workbench/src/contracts.ts": "22f896c438431808c55cfc60def40d6f0f88cc009bca53c3fa9606283a939072",
+    "packages/browser-workbench/src/spectrumDebug.ts": "8a2b1f289f69efb1f80ac7b82ba7711e2b46b33cec2291799cec47a743c07c2b",
+    "packages/workbench/src/components/MachineDebugPanel.tsx": "5c9e88e8de5a9aff59bb232db8edff0f6569ff20470f29e9986f7ff809716acc",
+    "packages/workbench/src/components/MonitorConsole.tsx": "46664fb3786dc5e105776aa1521a61ae10a7734834a28998e275f4c094c9b6d6",
+    "packages/workbench/src/styles.css": "0995c7eb0e42b90aac83ed6dcb5dcf13c9e28f9bd7a06460385652926f6844e4"
+  },
+  "ordinaryGate": {
+    "rustPassed": 1416,
+    "uiPassed": 732,
+    "optInIgnored": 57
+  },
+  "checks": [
+    {
+      "command": "./scripts/check.sh",
+      "result": "passed",
+      "localLogSha256": "1f92b0ac38d1200b9c05b12e6ba617a3d8bf421588dbccec9a7f61134f9a096b"
+    },
+    {
+      "command": "node scripts/browser/spectrum-runtime-parity.mjs",
+      "result": "passed",
+      "localLogSha256": "028eab39934422b7ba98fb1a06cc654fc66680f29c93a9fb2f0d09771828de0b"
+    },
+    {
+      "command": "EIGHTBIT_SPECTRUM48_REFERENCE_ROM=<local-rom> cargo test -p eightbit-spectrum-emulator --test calculator -- --include-ignored",
+      "result": "passed",
+      "localLogSha256": "951869e77c5e60df808715173c6e5aa56626b0220185b965c26427f53fa35b28"
+    },
+    {
+      "command": "STUDIO_MAME=<installed-mame> STUDIO_SPECTRUM48_ROM=<local-rom> cargo test -p eightbit-spectrum-core real_mame_original_assembler_debug_lifecycle -- --ignored",
+      "result": "passed",
+      "localLogSha256": "8d8c7b51d97b682486188c98f3e869e2af7e94de06527d784dfb94f9904ad9ca"
+    },
+    {
+      "command": "STUDIO_MAME=<installed-mame> STUDIO_SPECTRUM48_ROM=<local-rom> cargo test -p eightbit-spectrum-core real_mame_stock_rom_loads_original_small_and_full_size_cassettes -- --ignored",
+      "result": "passed",
+      "localLogSha256": "98b8b0c8da211b827da0274de129c6d04af5696a0d7e0f9324a710e2928929af"
+    },
+    {
+      "command": "CARGO_PROFILE_RELEASE_STRIP=none ./scripts/desktop-build.sh z80-studio",
+      "result": "passed",
+      "localLogSha256": "8f953e71188d3597641a8d2a03139def0da0c695efaead241472f21026a0f677"
+    },
+    {
+      "command": "CARGO_PROFILE_RELEASE_STRIP=none ./scripts/desktop-build.sh 6809-studio",
+      "result": "passed",
+      "localLogSha256": "306a28fd884e20bba6487a7049ee43b44796ca27a6f784c050b2523df3ef9bb1"
+    },
+    {
+      "command": "CARGO_PROFILE_RELEASE_STRIP=none ./scripts/desktop-build.sh 6502-studio",
+      "result": "passed",
+      "localLogSha256": "d97152e2c632114a19b28e245bae8ef438bdcb167d9ff484f1b2aa450284bb07"
+    }
+  ],
+  "nativeWasmParity": {
+    "schemaVersion": 1,
+    "result": "passed",
+    "comparedRequests": 438,
+    "traceSha256": "f1bdae8da05c4abb368d0eafdb20562f810043caad7aeb95eb2751e203babb22",
+    "cassetteBytes": 27,
+    "cassetteSha256": "ad53a236840e68e81cf560a06b30fe78659c13fd9fc25664c8f58e28d83091fc",
+    "checks": [
+      "fresh BASIC/assembly builds",
+      "source mismatch",
+      "guest graphics/audio/text/input",
+      "release retains submitted input",
+      "reset/stop",
+      "instruction Step and stale stop",
+      "real MIC capture and checked TAP export"
+    ]
+  },
+  "sourceReproduction": {
+    "rustAndWasmBuild": "passed from extracted corresponding source",
+    "uiProductionBuild": "passed from extracted corresponding source",
+    "uiTestsPassed": 119,
+    "nativeWasmTraceMatchesWorkingTree": true
+  },
+  "observedJourneys": [
+    "Native BASIC Run, graphics, INPUT and separate-window Stop",
+    "Native source-bound BASIC and assembly Debug/Step/Continue/Pause/Stop",
+    "Browser normal Play for BASIC and assembly without supplied ROM/tools",
+    "Browser BASIC and assembly source-bound Debug/Step/Continue/Pause/Stop",
+    "Native new-file cassette save and cancellation",
+    "Browser recording download to a real local file",
+    "C64 packaged shared-shell Build and sidebar toggling; existing 6809 workbench left intact"
+  ],
+  "cassetteExports": [
+    {
+      "host": "browser",
+      "format": "TAP",
+      "bytes": 26,
+      "sha256": "58eae7e3ef6d990beb079fd2f0182fd1b7b395eedae3e216ee76ff9a094a326d",
+      "headerAndPayloadAndChecksums": "independently checked",
+      "nativeSaveCancellation": null
+    },
+    {
+      "host": "native",
+      "format": "TAP",
+      "bytes": 26,
+      "sha256": "633faf48162f60413316990898a7e6d061f3d916eeaa916620dc3152fe6e3b12",
+      "headerAndPayloadAndChecksums": "independently checked",
+      "nativeSaveCancellation": "recording retained"
+    }
+  ],
+  "referenceRom": {
+    "sha256": "d55daa439b673b0e3f5897f99ac37ecb45f974d1862b4dadb85dec34af99cb42",
+    "bytes": 16384,
+    "role": "explicit local test input only; not included"
+  },
+  "compatibilityLimits": [
+    "Finite documented-interface cases do not guarantee arbitrary historical software or internal ROM addresses",
+    "Exact historic curve pixels, numeric rounding and electrical CPU/ULA corner cases are not universally qualified",
+    "Persistent heap allocation leaves a 512-byte recovery margin; raw 48 KiB RAM remains accessible",
+    "Editor is bounded to 4095 bytes and free workspace; syntax error caret does not identify the historic exact byte position",
+    "Long INPUT caption is not reconstructed after it scrolls out of the viewport; complete input data is retained"
+  ],
+  "notVerified": [
+    "Physical Spectrum cassette loading, heard sound, controls and gameplay",
+    "New original runtime packaged acceptance on Linux/Windows or a physical iPad",
+    "Signing, notarisation, public release or deployment"
+  ]
+}

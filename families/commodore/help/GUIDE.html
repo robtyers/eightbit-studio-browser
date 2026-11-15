@@ -1,0 +1,1395 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="AppleTitle" content="com.eightbitstudio.m6502.help">
+<title>Eightbit Studio 6502 User Guide</title>
+<link rel="stylesheet" href="sty/help.css">
+</head>
+<body><main>
+<h1>Eightbit Studio 6502 User Guide</h1>
+<p>Learn to use Eightbit Studio 6502, programme the C64 in BASIC V2 or the BBC Model B in BASIC II and assemble documented NMOS 6502 code. Begin with a tutorial or search for a command, instruction, hardware register or error. Complete examples are followed by expected results and explicit machine assumptions.</p>
+<nav aria-label="Guide contents">
+<h2>Contents</h2>
+<h3>Studio essentials</h3>
+<ul>
+<li><a href="#start">Getting started</a></li>
+<li><a href="#workbench">Using the workbench</a></li>
+<li><a href="#agent">Optional AI assistance</a></li>
+</ul>
+<h3>6502 processor</h3>
+<ul>
+<li><a href="#processor">6502 processor reference</a></li>
+<li><a href="#addressing">6502 addressing modes</a></li>
+<li><a href="#instructions">6502 instruction reference</a></li>
+<li><a href="#assembly-arithmetic">6502 arithmetic and comparisons</a></li>
+<li><a href="#assembly-patterns">Assembly loops, tables and routines</a></li>
+</ul>
+<h3>Commodore 64</h3>
+<ul>
+<li><a href="#using-c64">Using the C64</a></li>
+<li><a href="#basic">Commodore BASIC V2</a></li>
+<li><a href="#basic-control">Decisions, loops and subroutines</a></li>
+<li><a href="#basic-data">Strings, arrays and data</a></li>
+<li><a href="#basic-reference">BASIC statement reference</a></li>
+<li><a href="#basic-functions">BASIC functions and operators</a></li>
+<li><a href="#basic-errors">BASIC errors and recovery</a></li>
+<li><a href="#assembly">C64 assembly projects</a></li>
+<li><a href="#memory">C64 memory and hardware map</a></li>
+<li><a href="#screen">Text, colours and character graphics</a></li>
+<li><a href="#sprites">C64 sprite programming</a></li>
+<li><a href="#sound">C64 sound programming</a></li>
+<li><a href="#kernal">Calling the C64 KERNAL</a></li>
+<li><a href="#basic-project">BASIC project: collect the stars</a></li>
+<li><a href="#assembly-project">Assembly project: a text banner</a></li>
+<li><a href="#tools">Installing tools and firmware</a></li>
+<li><a href="#emulator">Running C64 programmes</a></li>
+<li><a href="#troubleshooting">Troubleshooting and limitations</a></li>
+<li><a href="#references">References and provenance</a></li>
+</ul>
+</nav>
+<section id="start">
+<h2>Getting started</h2>
+<p>Choose New Project, a supported machine, and its BASIC or 6502 assembly template. The tutorial in this article uses Commodore 64 (PAL) and Commodore BASIC V2; for BBC projects choose the BBC Model B machine guide. Choose a new folder name, then Create. Opening and creating projects never starts an emulator.</p><p>Edit src/basic/main.bas or src/asm/main.asm, Save, then Build. BASIC builds work offline without tools or firmware. Export PRG writes a new file; Run builds again and starts your separately configured VICE installation. A failed build never launches an older programme.</p><p>The 6510 in the C64 executes the NMOS 6502 instruction set. Other Commodore machines, NTSC targets, 65C02 and 65816 are not registered in this release.</p>
+<h3>Choose a learning path</h3>
+<p>If you are new to programming, start with Using the C64, then Commodore BASIC V2, Decisions, loops and subroutines, and Strings, arrays and data. Type the small examples into a BASIC project one at a time. Finish with the keyboard-game tutorial, which combines those techniques into one complete programme. Keep the language and error references open when an unfamiliar command or message appears.</p>
+<p>If you already write BASIC, try the screen, sprite and sound articles. They explain the C64 hardware addresses used by the examples instead of treating POKE numbers as magic. The memory-map article helps you understand which locations belong to the programme, the operating system and the display.</p>
+<p>For assembly, read the processor model, addressing modes and instruction reference before C64 assembly projects. Continue with arithmetic and common programming patterns, then build the assembly text-banner project. The first-party examples use the supported single-source ca65 subset and the same fixed entry point as a new Studio project.</p>
+<h3>A repeatable first run</h3>
+<p>Create a BASIC project and replace src/basic/main.bas with the complete example below. Save it, choose Build, and inspect the Build panel. A successful build produces a PRG. You can develop and export BASIC without installing an assembler. To observe its output, configure VICE and the C64 firmware in Settings, then choose Run and bring the VICE window forward.</p>
+<pre data-example="basic"><code>10 PRINT CHR$(147)
+20 PRINT "MY FIRST C64 PROGRAMME"
+30 PRINT "TWO PLUS THREE IS";2+3
+40 END</code></pre>
+<p>Expected result: a cleared screen, a heading and the value 5, followed by READY. Numeric PRINT output includes spacing; do not interpret a leading space as an extra digit. If Studio reports a successful build but VICE shows an error, use the BASIC error reference: the build validates source encoding and PRG structure, while the C64 ROM interprets BASIC syntax.</p>
+<h3>Change one thing at a time</h3>
+<p>Change the message, Save and Run again. Next change the arithmetic expression. Finally add a numbered line before END. Keep a known working copy with an explicit Git commit if you use source control. A small, observable change is easier to understand than copying a long programme and trying to diagnose several mistakes at once.</p>
+<p>Each complete example in this guide identifies its language. Replace the whole configured source when trying it; do not paste a second numbered programme after an existing one. Assembly examples also contain their own .org line and return instruction. Short reference fragments illustrate syntax and are not complete projects. Expected results describe what to check in the emulator; an assembler success alone does not prove graphics, keyboard or sound behaviour.</p>
+<h3>Independence and your software</h3><p>Eightbit Studio is an independent project and is not affiliated with, sponsored by or endorsed by any original manufacturer, emulator project or other organisation whose names, products or marks appear here. Those names and marks identify compatibility and remain the property of their respective owners. You are responsible for obtaining and using ROMs, firmware, games and other software lawfully, with any required permissions or licences. Eightbit Studio does not supply ROMs or grant rights to third-party software.</p></section>
+<section id="workbench">
+<h2>Using the workbench</h2>
+<p>Use the shared Explorer, editor tabs, toolbar, resizable bottom panels and optional Agent sidebar. Supporting project documents open read-only. Use Source Control for explicit Git actions and Terminal for commands you type yourself. AI cannot use the terminal, Git, Build or Run.</p><p>The Emulator panel provides Run, Stop, Restart and Rebuild on save. The editor stays visible while the selected emulator uses its own window. Rebuild on save applies only to your explicit Save while a project is already running; it resets programme state. Recovery and AI saves do not authorise execution.</p><p>Unsaved source blocks builds. Save or discard before switching projects. Stop a running emulator before changing projects or tools. Recovery is local to Eightbit Studio 6502.</p>
+<h3>Understand the project files</h3>
+<p>The machine-specific manifest selects its exact target and one source under src/ (c64.toml for C64, bbc.toml for BBC Model B). The BASIC template uses src/basic/main.bas; the assembly template uses src/asm/main.asm. README.md provides project guidance and AGENTS.md records machine programming guidance for coding assistants. CLAUDE.md directs Claude to that AGENTS file, and tests/README.md provides a repeatable verification checklist. Only the chosen language’s source folder is created; existing projects keep their valid configured paths. The manifest is configuration, not a place for executable commands or linker options. A folder containing another supported family manifest is ambiguous and cannot be opened as a source project.</p>
+<h3>Use Build as a checkpoint</h3>
+<p>After Save, Build validates the current source and creates the machine media (C64 program.prg or BBC program.ssd) with build metadata. Assembly also needs the configured ca65 and sibling ld65. Read the diagnostic before changing the programme: a tool-version failure and an invalid operand require different repairs. The Build result is tied to the saved source revision and the output hash. Editing the source makes that result unsuitable for exporting the new revision until another successful build.</p>
+<p>Export PRG or Export SSD writes a separately chosen new destination. It refuses to replace an existing file. Use a descriptive new filename for a milestone and keep the editable source in the project. A media image is executable programme data, not a backup of the project configuration, source comments or edit history. Do not edit generated build bytes to repair a source error; the next build replaces them.</p>
+<h3>Separate Studio and emulator state</h3>
+<p>The text in Studio is the source of the next build. Commands typed at the machine prompt affect only the running emulator. Editing a line in its window does not update src/basic/main.bas. Rebuild on save deliberately restarts a running project, so values, scores and temporary changes inside the emulator are reset. Turn it off when you want to examine a running programme while editing its next version.</p>
+<h3>Recover deliberately</h3>
+<p>If a source file changes outside Studio, reopen or reconcile it before saving over another revision. Read the recovery prompt rather than assuming the newest visible text is the only copy. Stop the emulator before changing project or tool settings. If a build fails after an earlier success, the last good bytes may still exist for diagnosis, but Run will not silently execute them.</p>
+<p>Use the terminal only for commands you choose to type, such as checking an installed tool version. A programme example is BASIC or assembly source and belongs in the editor; it is not a terminal command. The optional Agent can explain a selected diagnostic or propose a source change, but cannot start tools, operate Git or control the emulator on your behalf.</p>
+</section>
+<section id="using-c64">
+<h2>Using the C64</h2>
+<h3>The READY prompt</h3>
+<p>The C64 starts in BASIC. READY means that the interpreter is waiting for a command. A line without a number runs immediately: PRINT 2+3 displays a result. A numbered line is stored for later execution by RUN. This distinction explains why typing a calculation can display a value while typing 10 PRINT 2+3 merely returns to the prompt.</p>
+<p>Studio source files always contain numbered BASIC lines. To try a direct-mode reference example in Studio, put it in a suitable numbered programme or type it yourself into VICE. Do not add READY, the screen banner or the result of a calculation to the source file.</p>
+<h3>Editing and listing</h3>
+<p>On the original BASIC screen editor, entering an existing line number replaces that line. Entering only its number deletes it. Studio instead uses ordinary text editing: remove the source line to delete it, and keep the remaining numbers increasing without duplicates. Studio rejects empty numbered lines. The machine screen editor has its own input-length and wrapping constraints; a source file accepted by Studio is not a promise that the same long line can be retyped through the original editor unchanged.</p>
+<table>
+<thead><tr><th scope="col">Command at READY</th><th scope="col">Use</th></tr></thead>
+<tbody>
+<tr><td>LIST</td><td>Show the stored BASIC programme.</td></tr>
+<tr><td>LIST 100</td><td>Show one numbered line.</td></tr>
+<tr><td>LIST 100-200</td><td>Show an inclusive line-number range.</td></tr>
+<tr><td>RUN</td><td>Clear variables and start the stored programme.</td></tr>
+<tr><td>RUN 100</td><td>Start at a particular line after RUN initialisation; preceding setup is skipped.</td></tr>
+<tr><td>STOP</td><td>Stop BASIC execution without deleting the stored programme.</td></tr>
+<tr><td>CONT</td><td>Attempt to resume after a stoppage, when the interpreter still has a valid continuation.</td></tr>
+<tr><td>CLR</td><td>Clear variables and runtime stacks while retaining programme text.</td></tr>
+<tr><td>NEW</td><td>Remove the stored BASIC programme and variables from the current machine session.</td></tr>
+</tbody></table>
+<p>Use LIST before RUN if you suspect that the emulator is holding a different programme. NEW in VICE does not delete the Studio project. Conversely, saving the Studio source does not preserve variables currently held inside BASIC.</p>
+<h3>Keyboard and stopping</h3>
+<p>Click or focus VICE to send keyboard input to the C64. INPUT waits for a complete response followed by Return. GET reads an available character without waiting for Return. The C64 RUN/STOP key interrupts ordinary BASIC execution; the host key assigned to it depends on the VICE build and selected keyboard mapping. Consult that installation’s keyboard settings instead of assuming that every Mac uses the same shortcut.</p>
+<p>Use Studio Stop when you need to terminate the owned emulator, including a machine-code loop that no longer services the keyboard. Stop is different from pausing a BASIC programme: it ends that emulator session. Restart builds the saved source and starts a fresh session. A C64 reset is not an automatic source-save operation.</p>
+<h3>Text and character modes</h3>
+<p>The C64 uses PETSCII and character-generator modes, not Unicode. Letter case and graphic symbols can look different after changing character mode. The supplied examples assume the usual uppercase/graphics startup mode unless stated otherwise. Studio normalises printable ASCII source to uppercase and requires CHR$ for control bytes; pasting a graphical glyph from a modern document is not a supported way to insert a PETSCII byte.</p>
+<h3>Loading and saving on a real C64</h3>
+<p>The historical machine supports device-oriented LOAD, SAVE and VERIFY commands. For example, a separately operated C64 with a suitable disk drive can use LOAD "NAME",8 and SAVE "NAME",8. The device number and secondary address belong to that machine’s setup. They are included in the language reference so that older listings make sense.</p>
+<p><strong>Original C64 (development):</strong> save your source, open the Emulator panel and choose Run original C64 (development). It builds a fresh standard PRG and executes it with the bundled original emulator and firmware. BASIC needs no tools or historical ROM; assembly still uses separately installed ca65/ld65. The screen can be embedded or a separate Studio window. Focus its canvas for physical keys (Escape is RUN/STOP), or use BASIC command or input. Stop ends the session; Reset cold-boots without reloading; Restart builds the current saved source. Drives, cartridges and debugging are unsupported.</p>
+<p>The browser Project emulator selector also offers Original C64 (development) for a checked BASIC build. chips remains the initial browser choice; ordinary desktop Run retains VICE. Original glyph drawings, random sequence, transcendental approximations and conservative stack limits differ from the historical firmware. Use the retained VICE/chips route for compatibility-dependent programmes. No historical software or universal silicon compatibility is implied.</p>
+<p>Studio’s managed VICE session injects a fresh PRG directly into RAM and disables disk, filesystem and printer devices. It does not mount your project directory or save files back into it. Use Studio Export PRG for the implemented export workflow. Drive commands in an old listing therefore need a different, explicitly configured environment; they are not steps to add to the current Run workflow.</p>
+</section>
+<section id="basic">
+<h2>Commodore BASIC V2</h2>
+<h3>A small programme with values</h3>
+<p>BASIC lets you describe work using named values and numbered statements. The following programme stores a name and a score, changes the score, then prints both. The line numbers determine execution order; they are not instruction counts and need not be consecutive.</p>
+<pre data-example="basic"><code>10 REM A FIRST SCORE CARD
+20 NM$="SAM"
+30 SC=120
+40 SC=SC+25
+50 PRINT NM$;" SCORED ";SC
+60 END</code></pre>
+<p>Expected result: SAM SCORED followed by 145. The assignment SC=SC+25 reads the old score, adds 25 and stores the result. LET SC=120 is equivalent to SC=120. In an assignment, the equals sign stores a value; within a condition, it compares values.</p>
+<h3>Variable names and types</h3>
+<p>A name begins with a letter and may continue with letters or digits. Only the first two characters of its name are significant, with a type suffix distinguishing the kind of value. SC and SCORE can therefore collide, as can SCORE and SCENE. Use short, distinctive names such as SC for score, LI for lives and PX for a position. Avoid embedded BASIC keywords in names: tokenisation can recognise keywords even when they occur within a longer sequence of letters.</p>
+<table>
+<thead><tr><th scope="col">Form</th><th scope="col">Meaning</th><th scope="col">Example</th></tr></thead>
+<tbody>
+<tr><td>A or SC</td><td>Floating-point numeric value, including fractions.</td><td>SC=12.5</td></tr>
+<tr><td>A% or SC%</td><td>Signed 16-bit integer variable, from -32768 through 32767.</td><td>SC%=120</td></tr>
+<tr><td>A$ or NM$</td><td>String value, up to 255 characters.</td><td>NM$="SAM"</td></tr>
+</tbody></table>
+<p>Numeric variables start at zero and strings at the empty string. Explicit initialisation still makes the programme easier to read and restart. Integer variables save storage in some uses but do not turn BASIC arithmetic into native integer machine code. Test ranges before storing a computed value in an integer variable.</p>
+<h3>Numbers and expressions</h3>
+<p>Write ordinary decimal numbers in BASIC, including a decimal point or scientific notation where useful. Hexadecimal $D020 notation belongs to the assembler; write the decimal address 53280 for the same register in BASIC. A string literal is enclosed in double quotation marks. A suffix such as $ is part of a variable or function name, not a currency symbol.</p>
+<p>Parentheses make expressions easier to audit. The main order is exponentiation, unary sign, multiplication/division, addition/subtraction, comparisons, NOT, AND, then OR. Use explicit parentheses around mixed arithmetic and logical expressions rather than relying on a reader remembering every rule. String addition concatenates text; numeric addition calculates a sum. Adding a string directly to a number gives a type mismatch.</p>
+<pre data-example="basic"><code>10 A=7:B=3
+20 PRINT A+B;A-B;A*B;A/B
+30 PRINT (A+B)*2
+40 PRINT "HELLO "+"C64"
+50 END</code></pre>
+<p>Expected result: the four arithmetic results, then 20, then HELLO C64. BASIC uses floating-point arithmetic, so some decimal fractions are approximate. Prefer an integer counter for a loop and compute a displayed fraction from it rather than repeatedly adding a fraction and expecting exact equality.</p>
+<h3>PRINT and formatting</h3>
+<p>PRINT with no items starts a new line. A semicolon keeps items adjacent using their own formatting; a comma advances to a print zone. A trailing semicolon keeps the next output on the same line. Numeric output normally reserves space for a sign and adds spacing, so PRINT "SCORE=";SC is not a byte-exact text formatter. TAB and SPC help lay out columns; STR$ converts a number to text when you need to compose a string.</p>
+<p>Use PRINT CHR$(147) to clear the display through the screen output routine. This is a runtime control character, not a special Studio editor command. The screen article explains cursor, colour and reverse-video controls. A question mark outside a literal is shorthand for PRINT, but full keywords are easier for beginners to search.</p>
+<h3>Comments and source rules</h3>
+<p>REM consumes the rest of its physical line. A colon can separate several executable statements on a line, but a colon after REM remains part of the comment. Unlike some BASIC dialects, the apostrophe is not a BASIC V2 comment introducer. Use REM explicitly. Keep one main action per line when learning, and leave gaps of ten for later insertions.</p>
+<p>Studio accepts line numbers 0–63999 in increasing order, printable ASCII source, closed quoted strings and at most 250 tokenised bytes per line. A source file is bounded to 128 KiB, and the encoded programme must fit below $A000. Empty unnumbered lines may separate source sections. These are source/build limits; variable, string and array storage also consumes C64 memory at runtime.</p>
+<h3>Do not transplant another BASIC dialect</h3>
+<p>Stock C64 BASIC V2 has no ELSE, WHILE, REPEAT, PRINT USING, Dragon graphics commands or SOUND statement. Use IF with explicit branches, FOR/NEXT, screen memory and hardware-register programming as shown later. RESTORE has no line-number argument. This guide keeps C64 BASIC separate from the Dragon Help even where the languages share familiar words.</p>
+</section>
+<section id="basic-control">
+<h2>Decisions, loops and subroutines</h2>
+<h3>Decisions without ELSE</h3>
+<p>IF evaluates a numeric expression. Zero is false; non-zero is true. Comparisons produce -1 for true and 0 for false. THEN can introduce a statement or a target line number. BASIC V2 has no ELSE clause. Put the false path on a later line and use an explicit branch when the true path must skip it.</p>
+<pre data-example="basic"><code>10 INPUT "SCORE";SC
+20 IF SC&gt;=100 THEN 60
+30 PRINT "KEEP PRACTISING"
+40 GOTO 70
+60 PRINT "TARGET REACHED"
+70 PRINT "FINISHED"
+80 END</code></pre>
+<p>Enter 99 and then rerun with 100. Both paths should print FINISHED once. Notice that the branch to 70 prevents the false path from falling into the target message. When an IF condition is false, the rest of that numbered line is skipped, including statements after colons. Put unconditional work on a new line to make that rule visible.</p>
+<h3>Combining tests</h3>
+<p>AND, OR and NOT operate on signed 16-bit integer values. Their use with comparison results is convenient because true is all bits set. BASIC V2 does not provide a short-circuit guarantee that makes unsafe arithmetic disappear. Do not write IF D<>0 AND N/D>2 THEN ... to protect a division; test D first on a separate line, then evaluate the division only along the safe path.</p>
+<pre data-example="basic"><code>10 INPUT "NUMERATOR";N
+20 INPUT "DIVISOR";D
+30 IF D=0 THEN 70
+40 PRINT "QUOTIENT";N/D
+50 END
+70 PRINT "DIVISOR MUST NOT BE ZERO"
+80 GOTO 20</code></pre>
+<p>This separates invalid input from calculation. The same approach works before taking a square root of a negative value, indexing an array or reading the first character of an empty string.</p>
+<h3>Counted loops</h3>
+<p>FOR sets a counter, a terminal value and an optional STEP. NEXT updates the counter and repeats until the limit has been passed in the direction of the step. The default step is one. Use a negative step to count down. Do not assume FOR will skip its body just because its starting value is already beyond the intended limit; pre-test the range when the body must sometimes run zero times.</p>
+<pre data-example="basic"><code>10 FOR N=5 TO 1 STEP -1
+20 PRINT N
+30 NEXT N
+40 PRINT "GO"
+50 END</code></pre>
+<p>Expected result: 5, 4, 3, 2, 1 and GO. Avoid STEP 0 unless an intentionally endless loop is what you mean; an explicit GET loop is clearer. Give nested loops different counters and close the most recently opened loop first. Altering a FOR counter inside its body or jumping into the middle of a loop makes its bookkeeping difficult to follow.</p>
+<h3>Polling the keyboard</h3>
+<p>GET A$ returns an available character or an empty string. It does not wait for Return and is useful for menus and small games. Test for the empty string before ASC. INPUT is more convenient for complete text or numeric answers because it handles a line of editing before returning.</p>
+<pre data-example="basic"><code>10 PRINT "PRESS A OR Q"
+20 GET K$:IF K$="" THEN 20
+30 IF K$="Q" THEN 80
+40 IF K$&lt;&gt;"A" THEN 20
+50 PRINT "A SELECTED"
+60 GOTO 20
+80 PRINT "GOODBYE"
+90 END</code></pre>
+<p>Expected result: other keys are ignored; A prints a message; Q exits. Holding a key may produce repeated characters according to the machine keyboard behaviour. A game that needs newly pressed versus held keys must design those states explicitly.</p>
+<h3>Subroutines and dispatch</h3>
+<p>GOSUB saves a return position and transfers control to a numbered routine. RETURN resumes at that saved position. Put END before the subroutine area so normal execution does not fall into it. Do not enter a RETURN-ending routine with GOTO; no matching return position would have been created. BASIC variables are shared across subroutines, so document which values each routine reads and changes.</p>
+<pre data-example="basic"><code>10 SC=0
+20 GOSUB 1000
+30 SC=SC+10
+40 GOSUB 1000
+50 END
+1000 PRINT "SCORE";SC
+1010 RETURN</code></pre>
+<p>Expected result: SCORE 0 then SCORE 10. Extend the routine to print lives as well, and verify that it does not unexpectedly change SC. A good small routine has a clear purpose and a predictable set of changed variables.</p>
+<p>ON CH GOTO 100,200,300 selects a numbered destination using a one-based selector. ON CH GOSUB 1000,2000,3000 similarly calls a subroutine. A selector of zero or beyond the list normally falls through; an invalid negative or excessive value can raise an error. Validate menu input first. Use these forms when several branches have the same shape, not to obscure a simple two-way decision.</p>
+<h3>Stopping and restarting</h3>
+<p>END finishes the programme. STOP leaves a visible stoppage useful during experiments. CONT can resume only while the interpreter retains a valid continuation; editing or errors may invalidate it. A fresh RUN clears variables, so keep initialisation at the beginning rather than relying on values left from a previous attempt.</p>
+</section>
+<section id="basic-data">
+<h2>Strings, arrays and data</h2>
+<h3>Strings are sequences of characters</h3>
+<p>A string stores text, including an empty string of length zero. LEN gives its length. LEFT$, RIGHT$ and MID$ select parts without modifying the original. BASIC V2 uses one-based positions for MID$: the first character is position 1. Check a string is non-empty before ASC, because ASC("") is an illegal quantity.</p>
+<pre data-example="basic"><code>10 A$="COMMODORE"
+20 PRINT LEN(A$)
+30 PRINT LEFT$(A$,3)
+40 PRINT MID$(A$,4,2)
+50 PRINT RIGHT$(A$,4)
+60 END</code></pre>
+<p>Expected results: 9, COM, MO and DORE. To replace a character, construct a new string from the prefix, replacement and suffix. BASIC V2 does not support assigning into MID$ as some later dialects do. Keep the total at or below 255 characters and avoid repeatedly joining very large temporary strings in a fast loop.</p>
+<h3>Converting input</h3>
+<p>INPUT N asks for a numeric response. INPUT A$ asks for text. For one-key input use GET A$ and inspect it before converting. VAL converts an initial numeric part of a string; it does not guarantee that the entire string is a valid number. VAL("12X") can therefore be a poor validation test for a strict numeric field.</p>
+<pre data-example="basic"><code>10 PRINT "PRESS A DIGIT 0 TO 9"
+20 GET K$:IF K$="" THEN 20
+30 C=ASC(K$)
+40 IF C&lt;48 THEN 20
+50 IF C&gt;57 THEN 20
+60 N=C-48
+70 PRINT "YOU CHOSE";N
+80 END</code></pre>
+<p>Expected result: letters are ignored and a digit is converted to its value. This is an intentionally bounded one-character input format. For a longer answer, collect a string with an explicit maximum length and validate each character before calculation. A full text-entry editor also needs deletion and termination handling.</p>
+<h3>Arrays and bounds</h3>
+<p>DIM reserves an indexed set of values. DIM SC(3) provides four elements, numbered 0 through 3. The declared number is the upper bound, not the number of entries. String arrays use a $ suffix and integer arrays a % suffix. A two-dimensional array such as DIM B(3,2) has four times three elements. Storage rises with the product of the dimensions, so calculate the budget before declaring a large table.</p>
+<p>Undimensioned arrays receive a default upper bound of ten when first used, but relying on this hides mistakes. DIM once near startup, before the first use. Repeating a DIM for the same array during a loop gives REDIM’D ARRAY. Use indices within the declared bounds and initialise each value that your programme depends on.</p>
+<pre data-example="basic"><code>10 DIM NM$(2),SC(2)
+20 FOR I=0 TO 2
+30 READ NM$(I),SC(I)
+40 NEXT I
+50 FOR I=0 TO 2
+60 PRINT NM$(I);" ";SC(I)
+70 NEXT I
+80 END
+100 DATA "ADA",40,"BEN",55,"CY",30</code></pre>
+<p>Expected result: three names and their scores. The DATA line is part of the programme even though it follows END; READ searches the stored data stream rather than executing DATA as ordinary work. Try changing one score and rebuilding. Then deliberately attempt SC(3) to understand the bounds error before restoring the valid programme.</p>
+<h3>READ and RESTORE</h3>
+<p>READ takes successive DATA items into variables. Keep the destination type compatible with the item: text into a numeric destination raises a type mismatch. DATA is literal text, not a place for evaluated expressions. READ does not turn a stored expression such as 2+3 into the number 5. Quote text when commas, colons or leading/trailing spaces are significant.</p>
+<pre data-example="basic"><code>10 DATA 3,6,9
+20 READ A,B,C
+30 PRINT A;B;C
+40 RESTORE
+50 READ D
+60 PRINT "FIRST AGAIN";D
+70 END</code></pre>
+<p>Expected result: 3, 6, 9, then FIRST AGAIN 3. Bare RESTORE resets the data pointer to the first DATA item. C64 BASIC V2 does not accept RESTORE 100. To select one of several tables, use a known count and skip items deliberately, or load tables into arrays once and index them thereafter.</p>
+<h3>Search and aggregate</h3>
+<p>A table makes many operations share the same control structure: initialise an accumulator, visit each valid index, and update the result. The following example totals three scores. Initialise TT before the loop so another run or a subroutine call cannot accidentally reuse the previous sum.</p>
+<pre data-example="basic"><code>10 DIM SC(2)
+20 DATA 40,55,30
+30 TT=0
+40 FOR I=0 TO 2
+50 READ SC(I)
+60 TT=TT+SC(I)
+70 NEXT I
+80 PRINT "TOTAL";TT
+90 PRINT "AVERAGE";TT/3
+100 END</code></pre>
+<p>Expected result: total 125 and an average near 41.6667, subject to BASIC’s display precision. Extend the programme to find the highest score. Start the maximum from the first stored value rather than zero if negative values might be valid.</p>
+<h3>Memory and data lifetime</h3>
+<p>RUN and CLR discard variables and array contents. DATA remains in programme text and can be read again. Variable storage, array descriptors and strings share the BASIC memory budget with the programme. FRE reports available BASIC memory and can trigger string garbage collection; it is not a measure of all physical RAM. A short listing can still exhaust memory by dimensioning a large array or creating many strings.</p>
+</section>
+<section id="basic-reference">
+<h2>BASIC statement reference</h2>
+<h3>How to read this reference</h3>
+<p>Forms are written with optional parts in square brackets and alternatives in words. Do not type the brackets. Examples in this table are fragments, often suitable at READY or inside a numbered line; they are not complete Studio source files. A keyword’s presence in BASIC V2 does not mean Studio exposes every historical device it can operate. See the device notes beside OPEN, LOAD, SAVE and related forms.</p>
+<p>The table is alphabetical. Compound forms such as DEF FN, INPUT# and ON ... GOSUB have their own explanations. TO, STEP, THEN and FN are parts of other forms, not independent commands. Operators and numeric/string functions are described in the next article.</p>
+<h3><code>CLR</code></h3>
+<p><strong>Syntax:</strong> <code>CLR</code>. Discard variables, arrays and runtime control state while retaining programme text. Use during deliberate reinitialisation at READY.</p>
+<p><strong>Example:</strong> <code>CLR</code>. <strong>Remember:</strong> It is not a source-file save and does not erase the Studio editor.</p>
+<h3><code>CLOSE</code></h3>
+<p><strong>Syntax:</strong> <code>CLOSE logicalFile</code>. Close a logical file previously opened by OPEN.</p>
+<p><strong>Example:</strong> <code>CLOSE 2</code>. <strong>Remember:</strong> Only meaningful for an opened channel. Managed Run provides no disk or printer workflow.</p>
+<h3><code>CMD</code></h3>
+<p><strong>Syntax:</strong> <code>CMD logicalFile [, output]</code>. Redirect ordinary output to an opened logical output channel, optionally sending an item.</p>
+<p><strong>Example:</strong> <code>CMD 2</code>. <strong>Remember:</strong> Historical device operation. Restore normal output before closing the channel; do not expect an available printer in Studio.</p>
+<h3><code>CONT</code></h3>
+<p><strong>Syntax:</strong> <code>CONT</code>. Continue after STOP or RUN/STOP if the interpreter still has a valid continuation.</p>
+<p><strong>Example:</strong> <code>CONT</code>. <strong>Remember:</strong> Editing programme text or encountering an error can make continuation unavailable. Use RUN when a fresh start is intended.</p>
+<h3><code>DATA</code></h3>
+<p><strong>Syntax:</strong> <code>DATA item [, item ...]</code>. Store literal values for READ. Items are encountered in programme order, independently of normal execution flow.</p>
+<p><strong>Example:</strong> <code>DATA 12,&quot;NORTH&quot;,24</code>. <strong>Remember:</strong> Expressions are not calculated here. Quote text with commas or colons. Keep destination types compatible.</p>
+<h3><code>DEF FN</code></h3>
+<p><strong>Syntax:</strong> <code>DEF FN name(argument)=expression</code>. Define a numeric function of one numeric argument, then call it using FN.</p>
+<p><strong>Example:</strong> <code>DEF FN F(X)=X*X+1</code>. <strong>Remember:</strong> Define it in programme mode before calling FN F(3). Other variables used in the expression are shared programme values.</p>
+<h3><code>DIM</code></h3>
+<p><strong>Syntax:</strong> <code>DIM name(upperBound [, upperBound ...]) [, ...]</code>. Allocate arrays with inclusive upper bounds.</p>
+<p><strong>Example:</strong> <code>DIM SC(4),NM$(4)</code>. <strong>Remember:</strong> This gives five elements per array, from 0 through 4. Dimension once before use and budget multidimensional storage.</p>
+<h3><code>END</code></h3>
+<p><strong>Syntax:</strong> <code>END</code>. Finish execution without deleting programme text.</p>
+<p><strong>Example:</strong> <code>END</code>. <strong>Remember:</strong> Put END before subroutine or data-support code when normal fall-through would be wrong.</p>
+<h3><code>FOR</code></h3>
+<p><strong>Syntax:</strong> <code>FOR variable=start TO limit [STEP increment]</code>. Initialise a counted loop closed by NEXT.</p>
+<p><strong>Example:</strong> <code>FOR I=1 TO 10 STEP 2</code>. <strong>Remember:</strong> TO and STEP belong to this form. Pre-test if the loop must sometimes execute zero times; avoid a zero step.</p>
+<h3><code>GET</code></h3>
+<p><strong>Syntax:</strong> <code>GET variable [, variable ...]</code>. Read available characters without waiting for Return.</p>
+<p><strong>Example:</strong> <code>GET K$</code>. <strong>Remember:</strong> Prefer a string for keyboard input. An empty string means no key was available. Test before calling ASC.</p>
+<h3><code>GET#</code></h3>
+<p><strong>Syntax:</strong> <code>GET# logicalFile, variable [, variable ...]</code>. Read characters from a previously opened input channel.</p>
+<p><strong>Example:</strong> <code>GET# 2,A$</code>. <strong>Remember:</strong> GET# is formed from GET and #, not a separate token. Device-backed use is outside managed Run.</p>
+<h3><code>GOSUB</code></h3>
+<p><strong>Syntax:</strong> <code>GOSUB line</code>. Call a numbered subroutine and remember the return position.</p>
+<p><strong>Example:</strong> <code>GOSUB 1000</code>. <strong>Remember:</strong> Every reached exit must have a matching RETURN. Do not fall into a subroutine from the main programme.</p>
+<h3><code>GOTO</code></h3>
+<p><strong>Syntax:</strong> <code>GOTO line</code>. Continue execution at an existing numbered line.</p>
+<p><strong>Example:</strong> <code>GOTO 100</code>. <strong>Remember:</strong> GO TO is the spaced form using the GO and TO tokens. Studio does not provide Dragon-style multi-file target resolution.</p>
+<h3><code>IF</code></h3>
+<p><strong>Syntax:</strong> <code>IF expression THEN statement-or-line</code>. Execute the rest of the numbered line only when the condition is non-zero.</p>
+<p><strong>Example:</strong> <code>IF SC&gt;=100 THEN 500</code>. <strong>Remember:</strong> There is no ELSE. A false IF skips later colon-separated statements on the same line.</p>
+<h3><code>INPUT</code></h3>
+<p><strong>Syntax:</strong> <code>INPUT [&quot;prompt&quot;;] variable [, variable ...]</code>. Wait for a line of keyboard input and assign values.</p>
+<p><strong>Example:</strong> <code>INPUT &quot;NAME&quot;;NM$</code>. <strong>Remember:</strong> Numeric destinations require numeric input. For robust constrained input, GET into a string and validate explicitly.</p>
+<h3><code>INPUT#</code></h3>
+<p><strong>Syntax:</strong> <code>INPUT# logicalFile, variable [, variable ...]</code>. Read fields from an already opened input channel.</p>
+<p><strong>Example:</strong> <code>INPUT# 2,A$,N</code>. <strong>Remember:</strong> No interactive prompt is supplied. Field shape and destination type must match the file; managed Run has no disk input.</p>
+<h3><code>LET</code></h3>
+<p><strong>Syntax:</strong> <code>[LET] variable=expression</code>. Assign a computed value to a scalar or array element.</p>
+<p><strong>Example:</strong> <code>LET SC=SC+10</code>. <strong>Remember:</strong> LET is optional. Assign compatible string or numeric types and check integer ranges.</p>
+<h3><code>LIST</code></h3>
+<p><strong>Syntax:</strong> <code>LIST [first[-last]]</code>. Display all stored lines or a selected range at the C64 prompt.</p>
+<p><strong>Example:</strong> <code>LIST 100-200</code>. <strong>Remember:</strong> A direct-mode inspection command. Studio displays editable source itself; LIST output is not source to paste back verbatim.</p>
+<h3><code>LOAD</code></h3>
+<p><strong>Syntax:</strong> <code>LOAD [&quot;name&quot; [, device [, secondary]]]</code>. Historical file loading into the C64. The device and secondary address control source and loading behaviour.</p>
+<p><strong>Example:</strong> <code>LOAD &quot;DEMO&quot;,8</code>. <strong>Remember:</strong> Disk/file access is disabled in managed Run. Loading from inside a programme has special continuation effects; it is not an import API for Studio.</p>
+<h3><code>NEW</code></h3>
+<p><strong>Syntax:</strong> <code>NEW</code>. Remove the programme and variables from the current BASIC machine session.</p>
+<p><strong>Example:</strong> <code>NEW</code>. <strong>Remember:</strong> It does not remove the Studio project. Keep source saved before experimenting with machine-session commands.</p>
+<h3><code>NEXT</code></h3>
+<p><strong>Syntax:</strong> <code>NEXT [variable [, variable ...]]</code>. Advance one or more active FOR loops.</p>
+<p><strong>Example:</strong> <code>NEXT I</code>. <strong>Remember:</strong> Close nested loops from innermost outward. A missing or wrong active counter can produce NEXT WITHOUT FOR.</p>
+<h3><code>ON</code></h3>
+<p><strong>Syntax:</strong> <code>ON selector GOTO/GOSUB line [, line ...]</code>. Choose a one-based branch or subroutine from a list.</p>
+<p><strong>Example:</strong> <code>ON CH GOSUB 1000,2000,3000</code>. <strong>Remember:</strong> Validate selectors. Zero or a value beyond the available list can fall through instead of selecting an item.</p>
+<h3><code>OPEN</code></h3>
+<p><strong>Syntax:</strong> <code>OPEN logicalFile [, device [, secondary [, &quot;name&quot;]]]</code>. Create a logical connection to an input or output device.</p>
+<p><strong>Example:</strong> <code>OPEN 2,8,2,&quot;DATA,S,R&quot;</code>. <strong>Remember:</strong> Historical disk example only. A logical file number is not the same thing as a physical device number. Managed Run does not mount drives.</p>
+<h3><code>POKE</code></h3>
+<p><strong>Syntax:</strong> <code>POKE address,value</code>. Write a byte to a decimal memory or I/O address.</p>
+<p><strong>Example:</strong> <code>POKE 53280,6</code>. <strong>Remember:</strong> Use address 0–65535 and byte 0–255. Valid numeric ranges do not make every address safe to overwrite; consult the memory map.</p>
+<h3><code>PRINT</code></h3>
+<p><strong>Syntax:</strong> <code>PRINT [item [separator item ...]]</code>. Send text and values to the current output channel, normally the screen.</p>
+<p><strong>Example:</strong> <code>PRINT &quot;SCORE&quot;;SC</code>. <strong>Remember:</strong> Semicolon joins output; comma advances through zones. A trailing separator keeps output on the line. ? is shorthand outside literals.</p>
+<h3><code>PRINT#</code></h3>
+<p><strong>Syntax:</strong> <code>PRINT# logicalFile [, items]</code>. Send formatted output to an opened logical file.</p>
+<p><strong>Example:</strong> <code>PRINT# 2,A$</code>. <strong>Remember:</strong> Device-backed use is outside managed Run. Design delimiters deliberately when another programme will use INPUT# to read the data.</p>
+<h3><code>READ</code></h3>
+<p><strong>Syntax:</strong> <code>READ variable [, variable ...]</code>. Consume successive literal DATA items.</p>
+<p><strong>Example:</strong> <code>READ NM$,SC</code>. <strong>Remember:</strong> Too few items gives OUT OF DATA. A non-numeric item for a numeric destination gives TYPE MISMATCH.</p>
+<h3><code>REM</code></h3>
+<p><strong>Syntax:</strong> <code>REM comment</code>. Treat the rest of the physical line as a comment.</p>
+<p><strong>Example:</strong> <code>REM UPDATE THE SCORE</code>. <strong>Remember:</strong> A colon after REM does not restart execution. Use REM rather than an apostrophe comment from another dialect.</p>
+<h3><code>RESTORE</code></h3>
+<p><strong>Syntax:</strong> <code>RESTORE</code>. Reset the READ position to the first DATA item.</p>
+<p><strong>Example:</strong> <code>RESTORE</code>. <strong>Remember:</strong> BASIC V2 has no RESTORE line-number argument. Read and skip a known count or store tables in arrays.</p>
+<h3><code>RETURN</code></h3>
+<p><strong>Syntax:</strong> <code>RETURN</code>. Resume after the most recent GOSUB.</p>
+<p><strong>Example:</strong> <code>RETURN</code>. <strong>Remember:</strong> Use only when a matching call exists. END the main programme before its subroutine area.</p>
+<h3><code>RUN</code></h3>
+<p><strong>Syntax:</strong> <code>RUN [line]</code>. Clear variables and begin the stored BASIC programme, optionally at a selected line.</p>
+<p><strong>Example:</strong> <code>RUN 100</code>. <strong>Remember:</strong> Starting in the middle skips earlier setup. Studio Run additionally builds a fresh PRG and starts VICE; that is a host workflow, not BASIC syntax.</p>
+<h3><code>SAVE</code></h3>
+<p><strong>Syntax:</strong> <code>SAVE [&quot;name&quot; [, device [, secondary]]]</code>. Save the stored BASIC programme through the selected historical device.</p>
+<p><strong>Example:</strong> <code>SAVE &quot;DEMO&quot;,8</code>. <strong>Remember:</strong> Managed Run has no disk/filesystem save channel. Use Studio Save for source and Export PRG for a new output file.</p>
+<h3><code>STOP</code></h3>
+<p><strong>Syntax:</strong> <code>STOP</code>. Stop execution and retain a potential continuation.</p>
+<p><strong>Example:</strong> <code>STOP</code>. <strong>Remember:</strong> Use for a deliberate checkpoint. Studio Stop ends the emulator process and cannot be resumed by BASIC CONT.</p>
+<h3><code>SYS</code></h3>
+<p><strong>Syntax:</strong> <code>SYS address</code>. Call machine code at a decimal address.</p>
+<p><strong>Example:</strong> <code>SYS 2061</code>. <strong>Remember:</strong> Only call code actually present at that address with a valid return convention. Studio assembly adds its own SYS2061 loader; do not add another.</p>
+<h3><code>VERIFY</code></h3>
+<p><strong>Syntax:</strong> <code>VERIFY [&quot;name&quot; [, device [, secondary]]]</code>. Compare a stored programme with a file through a historical device.</p>
+<p><strong>Example:</strong> <code>VERIFY &quot;DEMO&quot;,8</code>. <strong>Remember:</strong> This is not Studio build-hash verification and does not work as a disk workflow in managed Run.</p>
+<h3><code>WAIT</code></h3>
+<p><strong>Syntax:</strong> <code>WAIT address,mask [, exclusiveOr]</code>. Poll until the byte read, optionally XORed with the third argument and ANDed with the mask, is non-zero.</p>
+<p><strong>Example:</strong> <code>WAIT 53265,128</code>. <strong>Remember:</strong> It can wait indefinitely and does not offer a BASIC timeout. Use explicit bounded polling for recoverable beginner examples; repeated reads alone do not synchronise a complete animation frame.</p>
+<h3>Special values and control syntax</h3>
+<p>ST (also called STATUS) reports I/O status; inspect it immediately after the relevant device operation. TI (TIME) is the jiffy clock and TI$ (TIME$) is its six-digit HHMMSS representation. Assign TI$="000000" to reset that clock deliberately. It is a machine timer, not a modern wall clock, and it depends on the normal operating-system interrupt service. The timer wraps; subtracting readings across a reset or wrap requires explicit handling.</p>
+</section>
+<section id="basic-functions">
+<h2>BASIC functions and operators</h2>
+<h3>Functions transform values</h3>
+<p>Use a function where an expression is expected: PRINT LEN(A$), N=INT(X), or IF ABS(D)>10 THEN 200. String functions end in $ where they return a string. A type suffix is part of the name and must not be omitted. Validating an argument first often produces a much clearer programme than letting the interpreter stop with a generic error.</p>
+<h3><code>ABS</code></h3>
+<p><strong>Form:</strong> <code>ABS(x)</code>. Absolute numeric magnitude.</p>
+<p><strong>Example:</strong> ABS(-7) gives 7. <strong>Remember:</strong> Use when only distance from zero matters.</p>
+<h3><code>ASC</code></h3>
+<p><strong>Form:</strong> <code>ASC(text$)</code>. Code of the first character.</p>
+<p><strong>Example:</strong> ASC(&quot;A&quot;) gives 65 in the example encoding. <strong>Remember:</strong> The empty string is invalid. A PETSCII code is not automatically a screen code.</p>
+<h3><code>ATN</code></h3>
+<p><strong>Form:</strong> <code>ATN(x)</code>. Arctangent in radians.</p>
+<p><strong>Example:</strong> ATN(1)*4 approximates pi. <strong>Remember:</strong> Convert units explicitly when the user thinks in degrees.</p>
+<h3><code>CHR$</code></h3>
+<p><strong>Form:</strong> <code>CHR$(n)</code>. A one-character string for a code from 0 through 255.</p>
+<p><strong>Example:</strong> PRINT CHR$(147) clears the normal text screen. <strong>Remember:</strong> Control characters act when printed; they are not visible decimal text.</p>
+<h3><code>COS</code></h3>
+<p><strong>Form:</strong> <code>COS(x)</code>. Cosine with a radian argument.</p>
+<p><strong>Example:</strong> COS(0) gives 1. <strong>Remember:</strong> Convert degrees using radians=degrees*pi/180.</p>
+<h3><code>EXP</code></h3>
+<p><strong>Form:</strong> <code>EXP(x)</code>. The exponential function e raised to x.</p>
+<p><strong>Example:</strong> EXP(0) gives 1. <strong>Remember:</strong> Large positive inputs overflow the numeric range.</p>
+<h3><code>FN</code></h3>
+<p><strong>Form:</strong> <code>FN name(x)</code>. Evaluate an earlier DEF FN definition.</p>
+<p><strong>Example:</strong> After DEF FN F(X)=X*X, FN F(4) gives 16. <strong>Remember:</strong> Define the function in programme mode before calling it.</p>
+<h3><code>FRE</code></h3>
+<p><strong>Form:</strong> <code>FRE(x)</code>. Available BASIC memory, with string collection effects.</p>
+<p><strong>Example:</strong> FRE(0) requests the current result. <strong>Remember:</strong> Values above 32767 can be reported as negative; add 65536 to a negative result for an unsigned count. Do not use it as a total physical-RAM test.</p>
+<h3><code>INT</code></h3>
+<p><strong>Form:</strong> <code>INT(x)</code>. Greatest integer no larger than x.</p>
+<p><strong>Example:</strong> INT(2.9) gives 2; INT(-2.1) gives -3. <strong>Remember:</strong> It rounds down, not towards zero. This difference matters with negative values.</p>
+<h3><code>LEFT$</code></h3>
+<p><strong>Form:</strong> <code>LEFT$(text$,count)</code>. Leftmost count characters.</p>
+<p><strong>Example:</strong> LEFT$(&quot;C64&quot;,1) gives &quot;C&quot;. <strong>Remember:</strong> Use a count in the supported byte range; zero yields an empty string.</p>
+<h3><code>LEN</code></h3>
+<p><strong>Form:</strong> <code>LEN(text$)</code>. Number of characters in a string.</p>
+<p><strong>Example:</strong> LEN(&quot;C64&quot;) gives 3. <strong>Remember:</strong> Control characters count as characters too, even if printing them moves the cursor.</p>
+<h3><code>LOG</code></h3>
+<p><strong>Form:</strong> <code>LOG(x)</code>. Natural logarithm.</p>
+<p><strong>Example:</strong> LOG(1) gives 0. <strong>Remember:</strong> The argument must be positive. Base-ten log can be formed as LOG(x)/LOG(10).</p>
+<h3><code>MID$</code></h3>
+<p><strong>Form:</strong> <code>MID$(text$,start [, count])</code>. Substring from a one-based starting position.</p>
+<p><strong>Example:</strong> MID$(&quot;C64 PAL&quot;,5,3) gives &quot;PAL&quot;. <strong>Remember:</strong> Omitting count takes the remainder. There is no MID$ assignment statement in BASIC V2.</p>
+<h3><code>PEEK</code></h3>
+<p><strong>Form:</strong> <code>PEEK(address)</code>. Read the byte at a decimal address.</p>
+<p><strong>Example:</strong> PEEK(53280) reads the border-colour register. <strong>Remember:</strong> Readback may include unused high bits; mask with AND 15 for a colour. Some I/O reads have side effects.</p>
+<h3><code>POS</code></h3>
+<p><strong>Form:</strong> <code>POS(x)</code>. Current position within the logical screen line.</p>
+<p><strong>Example:</strong> POS(0) is useful when formatting output. <strong>Remember:</strong> The argument is conventional; logical-line wrapping is different from a general screen-coordinate query.</p>
+<h3><code>RIGHT$</code></h3>
+<p><strong>Form:</strong> <code>RIGHT$(text$,count)</code>. Rightmost count characters.</p>
+<p><strong>Example:</strong> RIGHT$(&quot;C64&quot;,2) gives &quot;64&quot;. <strong>Remember:</strong> A count beyond the string length returns the available text, not invented padding.</p>
+<h3><code>RND</code></h3>
+<p><strong>Form:</strong> <code>RND(x)</code>. Pseudo-random fraction in the generator’s range.</p>
+<p><strong>Example:</strong> INT(RND(1)*6)+1 selects a die value. <strong>Remember:</strong> Positive x advances the generator, negative x seeds it, and zero uses system timing inputs. Do not reseed with the same negative number every draw.</p>
+<h3><code>SGN</code></h3>
+<p><strong>Form:</strong> <code>SGN(x)</code>. Sign as -1, 0 or 1.</p>
+<p><strong>Example:</strong> SGN(-12) gives -1. <strong>Remember:</strong> Useful for choosing a direction; it does not provide the magnitude.</p>
+<h3><code>SIN</code></h3>
+<p><strong>Form:</strong> <code>SIN(x)</code>. Sine with a radian argument.</p>
+<p><strong>Example:</strong> SIN(0) gives 0. <strong>Remember:</strong> Floating-point trigonometry is approximate; do not compare a calculated value with exact zero to detect all crossings.</p>
+<h3><code>SPC(</code></h3>
+<p><strong>Form:</strong> <code>SPC(n)</code>. Emit a chosen number of spaces in PRINT.</p>
+<p><strong>Example:</strong> PRINT &quot;A&quot;;SPC(3);&quot;B&quot; <strong>Remember:</strong> Use inside output, not as a stand-alone assignment expression.</p>
+<h3><code>SQR</code></h3>
+<p><strong>Form:</strong> <code>SQR(x)</code>. Non-negative square root.</p>
+<p><strong>Example:</strong> SQR(81) gives 9. <strong>Remember:</strong> A negative input raises ILLEGAL QUANTITY.</p>
+<h3><code>STR$</code></h3>
+<p><strong>Form:</strong> <code>STR$(x)</code>. String representation of a number.</p>
+<p><strong>Example:</strong> STR$(12) includes a leading space for a non-negative number. <strong>Remember:</strong> Account for that sign space when aligning or joining text.</p>
+<h3><code>TAB(</code></h3>
+<p><strong>Form:</strong> <code>TAB(n)</code>. Move output towards a chosen print position.</p>
+<p><strong>Example:</strong> PRINT TAB(10);&quot;C64&quot; <strong>Remember:</strong> Position is not a general two-dimensional cursor address. Behaviour when already past a tab stop can move output to a new line.</p>
+<h3><code>TAN</code></h3>
+<p><strong>Form:</strong> <code>TAN(x)</code>. Tangent with a radian argument.</p>
+<p><strong>Example:</strong> TAN(0) gives 0. <strong>Remember:</strong> Near odd multiples of pi/2 the value grows sharply; choose input bounds for the application.</p>
+<h3><code>USR</code></h3>
+<p><strong>Form:</strong> <code>USR(x)</code>. Call a user-supplied numeric machine-language function.</p>
+<p><strong>Example:</strong> USR(0) is a call form, not a ready-made useful function. <strong>Remember:</strong> The caller must install the vector and honour the BASIC floating-point contract. Studio supplies no USR integration; use the supported assembly SYS loader for these tutorials.</p>
+<h3><code>VAL</code></h3>
+<p><strong>Form:</strong> <code>VAL(text$)</code>. Convert the initial numeric portion of text.</p>
+<p><strong>Example:</strong> VAL(&quot;123&quot;) gives 123. <strong>Remember:</strong> It may stop at later non-numeric text or return zero if no numeric prefix exists. It does not validate an entire input field.</p>
+<h3>Operators</h3>
+<table>
+<thead><tr><th scope="col">Group</th><th scope="col">Forms</th><th scope="col">Meaning</th></tr></thead>
+<tbody>
+<tr><td>Arithmetic</td><td><code>+ - * / ^</code></td><td>Addition, subtraction, multiplication, division and exponentiation. Guard a divisor against zero.</td></tr>
+<tr><td>Comparisons</td><td><code>= &lt;&gt; &lt; &gt; &lt;= &gt;=</code></td><td>Compare compatible values. The result is -1 for true or 0 for false.</td></tr>
+<tr><td>Logical/bitwise</td><td><code>NOT AND OR</code></td><td>Operate on signed 16-bit integer values. Use small non-negative masks for hardware bytes.</td></tr>
+<tr><td>String joining</td><td><code>+</code></td><td>Concatenate two strings. Convert a number deliberately using STR$ when appropriate.</td></tr>
+</tbody></table>
+<h3>A bounded random experiment</h3>
+<pre data-example="basic"><code>10 DIM CT(6)
+20 FOR I=1 TO 60
+30 N=INT(RND(1)*6)+1
+40 CT(N)=CT(N)+1
+50 NEXT I
+60 FOR N=1 TO 6
+70 PRINT N;CT(N)
+80 NEXT N
+90 END</code></pre>
+<p>Expected result: six counts whose sum is 60. The counts need not be equal. This is a small statistical experiment, not evidence of cryptographic randomness. Change the number of trials, keep it within a comfortable runtime, and compare distributions without assuming every run must differ in a particular way.</p>
+</section>
+<section id="basic-errors">
+<h2>BASIC errors and recovery</h2>
+<h3>Locate the failing operation</h3>
+<p>BASIC runtime messages appear in the VICE window, commonly as ?NAME ERROR IN line. The number is the BASIC source line, not its row in Monaco. INPUT can also issue recoverable messages such as ?REDO FROM START or ?EXTRA IGNORED. The catalogue below includes those messages as well as the standard errors; it does not pretend they are all fatal errors.</p>
+<p>First read the line and inspect the values that reach it. Fix the source in Studio, Save and Run again. Editing only the running C64’s copy does not update the project. Studio build errors such as DC64100 are separate from messages printed by the ROM.</p>
+<h3><code>BAD DATA</code></h3>
+<p><strong>Cause:</strong> Input read through INPUT# does not match the expected field type.</p>
+<p><strong>Example:</strong> A file field containing text is read into a numeric variable.</p>
+<p><strong>Recovery:</strong> Check the record format, separators and destination types. Device input is outside managed Run; reproduce file problems only in an appropriate separately configured environment.</p>
+<h3><code>BAD SUBSCRIPT</code></h3>
+<p><strong>Cause:</strong> An array index is outside its allocated bounds or has an invalid dimension shape.</p>
+<p><strong>Example:</strong> DIM A(2) followed by PRINT A(3).</p>
+<p><strong>Recovery:</strong> Inspect the failing index and the DIM statement. Bounds are inclusive: DIM A(2) allows 0, 1 and 2. Fix the loop limit before increasing storage.</p>
+<h3><code>CAN&#x27;T CONTINUE</code></h3>
+<p><strong>Cause:</strong> CONT has no valid saved execution position.</p>
+<p><strong>Example:</strong> Attempt CONT after editing the programme or after an error.</p>
+<p><strong>Recovery:</strong> Start again with RUN, passing through initialisation. Use small saved checkpoints in source instead of relying on continuation after arbitrary changes.</p>
+<h3><code>DEVICE NOT PRESENT</code></h3>
+<p><strong>Cause:</strong> The requested peripheral does not respond.</p>
+<p><strong>Example:</strong> LOAD &quot;DEMO&quot;,8 without an available drive.</p>
+<p><strong>Recovery:</strong> Check the actual environment. Disk/filesystem devices are disabled in Studio’s managed session, so use Export PRG rather than trying to repair this by adding drive commands.</p>
+<h3><code>DIVISION BY ZERO</code></h3>
+<p><strong>Cause:</strong> A division attempts to use zero as its divisor.</p>
+<p><strong>Example:</strong> PRINT 10/0.</p>
+<p><strong>Recovery:</strong> Validate the divisor on a separate line before evaluating the quotient. An AND expression is not a safe substitute for control flow.</p>
+<h3><code>EXTRA IGNORED</code></h3>
+<p><strong>Cause:</strong> Keyboard INPUT received more fields than there are destinations.</p>
+<p><strong>Example:</strong> INPUT A receives two comma-separated answers.</p>
+<p><strong>Recovery:</strong> Enter the requested number of items or change the INPUT destinations. This is an input warning rather than proof that every extra item was stored.</p>
+<h3><code>FILE NOT FOUND</code></h3>
+<p><strong>Cause:</strong> A device could not locate the requested file.</p>
+<p><strong>Example:</strong> LOAD names a file absent from the chosen device.</p>
+<p><strong>Recovery:</strong> Check the name and device in a separately configured file workflow. The managed session has no mounted project files.</p>
+<h3><code>FILE NOT OPEN</code></h3>
+<p><strong>Cause:</strong> A logical channel is used before it has been opened.</p>
+<p><strong>Example:</strong> PRINT# 2,&quot;X&quot; when logical file 2 is not open.</p>
+<p><strong>Recovery:</strong> Audit the OPEN/use/CLOSE order and the logical file number. Do not confuse a logical channel number with a drive number.</p>
+<h3><code>FILE OPEN</code></h3>
+<p><strong>Cause:</strong> A logical file number is opened while already in use.</p>
+<p><strong>Example:</strong> The same OPEN runs twice without closing its channel.</p>
+<p><strong>Recovery:</strong> Close the intended channel or choose a deliberate distinct number. Avoid branching back through setup while retaining the old connection.</p>
+<h3><code>FORMULA TOO COMPLEX</code></h3>
+<p><strong>Cause:</strong> An expression requires more internal temporary processing than BASIC can provide.</p>
+<p><strong>Example:</strong> A deeply nested or long string expression exceeds the interpreter’s evaluation capacity.</p>
+<p><strong>Recovery:</strong> Break the operation into intermediate assignments. Keep temporary strings short and remove unnecessary nested expressions.</p>
+<h3><code>ILLEGAL DIRECT</code></h3>
+<p><strong>Cause:</strong> A statement requiring programme context is used directly at READY.</p>
+<p><strong>Example:</strong> Enter a DEF FN definition as an immediate command.</p>
+<p><strong>Recovery:</strong> Put the operation into a numbered programme and RUN it. Studio already requires numbered source; do not paste a transcript containing prompt commands into the file.</p>
+<h3><code>ILLEGAL QUANTITY</code></h3>
+<p><strong>Cause:</strong> A numeric argument is outside the operation’s allowed range.</p>
+<p><strong>Example:</strong> POKE 53280,256 or PRINT SQR(-1).</p>
+<p><strong>Recovery:</strong> Inspect each argument, including values produced by expressions. Range-check addresses, bytes, substring positions and function domains before calling them.</p>
+<h3><code>LOAD</code></h3>
+<p><strong>Cause:</strong> A tape-loading operation encounters a loading problem.</p>
+<p><strong>Example:</strong> An incomplete or unreliable cassette read fails.</p>
+<p><strong>Recovery:</strong> On a separately operated machine, check the medium and loading setup. Studio injects a fresh PRG rather than using cassette playback; treat a managed-session startup failure through Studio’s emulator diagnostics.</p>
+<h3><code>NEXT WITHOUT FOR</code></h3>
+<p><strong>Cause:</strong> NEXT has no matching active FOR loop.</p>
+<p><strong>Example:</strong> A branch jumps directly to NEXT I without executing FOR I.</p>
+<p><strong>Recovery:</strong> Trace the branch into the loop and match nested counters. Keep loop entry at FOR and exits explicit.</p>
+<h3><code>NOT INPUT FILE</code></h3>
+<p><strong>Cause:</strong> Input is attempted on a file opened for another direction.</p>
+<p><strong>Example:</strong> INPUT# uses a logical channel opened for writing.</p>
+<p><strong>Recovery:</strong> Correct the file mode and channel selection. This is a historical device-channel error, not a Studio source encoding failure.</p>
+<h3><code>NOT OUTPUT FILE</code></h3>
+<p><strong>Cause:</strong> Output is attempted on a file opened for another direction.</p>
+<p><strong>Example:</strong> PRINT# uses a logical channel opened for reading.</p>
+<p><strong>Recovery:</strong> Open the intended output channel before use and close it afterwards in an environment that provides that device.</p>
+<h3><code>OUT OF DATA</code></h3>
+<p><strong>Cause:</strong> READ has consumed all available DATA items.</p>
+<p><strong>Example:</strong> Four variables are read from a three-item data table.</p>
+<p><strong>Recovery:</strong> Count the items and reads, including reads inside loops. Use RESTORE only when restarting the data stream is intended; do not hide a missing item by resetting it on every read.</p>
+<h3><code>OUT OF MEMORY</code></h3>
+<p><strong>Cause:</strong> BASIC cannot allocate required programme/runtime storage or control-stack space.</p>
+<p><strong>Example:</strong> A very large array or unbounded recursive GOSUB exhausts the available memory.</p>
+<p><strong>Recovery:</strong> Reduce array bounds and temporary strings, or fix runaway calls. A successful PRG build only checks programme bytes; it does not reserve all memory that the programme may allocate at runtime.</p>
+<h3><code>OVERFLOW</code></h3>
+<p><strong>Cause:</strong> A numeric calculation exceeds the representable range.</p>
+<p><strong>Example:</strong> An excessively large positive argument to EXP.</p>
+<p><strong>Recovery:</strong> Choose a smaller range, scale intermediate calculations or reject the input before evaluating the expression.</p>
+<h3><code>REDIM&#x27;D ARRAY</code></h3>
+<p><strong>Cause:</strong> DIM attempts to allocate an array that already exists.</p>
+<p><strong>Example:</strong> DIM A(5) executes again on the second pass through a loop.</p>
+<p><strong>Recovery:</strong> Dimension once near startup. Also check for an earlier use that implicitly allocated the array. Use RUN for a clean start when testing changed allocation.</p>
+<h3><code>REDO FROM START</code></h3>
+<p><strong>Cause:</strong> Keyboard INPUT could not interpret the supplied value for its destinations.</p>
+<p><strong>Example:</strong> Type letters in response to a numeric INPUT.</p>
+<p><strong>Recovery:</strong> Enter a compatible value. For a controlled user interface, read a string and validate it instead of relying on the generic numeric prompt.</p>
+<h3><code>RETURN WITHOUT GOSUB</code></h3>
+<p><strong>Cause:</strong> RETURN is executed without a pending subroutine call.</p>
+<p><strong>Example:</strong> Main code falls through into a routine ending in RETURN.</p>
+<p><strong>Recovery:</strong> Put END before the routine area, and enter it with GOSUB rather than GOTO. Check every exit path.</p>
+<h3><code>STRING TOO LONG</code></h3>
+<p><strong>Cause:</strong> A string would exceed 255 characters.</p>
+<p><strong>Example:</strong> Repeated concatenation grows A$ beyond the maximum length.</p>
+<p><strong>Recovery:</strong> Check LEN before appending. Store separate records or process smaller pieces rather than building one oversized string.</p>
+<h3><code>SYNTAX</code></h3>
+<p><strong>Cause:</strong> The interpreter cannot parse the statement as BASIC V2.</p>
+<p><strong>Example:</strong> IF X=1 THEN PRINT &quot;YES&quot; ELSE PRINT &quot;NO&quot; uses an unavailable ELSE.</p>
+<p><strong>Recovery:</strong> Check spelling, punctuation, brackets, separators and dialect. Inspect the indicated numbered line. Studio tokenisation can succeed even though runtime syntax is invalid.</p>
+<h3><code>TOO MANY FILES</code></h3>
+<p><strong>Cause:</strong> Too many logical channels are open.</p>
+<p><strong>Example:</strong> Repeated OPEN operations allocate channels without matching CLOSE operations.</p>
+<p><strong>Recovery:</strong> Close channels when their work ends and bound how many can be open simultaneously. Managed Run does not provide disk/printer usage to exercise this workflow.</p>
+<h3><code>TYPE MISMATCH</code></h3>
+<p><strong>Cause:</strong> A string is used where a number is needed, or vice versa.</p>
+<p><strong>Example:</strong> N=&quot;TEN&quot; or READ N consumes a text DATA item.</p>
+<p><strong>Recovery:</strong> Match variable suffixes and values. Use VAL or STR$ only when conversion is intended and validate its result appropriately.</p>
+<h3><code>UNDEF&#x27;D FUNCTION</code></h3>
+<p><strong>Cause:</strong> FN calls a function that has not been defined along the executed path.</p>
+<p><strong>Example:</strong> PRINT FN F(2) occurs before its DEF FN F(X) line.</p>
+<p><strong>Recovery:</strong> Define the function before its first use and check its name. Starting RUN at a later line can skip the definition.</p>
+<h3><code>UNDEF&#x27;D STATEMENT</code></h3>
+<p><strong>Cause:</strong> A branch refers to a line number absent from the programme.</p>
+<p><strong>Example:</strong> GOTO 900 after line 900 was removed.</p>
+<p><strong>Recovery:</strong> Check GOTO, GOSUB, IF and ON destinations after edits. Use actual programme line numbers, not editor line positions.</p>
+<h3><code>VERIFY</code></h3>
+<p><strong>Cause:</strong> The loaded comparison data differs from the programme in memory.</p>
+<p><strong>Example:</strong> VERIFY compares an older saved file with an edited programme.</p>
+<p><strong>Recovery:</strong> Check the file/version and device in the historical workflow. For Studio exports, rebuild the saved revision and use a new destination; BASIC VERIFY is not the Studio hash check.</p>
+<h3>BREAK and a deliberate experiment</h3>
+<p>BREAK is a stoppage notice, for example after RUN/STOP or STOP, rather than a misspelt command. CONT may resume if the continuation is still valid. If a machine-code programme no longer services input, Studio Stop terminates the owned emulator.</p>
+<p>To practise diagnosis, create a small BASIC programme containing a divisor variable set to zero and PRINT 10/D. Observe the error, then add a separate IF D=0 branch before the division. The corrected version should display your own useful explanation and avoid the runtime error. Keep this intentional failure separate from examples labelled as successful complete programmes.</p>
+</section>
+<section id="processor">
+<h2>6502 processor reference</h2>
+<h3>Think in bytes and addresses</h3>
+<p>The NMOS 6502 executes small operations on bytes. A byte holds an unsigned value from 0 through 255. A 16-bit address selects a location from $0000 through $FFFF. The C64’s 6510 executes this documented instruction set and adds a machine-specific I/O port used for memory configuration. The CPU model explains instructions; the C64 memory map explains what an address means in this machine.</p>
+<table>
+<thead><tr><th scope="col">Register</th><th scope="col">Width</th><th scope="col">Practical role</th></tr></thead>
+<tbody>
+<tr><td>A</td><td>8 bits</td><td>Accumulator: the main arithmetic, logic and byte-load/store register.</td></tr>
+<tr><td>X</td><td>8 bits</td><td>Index, loop counter and register-transfer participant.</td></tr>
+<tr><td>Y</td><td>8 bits</td><td>Index and loop counter, also used after indirect pointer lookup.</td></tr>
+<tr><td>SP</td><td>8 bits</td><td>Stack offset within page $0100–$01FF.</td></tr>
+<tr><td>PC</td><td>16 bits</td><td>Instruction address; updated by instruction length, branches, jumps and returns.</td></tr>
+<tr><td>P</td><td>Status bits</td><td>Records arithmetic conditions and processor control state.</td></tr>
+</tbody></table>
+<p>A, X and Y are separate registers. Loading X does not also load A. Most arithmetic operates on A; use TAX, TXA, TAY and TYA when an index value must move to or from it. A register is not a variable name in RAM: its value lasts only until an instruction changes it.</p>
+<h3>Number notation and byte order</h3>
+<p>ca65 accepts decimal numbers, hexadecimal prefixed with $ and binary prefixed with %. The # character means an immediate value. LDA #$20 loads the byte $20; LDA $20 reads memory at zero-page address $20. Multi-byte addresses are little-endian: a word $1234 is stored as byte $34 followed by byte $12.</p>
+<p>Use &lt;label and &gt;label to obtain the low and high address bytes in supported expressions, for example when initialising a pointer. A .word label stores those bytes in the correct order. These operators are assembler expression syntax, not runtime instructions. Studio permits a restricted set of directives and operands; consult the project article before borrowing syntax from another assembler.</p>
+<h3>Status flags</h3>
+<table>
+<thead><tr><th scope="col">Flag</th><th scope="col">Purpose</th><th scope="col">Common use</th></tr></thead>
+<tbody>
+<tr><td>N</td><td>Negative: normally reflects result bit 7.</td><td>BMI/BPL after an appropriate result. It is not a complete signed comparison by itself.</td></tr>
+<tr><td>V</td><td>Signed overflow.</td><td>Detect a signed result outside -128 through 127 after addition/subtraction.</td></tr>
+<tr><td>D</td><td>Decimal arithmetic mode.</td><td>SED enables BCD ADC/SBC; CLD restores binary arithmetic.</td></tr>
+<tr><td>I</td><td>Maskable interrupt disable.</td><td>SEI masks IRQ; CLI enables it. NMI is separate.</td></tr>
+<tr><td>Z</td><td>Zero result.</td><td>BEQ/BNE after loads, comparisons and other flag-setting instructions.</td></tr>
+<tr><td>C</td><td>Carry, no-borrow and shifted-out bit.</td><td>Multi-byte arithmetic, unsigned comparison and rotates.</td></tr>
+</tbody></table>
+<p>The status byte pushed onto the stack also includes a B indication and a set bit 5. B is not an ordinary persistent flag that you can branch on or set with a dedicated instruction: PHP/BRK and hardware interrupt entry differ in the pushed representation. Do not treat every bit in a saved status byte as an independently writable CPU register.</p>
+<p>Instructions set different subsets of flags. LDA sets N and Z but leaves C unchanged. STA changes no flags. CMP sets N, Z and C without changing A. A subroutine may change flags even if it preserves a register. Place a branch immediately after the test it is meant to use, unless the intervening instruction is deliberately known to preserve that test.</p>
+<h3>The stack and calls</h3>
+<p>The hardware stack occupies $0100–$01FF. A push writes at $0100+SP and then decrements SP; a pull increments SP before reading. It has only 256 byte positions and no automatic overflow protection. BASIC, KERNAL calls and interrupts share it with your assembly. Never treat the whole page as free scratch space.</p>
+<p>JSR saves the return information and transfers control to a routine. RTS reconstructs the address of the following instruction. PHA/PLA save and restore A; PHP/PLP save and restore status. There are no PHX, PLX, PHY or PLY instructions on the documented NMOS 6502. Save X or Y through A or in owned memory. Balance every push with a pull on every exit path.</p>
+<h3>Timing and instruction families</h3>
+<p>Instructions take different numbers of cycles. Some indexed reads gain a cycle when an address crosses a page; a taken branch also has additional cost, with another cycle when it crosses a page. The C64 video hardware can take bus time, so a sum of CPU instruction cycles alone is not a complete model of display timing. Begin with correct bounded programmes before trying raster-sensitive code.</p>
+<p>Use the documented NMOS instructions in this guide. 65C02 instructions such as BRA, STZ and PHX, 65816 width changes and undocumented opcodes are outside the implemented source contract. The 6502 has neither a general multiply/divide instruction nor a 16-bit accumulator: software combines byte operations to implement those jobs.</p>
+</section>
+<section id="addressing">
+<h2>6502 addressing modes</h2>
+<h3>An operand tells the CPU where the value comes from</h3>
+<p>Read each instruction as an operation plus an addressing choice. LDA #6 places a literal byte in A; LDA $D020 reads the C64 border register; STA $D020 writes A there. Confusing a value with its address is one of the most common assembly mistakes. The assembler checks legal opcode/mode combinations, but it cannot know whether you intended to read or write a particular hardware register.</p>
+<table>
+<thead><tr><th scope="col">Mode</th><th scope="col">Example fragment</th><th scope="col">Meaning</th></tr></thead>
+<tbody>
+<tr><td>Implied</td><td><code>CLC</code></td><td>The operation identifies all its operands; there is no address field.</td></tr>
+<tr><td>Accumulator</td><td><code>ASL A</code></td><td>Operate directly on A rather than a byte in memory.</td></tr>
+<tr><td>Immediate</td><td><code>LDA #$2A</code></td><td>Use the literal byte $2A. STA has no immediate mode.</td></tr>
+<tr><td>Zero page</td><td><code>LDA $FB</code></td><td>Read a byte from the first 256 addresses. The instruction uses a one-byte address field.</td></tr>
+<tr><td>Zero page,X</td><td><code>LDA $80,X</code></td><td>Add X to a zero-page base, wrapping within that page.</td></tr>
+<tr><td>Zero page,Y</td><td><code>LDX $80,Y</code></td><td>Y-indexed zero-page form available for LDX/STX, not a general substitute for zero page,X.</td></tr>
+<tr><td>Absolute</td><td><code>LDA $0400</code></td><td>Use a full 16-bit address.</td></tr>
+<tr><td>Absolute,X</td><td><code>LDA $0400,X</code></td><td>Add X to a 16-bit base. The effective address may cross a page.</td></tr>
+<tr><td>Absolute,Y</td><td><code>LDA $0400,Y</code></td><td>Add Y to a 16-bit base where that opcode supports it.</td></tr>
+<tr><td>Indexed indirect</td><td><code>LDA ($F0,X)</code></td><td>Add X to the zero-page pointer location first, then read the 16-bit address stored there.</td></tr>
+<tr><td>Indirect indexed</td><td><code>LDA ($FB),Y</code></td><td>Read the 16-bit pointer at $FB/$FC first, then add Y to the pointed-to address.</td></tr>
+<tr><td>Absolute indirect</td><td><code>JMP ($2000)</code></td><td>Load the jump destination from a two-byte pointer. It is a JMP form, not an LDA form.</td></tr>
+<tr><td>Relative</td><td><code>BNE loop</code></td><td>Branch using a signed byte displacement from the instruction after the branch.</td></tr>
+</tbody></table>
+<h3>Zero page is shared machine state</h3>
+<p>Zero-page addressing is compact and often faster, but the C64 operating system already uses many of those locations. An example operand in the table is a syntax illustration, not permission to overwrite every nearby byte. The machine-memory article identifies a small conventional user workspace and the need to preserve it when returning to BASIC.</p>
+<p>Zero-page indexed arithmetic wraps at $FF. A base of $F0 plus X=$20 addresses $10, not $0110. By contrast, absolute indexed arithmetic crosses into the next page. This difference is useful when intentional and destructive when overlooked. Pointer fetches for the zero-page indirect modes also wrap their pointer-byte locations within zero page.</p>
+<h3>Walk a table using an index</h3>
+<pre data-example="assembly"><code>.org $080D
+    ldx #0
+copy:
+    lda message,x
+    sta $0400,x
+    lda #1
+    sta $D800,x
+    inx
+    cpx #5
+    bne copy
+    rts
+message:
+    .byte 3,54,52,32,1</code></pre>
+<p>Expected result: the five screen codes display C64 A in white at the top-left of the default text screen. The table contains screen codes, not the PETSCII string bytes used by CHROUT. X starts at zero and stops at five, so the last read is message+4. The test after INX determines the loop count.</p>
+<h3>Choose the legal mode for the register</h3>
+<p>LDA has more addressing choices than LDX and LDY. LDX supports absolute,Y while LDY supports absolute,X. STX and STY also have narrower choices. Do not assume an opcode works with every mode just because another load or store does. The instruction table lists the supported mode families and ca65 rejects combinations that have no NMOS encoding.</p>
+<p>An assembler may choose zero-page encoding for a known low address. Forward labels and expression forms can affect mode selection, so inspect real build results when exact timing or byte count matters. Studio does not accept arbitrary segment/linker controls to force a different memory plan.</p>
+<h3>Branch distance and the NMOS indirect-jump quirk</h3>
+<p>A relative branch reaches -128 through +127 bytes from the following instruction. Adding data or code can move a target out of range. Replace a long conditional branch with the inverse short branch around an absolute JMP, keeping the intended fall-through clear. Do not insert undocumented long-branch syntax from another assembler.</p>
+<p>On the NMOS processor, JMP through an indirect pointer ending at $xxFF fetches its high byte from $xx00 rather than the next page. Place such two-byte jump pointers away from page ends. This is different from adding an index to an ordinary absolute address. The 65C02 changes some behaviour, so its documentation is not interchangeable with the C64’s NMOS model.</p>
+</section>
+<section id="instructions">
+<h2>6502 instruction reference</h2>
+<h3>Documented NMOS mnemonics</h3>
+<p>This is the complete documented mnemonic set accepted by the current source policy. “zp” means zero page. Flag descriptions assume ordinary binary arithmetic unless a decimal-mode note says otherwise. “None” describes the instruction itself; code reached by a call, interrupt or jump can of course change state. ca65 still checks exact operand ranges and available encodings.</p>
+<h3><code>ADC</code></h3>
+<p>A + operand + C → A. <strong>Flags:</strong> N Z C V. <strong>Modes:</strong> immediate, zero page, zero page,X, absolute, absolute,X/Y, (zp,X), (zp),Y. Use CLC for the first byte of ordinary addition. D selects decimal behaviour.</p>
+<h3><code>AND</code></h3>
+<p>A AND operand → A. <strong>Flags:</strong> N Z. <strong>Modes:</strong> same data modes as ADC. Clear unwanted bits with a mask; other flags, including C, are retained.</p>
+<h3><code>ASL</code></h3>
+<p>Shift left, zero into bit 0. <strong>Flags:</strong> N Z C. <strong>Modes:</strong> A, zero page, zero page,X, absolute, absolute,X. Old bit 7 enters C. Memory forms are read/modify/write operations.</p>
+<h3><code>BCC</code></h3>
+<p>Branch if C=0. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. After CMP, unsigned A is below the operand.</p>
+<h3><code>BCS</code></h3>
+<p>Branch if C=1. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. After CMP, unsigned A is greater than or equal to the operand.</p>
+<h3><code>BEQ</code></h3>
+<p>Branch if Z=1. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. Equality only when the preceding flag-setting operation represents the intended comparison.</p>
+<h3><code>BIT</code></h3>
+<p>A AND memory tested; memory bits 7/6 → N/V. <strong>Flags:</strong> N Z V. <strong>Modes:</strong> zero page, absolute. Z comes from the AND test; A is unchanged. NMOS BIT has no immediate form.</p>
+<h3><code>BMI</code></h3>
+<p>Branch if N=1. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. Tests the sign bit; not a complete signed less-than test after overflow.</p>
+<h3><code>BNE</code></h3>
+<p>Branch if Z=0. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. Often closes a counted loop after DEX or CPX.</p>
+<h3><code>BPL</code></h3>
+<p>Branch if N=0. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. Tests non-negative result bit interpretation, including zero.</p>
+<h3><code>BRK</code></h3>
+<p>Software interrupt entry. <strong>Flags:</strong> I; stack status representation. <strong>Modes:</strong> implied with a following signature byte. Uses the IRQ/BRK vector and saves a return address two bytes past its opcode. It is not Studio’s Stop action.</p>
+<h3><code>BVC</code></h3>
+<p>Branch if V=0. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. No signed overflow from the operation that last set V.</p>
+<h3><code>BVS</code></h3>
+<p>Branch if V=1. <strong>Flags:</strong> none. <strong>Modes:</strong> relative. Signed overflow detected; keep intervening flag changes in mind.</p>
+<h3><code>CLC</code></h3>
+<p>Clear carry. <strong>Flags:</strong> C. <strong>Modes:</strong> implied. Begin binary addition or request PLOT cursor positioning.</p>
+<h3><code>CLD</code></h3>
+<p>Clear decimal mode. <strong>Flags:</strong> D. <strong>Modes:</strong> implied. Use binary arithmetic in the beginner routines and leave BASIC’s expected mode intact.</p>
+<h3><code>CLI</code></h3>
+<p>Clear IRQ mask. <strong>Flags:</strong> I. <strong>Modes:</strong> implied. Re-enable maskable interrupts only when your routine owns the corresponding change.</p>
+<h3><code>CLV</code></h3>
+<p>Clear overflow. <strong>Flags:</strong> V. <strong>Modes:</strong> implied. Does not clear C or Z.</p>
+<h3><code>CMP</code></h3>
+<p>Compare A with operand. <strong>Flags:</strong> N Z C. <strong>Modes:</strong> same data modes as ADC. Subtracts for flags only. C=1 means no unsigned borrow; V is unchanged.</p>
+<h3><code>CPX</code></h3>
+<p>Compare X with operand. <strong>Flags:</strong> N Z C. <strong>Modes:</strong> immediate, zero page, absolute. Use CPX #count for a bounded index loop.</p>
+<h3><code>CPY</code></h3>
+<p>Compare Y with operand. <strong>Flags:</strong> N Z C. <strong>Modes:</strong> immediate, zero page, absolute. Does not alter Y or V.</p>
+<h3><code>DEC</code></h3>
+<p>Decrement a memory byte. <strong>Flags:</strong> N Z. <strong>Modes:</strong> zero page, zero page,X, absolute, absolute,X. Wraps zero to $FF and leaves C unchanged. NMOS DEC A is unavailable.</p>
+<h3><code>DEX</code></h3>
+<p>Decrement X. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. Wraps zero to $FF; test loop entry if zero items are possible.</p>
+<h3><code>DEY</code></h3>
+<p>Decrement Y. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. Useful for a countdown with an explicit non-zero starting count.</p>
+<h3><code>EOR</code></h3>
+<p>A exclusive-OR operand → A. <strong>Flags:</strong> N Z. <strong>Modes:</strong> same data modes as ADC. Toggle selected bits; EOR #$FF complements A.</p>
+<h3><code>INC</code></h3>
+<p>Increment a memory byte. <strong>Flags:</strong> N Z. <strong>Modes:</strong> zero page, zero page,X, absolute, absolute,X. Wraps $FF to zero and leaves C unchanged. Memory-mapped I/O may dislike its bus writes.</p>
+<h3><code>INX</code></h3>
+<p>Increment X. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. Index arithmetic wraps at 256.</p>
+<h3><code>INY</code></h3>
+<p>Increment Y. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. Does not carry into another register automatically.</p>
+<h3><code>JMP</code></h3>
+<p>Transfer control. <strong>Flags:</strong> none. <strong>Modes:</strong> absolute, absolute indirect. No return is saved. Observe the NMOS page-end indirect-pointer quirk.</p>
+<h3><code>JSR</code></h3>
+<p>Call a routine. <strong>Flags:</strong> none. <strong>Modes:</strong> absolute. Pushes return information; the called routine can change registers and flags.</p>
+<h3><code>LDA</code></h3>
+<p>Load A. <strong>Flags:</strong> N Z. <strong>Modes:</strong> same data modes as ADC. Immediate loads values; other forms read memory.</p>
+<h3><code>LDX</code></h3>
+<p>Load X. <strong>Flags:</strong> N Z. <strong>Modes:</strong> immediate, zero page, zero page,Y, absolute, absolute,Y. The indexed forms use Y, not X.</p>
+<h3><code>LDY</code></h3>
+<p>Load Y. <strong>Flags:</strong> N Z. <strong>Modes:</strong> immediate, zero page, zero page,X, absolute, absolute,X. The indexed forms use X, not Y.</p>
+<h3><code>LSR</code></h3>
+<p>Shift right, zero into bit 7. <strong>Flags:</strong> N Z C. <strong>Modes:</strong> A, zero page, zero page,X, absolute, absolute,X. Old bit 0 enters C. N is cleared because the new bit 7 is zero.</p>
+<h3><code>NOP</code></h3>
+<p>No operation. <strong>Flags:</strong> none. <strong>Modes:</strong> implied. Only the documented NOP form belongs to this source contract.</p>
+<h3><code>ORA</code></h3>
+<p>A OR operand → A. <strong>Flags:</strong> N Z. <strong>Modes:</strong> same data modes as ADC. Set selected bits without clearing the others.</p>
+<h3><code>PHA</code></h3>
+<p>Push A. <strong>Flags:</strong> none. <strong>Modes:</strong> implied. SP decreases; A remains unchanged.</p>
+<h3><code>PHP</code></h3>
+<p>Push status representation. <strong>Flags:</strong> none. <strong>Modes:</strong> implied. The pushed byte includes the software B indication.</p>
+<h3><code>PLA</code></h3>
+<p>Pull into A. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. SP increases and flags reflect the pulled value.</p>
+<h3><code>PLP</code></h3>
+<p>Pull status. <strong>Flags:</strong> status restored. <strong>Modes:</strong> implied. Restores arithmetic/control flags, including D and I; use only with a known saved status.</p>
+<h3><code>ROL</code></h3>
+<p>Rotate left through C. <strong>Flags:</strong> N Z C. <strong>Modes:</strong> A, zero page, zero page,X, absolute, absolute,X. Old C enters bit 0 and old bit 7 enters C.</p>
+<h3><code>ROR</code></h3>
+<p>Rotate right through C. <strong>Flags:</strong> N Z C. <strong>Modes:</strong> A, zero page, zero page,X, absolute, absolute,X. Old C enters bit 7 and old bit 0 enters C.</p>
+<h3><code>RTI</code></h3>
+<p>Return from interrupt. <strong>Flags:</strong> status restored. <strong>Modes:</strong> implied. Restores saved status and PC. It does not replace RTS for a normal SYS/JSR call.</p>
+<h3><code>RTS</code></h3>
+<p>Return from subroutine. <strong>Flags:</strong> none. <strong>Modes:</strong> implied. Requires the original call frame to remain correctly balanced.</p>
+<h3><code>SBC</code></h3>
+<p>A - operand - (1-C) → A. <strong>Flags:</strong> N Z C V. <strong>Modes:</strong> same data modes as ADC. Use SEC for the first byte of ordinary subtraction. Carry means no borrow.</p>
+<h3><code>SEC</code></h3>
+<p>Set carry. <strong>Flags:</strong> C. <strong>Modes:</strong> implied. Begin subtraction or request PLOT cursor readback.</p>
+<h3><code>SED</code></h3>
+<p>Set decimal mode. <strong>Flags:</strong> D. <strong>Modes:</strong> implied. BCD arithmetic is specialised; do not leave D set when returning to BASIC.</p>
+<h3><code>SEI</code></h3>
+<p>Set IRQ mask. <strong>Flags:</strong> I. <strong>Modes:</strong> implied. Does not mask NMI. Prolonged masking disrupts keyboard/timer service.</p>
+<h3><code>STA</code></h3>
+<p>Store A. <strong>Flags:</strong> none. <strong>Modes:</strong> zero page, zero page,X, absolute, absolute,X/Y, (zp,X), (zp),Y. No immediate mode. A store does not set Z to match the stored value.</p>
+<h3><code>STX</code></h3>
+<p>Store X. <strong>Flags:</strong> none. <strong>Modes:</strong> zero page, zero page,Y, absolute. No absolute,Y store form on NMOS 6502.</p>
+<h3><code>STY</code></h3>
+<p>Store Y. <strong>Flags:</strong> none. <strong>Modes:</strong> zero page, zero page,X, absolute. No absolute,X store form on NMOS 6502.</p>
+<h3><code>TAX</code></h3>
+<p>A → X. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. A remains unchanged.</p>
+<h3><code>TAY</code></h3>
+<p>A → Y. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. A remains unchanged.</p>
+<h3><code>TSX</code></h3>
+<p>SP → X. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. Reads the stack offset; it does not pull a byte.</p>
+<h3><code>TXA</code></h3>
+<p>X → A. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. Useful before PHA when preserving X.</p>
+<h3><code>TXS</code></h3>
+<p>X → SP. <strong>Flags:</strong> none. <strong>Modes:</strong> implied. Changes the stack position. Do not reset SP in a routine that must return through BASIC’s existing frame.</p>
+<h3><code>TYA</code></h3>
+<p>Y → A. <strong>Flags:</strong> N Z. <strong>Modes:</strong> implied. Useful before PHA when preserving Y.</p>
+<h3>Cycle costs without false precision</h3>
+<p>For orientation, immediate LDA takes two CPU cycles, absolute STA four, JSR six and RTS six. An untaken conditional branch takes two; a taken one takes three, or four if its destination crosses a page. Indexed read timing depends on opcode and page crossing, while indexed writes have their own fixed rules. Use an authoritative per-opcode timing table for cycle-sensitive work and account for the C64 video bus; these examples do not claim raster-exact timing.</p>
+<h3>Source directives are not instructions</h3>
+<table>
+<thead><tr><th scope="col">Directive</th><th scope="col">Supported use</th></tr></thead>
+<tbody>
+<tr><td><code>.org $080D</code></td><td>Exactly once at the fixed programme entry. Studio controls loading and linking.</td></tr>
+<tr><td><code>.byte 1,2,3</code></td><td>Emit explicit bytes; keep values within their representation.</td></tr>
+<tr><td><code>.word label</code></td><td>Emit a little-endian 16-bit value or address.</td></tr>
+<tr><td><code>.res 16,0</code></td><td>Reserve an explicit decimal count, optionally filled with a decimal byte.</td></tr>
+</tbody></table>
+<p>Directives determine output and allocation during assembly. They do not consume CPU cycles as operations, although emitted bytes will execute if control accidentally falls into them. Other ca65 features, including includes, imports, macros and custom linker scripts, are outside Studio’s bounded source contract.</p>
+</section>
+<section id="assembly-arithmetic">
+<h2>6502 arithmetic and comparisons</h2>
+<h3>A byte has an interpretation</h3>
+<p>The bit pattern $FF is 255 when treated as unsigned and -1 when treated as signed two’s complement. The CPU does not attach a type label to it. Your programme chooses the interpretation and branches accordingly. Addition wraps to the low eight bits; carry and overflow describe different information about that result.</p>
+<p>Unsigned addition uses C to report a ninth bit. Signed addition uses V to report that the mathematical answer cannot fit into -128 through 127. For example, $7F+1 gives $80 with signed overflow even though there is no unsigned carry. $FF+1 gives zero with unsigned carry. Do not use BCS as a general signed-overflow check.</p>
+<h3>Single-byte arithmetic</h3>
+<p>Start ordinary addition with CLC, then ADC. Start ordinary subtraction with SEC, then SBC. SBC subtracts both the operand and an incoming borrow represented by C=0. Forgetting the initial carry setup introduces a one-off error that can depend on whichever earlier instruction last changed C. CLD selects binary arithmetic explicitly for routines that need it.</p>
+<pre data-example="assembly"><code>.org $080D
+    cld
+    clc
+    lda #7
+    adc #2
+    sta result
+    clc
+    adc #48
+    jsr $FFD2
+    lda #13
+    jsr $FFD2
+    rts
+result:
+    .byte 0</code></pre>
+<p>Expected result: the digit 9 and a line break. The conversion adds the PETSCII code for zero, so it works only for a result from 0 to 9. It is deliberately not a general decimal-printing routine. The saved result is a numeric byte; the byte sent to CHROUT is a character.</p>
+<h3>Adding and subtracting words</h3>
+<p>Store a word low byte first. Add the low bytes with CLC/ADC, then add the high bytes with ADC without clearing C again. The low-byte carry becomes part of the high-byte sum. Subtraction similarly starts with SEC on the low byte and propagates its no-borrow state into the high-byte SBC.</p>
+<pre data-example="assembly"><code>.org $080D
+    cld
+    clc
+    lda left
+    adc right
+    sta sum
+    lda left+1
+    adc right+1
+    sta sum+1
+    lda sum
+    cmp #0
+    bne failed
+    lda sum+1
+    cmp #2
+    bne failed
+    lda #5
+    sta $D020
+    rts
+failed:
+    lda #2
+    sta $D020
+    rts
+left:
+    .word 255
+right:
+    .word 257
+sum:
+    .word 0</code></pre>
+<p>Expected result: a green border, because 255+257 is 512 ($0200). Red indicates that the explicit byte checks failed. This gives visible evidence without requiring an integrated debugger. The final ADC carry would additionally report a result beyond 65535, which this small test does not generate.</p>
+<h3>Unsigned comparison</h3>
+<p>CMP, CPX and CPY subtract for flags without retaining the difference. Equality sets Z. Carry set means the register is greater than or equal to the operand as an unsigned byte; carry clear means below. Use BCC for unsigned less-than, BCS for greater-than-or-equal, and BEQ/BNE for equality. To require strictly greater-than, exclude equality as well.</p>
+<p>For an unsigned word, compare the high bytes first. If they differ, they determine the order. Compare the low bytes only when the high bytes match. Comparing only the low byte makes 256 appear smaller than 255. Multi-byte counters and bounds should be designed as words from the beginning rather than patched after an 8-bit wrap.</p>
+<h3>Signed comparison</h3>
+<p>N alone is not a reliable signed less-than result after subtracting values that can overflow. CMP leaves V unchanged, so a signed N-versus-V test must not assume CMP produced a fresh overflow flag. One simple signed-byte ordering technique flips bit 7 in both values and uses an unsigned comparison. For variable operands, store one transformed value in owned scratch memory, then compare the other transformed value against it.</p>
+<p>Alternatively use binary SBC with SEC and interpret N XOR V, preserving the flags until both have been examined. The 6502 has no single signed-less-than branch. Choose a clear method and test -128, -1, 0, 1 and 127, plus equal pairs, rather than extrapolating from positive-only tests.</p>
+<h3>Shifts, masks and BCD</h3>
+<p>ASL multiplies an unsigned byte by two modulo 256 and sends the lost high bit to C. LSR divides an unsigned byte by two, discarding the fractional half into C. ROL and ROR include the previous carry, making chains of bytes possible. For a word shifted left, use ASL on the low byte followed by ROL on the high byte. A signed right shift needs to preserve the sign bit deliberately; LSR alone always inserts zero.</p>
+<p>AND clears bits outside a mask, ORA sets selected bits and EOR toggles them. Use read-mask-write only on hardware registers for which that sequence is appropriate. Read/modify/write instructions such as INC or ASL on NMOS hardware can issue more than one write on the bus; a memory byte and an I/O control register are not interchangeable.</p>
+<p>SED makes ADC/SBC operate on packed binary-coded decimal digits. On NMOS 6502, some resulting flags do not describe the adjusted decimal answer in the intuitive binary way, and interrupt entry does not automatically clear D. Keep beginner arithmetic in CLD binary mode and restore a valid machine environment before returning. Do not introduce decimal arithmetic into an interrupt-enabled BASIC environment without designing the interaction.</p>
+</section>
+<section id="assembly">
+<h2>C64 assembly projects</h2>
+<p>Install cc65 2.19 separately. In Build Tools, select its ca65 executable; ld65 must be in the same installation folder. Studio checks both tools before assembly builds. This release does not compile C.</p><pre data-example="assembly"><code>.org $080D
+    lda #6
+    sta $D020
+    lda #0
+    sta $D021
+    rts</code></pre><p>Use exactly one .org $080D (2061 decimal), simple labels, documented NMOS 6502 instructions and .byte, .word or .res. The linked code must contain 1–32768 bytes. .res uses a decimal count and optional decimal fill byte. Includes, imports, macros, scripting, arbitrary linker configuration and bank switching are rejected before tool execution.</p><p>Studio adds its own 10 SYS2061 BASIC loader at $0801. Return with RTS to resume BASIC. There is no integrated C64 debugger in this release.</p>
+<h3>What the toolchain does</h3>
+<p>The editor contains human-readable assembly source. ca65 translates the allowed instructions and data declarations into an object file; ld65 links that object into the fixed memory layout selected by Studio. Studio then packages the bytes as a PRG with a load address and the BASIC SYS loader. A successful build means those stages accepted the input; it does not prove that the programme will return, display the intended pixels or preserve machine state.</p>
+<h3>One source, one origin</h3>
+<p>The configured .asm file is the complete source of the build. Begin with .org $080D, use a simple colon-ended label on its own line or before an instruction, and put at most one instruction on each line. A semicolon begins an assembly comment. Label names begin with a letter or underscore and continue with letters, digits or underscores. ca65 labels are case-sensitive; keep a consistent spelling.</p>
+<p>Studio allows documented NMOS mnemonics and the four listed directives. It does not allow constant-definition statements, .include, .incbin, .macro, .proc, .segment, .import or .export. The full ca65 manual describes many features beyond this subset. Copy the patterns in this guide rather than a complete external build script. Numeric hardware addresses appear explicitly in the examples because a separate equate directive is not part of this contract.</p>
+<p>The first output byte at $080D must be the first instruction to execute. Place data after an RTS or branch around it. An origin declaration is not a runtime jump, and a label does not stop fall-through. A programme beginning with a table will attempt to execute its table bytes when the SYS loader runs.</p>
+<h3>A complete named routine</h3>
+<pre data-example="assembly"><code>.org $080D
+start:
+    jsr set_colours
+    rts
+set_colours:
+    lda #14
+    sta $D020
+    lda #0
+    sta $D021
+    rts</code></pre>
+<p>Expected result: a light-blue border and black background, followed by BASIC’s return to READY. JSR set_colours creates a nested call frame; the first RTS returns to start, and the second returns through SYS. Exchanging either RTS for RTI is wrong because the stack frame shapes differ.</p>
+<h3>Data and storage</h3>
+<p>.byte emits individual bytes. .word emits a little-endian word, including label addresses. .res uses a decimal count and optional decimal fill byte, such as .res 16,0. Reserved bytes are part of the linked output and count towards its 32768-byte maximum. Use a label to address owned storage, not an arbitrary unused-looking address near BASIC’s variables.</p>
+<p>The source validator also bounds the source file to 128 KiB and an assembly source line to 4096 bytes of ASCII. Operands are restricted to the supported expression character set. These bounds prevent arbitrary build scripts; they are not a statement that every accepted operand is meaningful. ca65 performs the final instruction/mode/range checks.</p>
+<h3>Return safely</h3>
+<p>A SYS-started routine inherits a live BASIC/KERNAL machine environment. Keep its stack balanced, leave decimal mode clear for BASIC, and preserve any zero-page or system state you borrowed. The supplied examples avoid disabling interrupts or changing the CPU memory port. If you change colours or display contents, that visible change may intentionally remain after RTS; distinguish that from corrupting the interpreter’s workspace.</p>
+<p>Do not reset the stack pointer with TXS, replace the IRQ vector, bank out ROM or install an endless interrupt handler as part of these beginner routines. Studio’s accepted release scope does not provide a debugger or a bank-switching workflow. Use Stop to recover from a stuck machine-code programme, fix the source and Run a fresh build.</p>
+<h3>Useful build diagnostics</h3>
+<p>An unsupported directive is rejected before tools run. An invalid addressing mode or immediate value can be rejected by ca65. A branch outside its signed-byte range needs a different control-flow sequence, not a larger BASIC line number. Missing or incompatible tools require Settings changes. After any failure, read the diagnostic and rebuild; Run never falls back to a previous successful PRG.</p>
+</section>
+<section id="assembly-patterns">
+<h2>Assembly loops, tables and routines</h2>
+<h3>Counted loops must define their bounds</h3>
+<p>An 8-bit index can represent 0–255 and wraps after that. For a table with five items, initialise X to zero, access item X, increment X, compare against five and repeat while unequal. A decrement-to-zero loop has different entry behaviour: starting X at zero and immediately executing DEX produces 255, not an empty loop. Pre-test when zero items should mean no work.</p>
+<p>Put the count next to the design of the data. A zero-terminated string uses a different rule: fetch a byte, stop on zero, otherwise output it and advance. Such a scan must still remain inside the allocated table if its terminator is damaged or missing. For small fixed demos, an explicit count often makes the boundary easier to verify.</p>
+<h3>Save only the state the caller needs</h3>
+<pre data-example="assembly"><code>.org $080D
+    ldx #7
+    jsr print_mark
+    txa
+    clc
+    adc #48
+    jsr $FFD2
+    lda #13
+    jsr $FFD2
+    rts
+print_mark:
+    txa
+    pha
+    lda #42
+    jsr $FFD2
+    pla
+    tax
+    rts</code></pre>
+<p>Expected result: *7 and a line break. The routine preserves X by transferring it to A and pushing it. It does not promise to preserve A or flags. The caller uses X after the call, demonstrating that preservation is part of a useful routine contract rather than ceremonial code.</p>
+<p>Write down each routine’s inputs, outputs and changed registers. A routine that accepts A as a character can return with A changed if that is documented. A table-walking caller that keeps its index in X must preserve it around calls that can change X. Pushing A after a transfer saves the transferred value, not the earlier accumulator contents; choose the save order consciously.</p>
+<h3>Words and pointers</h3>
+<p>A pointer is a stored address, usually two bytes in little-endian order. Indirect-indexed access LDA (pointer),Y requires the pointer itself in zero page. The pointed-to data can be elsewhere. Incrementing Y walks at most a 256-byte offset range before it wraps, so a longer transfer must advance the pointer or use another bounded layout.</p>
+<p>In a C64 programme, reserve and preserve a permitted zero-page pair before using it. The conventional user bytes $FB–$FE are small; they are not a licence to overwrite neighbouring BASIC workspace. A routine called from another routine must also respect that caller’s use of the pair. If absolute indexed addressing is enough, it avoids borrowing a pointer entirely.</p>
+<h3>Read-only data versus writable state</h3>
+<p>A table of character codes may remain unchanged throughout a run. A counter, score or current position is writable state. Give each a label and choose its width. Keep both after a return or behind a jump so the processor cannot fall into data. The C64 PRG is loaded into RAM, but that does not make accidental self-modification a good beginner technique.</p>
+<p>When copying overlapping ranges, direction matters. Copying forwards from a lower address into a nearby higher address can overwrite bytes that have not yet been read. Copy backwards or choose disjoint ranges. Also keep the copy away from the current instruction stream, stack, interpreter state and hardware registers.</p>
+<h3>Make failure visible and recoverable</h3>
+<p>For a small assembly exercise, use one border colour for a successful self-check and another for failure, then RTS. This provides a bounded observation without embedding debugger assumptions. Test the zero count, final item and carry boundary explicitly. If a loop waits for an external event, give it an exit path or a finite iteration budget rather than treating a hang as useful output.</p>
+<p>Delay loops count instructions, not wall-clock milliseconds. Their duration varies with CPU timing and C64 video contention. Keyboard and the normal clock rely on interrupt service, so leaving interrupts disabled can make a seemingly reasonable input loop wait forever. Use the default machine environment while learning and keep timing-sensitive experiments separate from general routine examples.</p>
+</section>
+<section id="memory">
+<h2>C64 memory and hardware map</h2>
+<h3>One address can mean different hardware</h3>
+<p>The CPU has a 64 KiB address space, but the C64 combines RAM, ROM and I/O through mapping logic. The following map describes the normal BASIC startup configuration used by the examples. It is not a statement that ROM and RAM can all be addressed as unrelated flat regions at once. A write under a visible ROM and a read from that address need not reach the same physical storage.</p>
+<table>
+<thead><tr><th scope="col">Hex range</th><th scope="col">Decimal range</th><th scope="col">Default role and care</th></tr></thead>
+<tbody>
+<tr><td>$0000–$0001</td><td>0–1</td><td>6510 data-direction and processor-port registers. They influence memory mapping; do not alter them in these projects.</td></tr>
+<tr><td>$0002–$00FF</td><td>2–255</td><td>Zero-page operating-system/BASIC workspace with a small conventional user area at $FB–$FE. Preserve borrowed state.</td></tr>
+<tr><td>$0100–$01FF</td><td>256–511</td><td>CPU stack shared by calls, interrupts and BASIC.</td></tr>
+<tr><td>$0200–$03FF</td><td>512–1023</td><td>System buffers, vectors and workspace. This is not generally free programme storage.</td></tr>
+<tr><td>$0400–$07E7</td><td>1024–2023</td><td>1000 visible screen-code cells in the default 40×25 text display.</td></tr>
+<tr><td>$07F8–$07FF</td><td>2040–2047</td><td>Sprite pointers for the default screen matrix.</td></tr>
+<tr><td>$0801 onwards</td><td>2049 onwards</td><td>Normal BASIC programme start. Studio assembly has a small loader here and code at $080D.</td></tr>
+<tr><td>$A000–$BFFF</td><td>40960–49151</td><td>BASIC ROM visible in the default map.</td></tr>
+<tr><td>$C000–$CFFF</td><td>49152–53247</td><td>RAM outside the normal BASIC programme/variable area; tutorials may use a deliberately chosen small area here.</td></tr>
+<tr><td>$D000–$D3FF</td><td>53248–54271</td><td>VIC-II registers and mirrors; use the documented register addresses.</td></tr>
+<tr><td>$D400–$D7FF</td><td>54272–55295</td><td>SID registers and mirrors.</td></tr>
+<tr><td>$D800–$DBFF</td><td>55296–56319</td><td>Colour RAM; only the low nibble of each cell is meaningful for its colour.</td></tr>
+<tr><td>$DC00–$DCFF</td><td>56320–56575</td><td>CIA 1: keyboard/joysticks/timers and mirrors.</td></tr>
+<tr><td>$DD00–$DDFF</td><td>56576–56831</td><td>CIA 2: serial/user-port/video-bank control and mirrors.</td></tr>
+<tr><td>$DE00–$DFFF</td><td>56832–57343</td><td>Expansion I/O space; no cartridge workflow is provided here.</td></tr>
+<tr><td>$E000–$FFFF</td><td>57344–65535</td><td>KERNAL ROM and CPU vectors in the default map.</td></tr>
+</tbody></table>
+<h3>BASIC and assembly occupy real RAM</h3>
+<p>A BASIC PRG contains two initial load-address bytes followed by linked numbered lines and a final zero link. Programme text starts at $0801. Variables and arrays grow in the available BASIC workspace and strings also consume that budget. The encoder’s below-$A000 limit is a programme bound, not a guarantee of free runtime storage.</p>
+<p>Studio assembly loads at $0801 with its own 10 SYS2061 loader; the first assembled instruction is at $080D. The linked code/data payload is limited to 32768 bytes. Do not assume you can add arbitrary BASIC variables to that loader or reserve a second overlapping region. The supported model is a single assembly source and the generated entry stub.</p>
+<h3>Screen and colour addresses</h3>
+<p>With the default screen matrix, the cell at column X and row Y is 1024+40*Y+X. Its colour is at 55296+40*Y+X. X ranges from 0 through 39 and Y from 0 through 24. The corresponding assembly bases are $0400 and $D800. Use a screen code for the first write and a colour value 0–15 for the second.</p>
+<p>A PETSCII A has code 65, while screen code 1 selects A in the standard uppercase/graphics set. Printing through BASIC or CHROUT performs a character-output interpretation; storing a byte directly into screen RAM does not. Misunderstanding this difference produces unexpected symbols even when the address arithmetic is correct.</p>
+<h3>Video-bank boundaries</h3>
+<p>The VIC-II sees a 16 KiB bank selected by machine registers, and screen, character and sprite addresses are interpreted within it. The examples retain the default bank and screen setup. A sprite pointer holds a 64-byte block index within that bank, not a full CPU address. Eight sprite pointer bytes are located relative to the screen matrix, not at universal addresses after arbitrary screen relocation.</p>
+<p>The sprite tutorial deliberately uses $0340–$037F in the normal cassette-buffer region after PRG RAM injection, while cassette devices remain unused. That is a stated allocation with a matching pointer, not general free memory. It would be unsuitable if a different workflow needed the cassette buffer. Do not move the CPU or VIC bank to make copied listings fit: bank switching is outside the current Studio scope.</p>
+<h3>Read hardware registers with care</h3>
+<p>Some hardware values contain status bits, unused readback bits or side effects on read. Mask the low nibble when interpreting a colour register. A register that acknowledges an event or triggers hardware is not a RAM variable. Avoid INC, DEC and other read/modify/write instructions on I/O unless the documented bus effects are exactly what is intended.</p>
+<p>The CIA keyboard matrix and joystick lines share circuitry. Advanced direct scanning needs a clear plan for data-direction registers, output bits and the KERNAL keyboard service. The beginner input examples use GET or GETIN so they can leave that machine state under normal system control.</p>
+</section>
+<section id="screen">
+<h2>Text, colours and character graphics</h2>
+<h3>Two ways to draw text</h3>
+<p>PRINT and the KERNAL CHROUT routine interpret character/control bytes and update the cursor. Direct screen-memory writes place character codes at fixed cells without moving the cursor. Choose PRINT for ordinary messages and cell writes for a small board, status field or controlled animation. Keep the two coordinate models distinct.</p>
+<table>
+<thead><tr><th scope="col">Control byte for CHR$</th><th scope="col">Effect in normal screen output</th></tr></thead>
+<tbody>
+<tr><td>147</td><td>Clear the screen and home the cursor.</td></tr>
+<tr><td>19</td><td>Home the cursor without clearing the screen.</td></tr>
+<tr><td>13</td><td>Carriage return.</td></tr>
+<tr><td>17 / 145</td><td>Cursor down / up.</td></tr>
+<tr><td>29 / 157</td><td>Cursor right / left.</td></tr>
+<tr><td>18 / 146</td><td>Reverse video on / off.</td></tr>
+<tr><td>5 / 28 / 30 / 31</td><td>White / red / green / blue text.</td></tr>
+<tr><td>14 / 142</td><td>Select lowercase/uppercase text mode / uppercase/graphics mode.</td></tr>
+</tbody></table>
+<p>These decimal numbers are control characters when sent through PRINT. POKE 1024,147 instead writes screen code 147 into a cell; it does not clear the screen. Keep source ASCII and use CHR$ for the control byte rather than pasting a special glyph into a quoted string.</p>
+<h3>The colour palette</h3>
+<table>
+<thead><tr><th scope="col">Value</th><th scope="col">Colour</th><th scope="col">Value</th><th scope="col">Colour</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>Black</td><td>8</td><td>Orange</td></tr>
+<tr><td>1</td><td>White</td><td>9</td><td>Brown</td></tr>
+<tr><td>2</td><td>Red</td><td>10</td><td>Light red</td></tr>
+<tr><td>3</td><td>Cyan</td><td>11</td><td>Dark grey</td></tr>
+<tr><td>4</td><td>Purple</td><td>12</td><td>Grey</td></tr>
+<tr><td>5</td><td>Green</td><td>13</td><td>Light green</td></tr>
+<tr><td>6</td><td>Blue</td><td>14</td><td>Light blue</td></tr>
+<tr><td>7</td><td>Yellow</td><td>15</td><td>Light grey</td></tr>
+</tbody></table>
+<p>POKE 53280,C sets the border and POKE 53281,C sets background colour 0 in the standard text mode. For a cell’s character colour, write C to colour RAM. The examples use values 0–15; use an explicit AND 15 when extracting a colour from a readback byte. Changing the border does not recolour existing character cells.</p>
+<h3>Place a character at a coordinate</h3>
+<pre data-example="basic"><code>10 PRINT CHR$(147)
+20 POKE 53280,6:POKE 53281,0
+30 X=12:Y=8:C=7
+40 A=1024+40*Y+X
+50 POKE A,1
+60 POKE 55296+40*Y+X,C
+70 END</code></pre>
+<p>Expected result: a yellow A at column 12, row 8, on a black display with a blue border. Coordinates are zero-based. Change X and Y within their limits and rerun. A value outside the screen rectangle can overwrite another region even if POKE considers the address numerically legal.</p>
+<h3>Draw a bounded character board</h3>
+<pre data-example="basic"><code>10 PRINT CHR$(147)
+20 POKE 53281,0
+30 FOR Y=5 TO 10
+40 FOR X=10 TO 21
+50 A=40*Y+X
+60 POKE 1024+A,160
+70 POKE 55296+A,1+((X+Y)AND 1)*6
+80 NEXT X
+90 NEXT Y
+100 END</code></pre>
+<p>Expected result: a six-row, twelve-column checkerboard using white and yellow full blocks. Screen code 160 is the reverse-space/full-block cell in the default character set. AND 1 isolates the low bit of X+Y to alternate colours. The programme writes a bounded rectangle and leaves the rest of screen RAM alone.</p>
+<h3>Movement requires an erase policy</h3>
+<p>To move a cell object, restore the old location, compute a new bounded position, then draw at the new location. Erasing to a space works only if the background was blank; a board game should restore the underlying board tile. Keep game state in variables or a table rather than treating the displayed character as the only copy of state.</p>
+<p>PRINT can scroll the display and disturb absolute cell placement. Put status messages in a known area or repaint the board after scrolling. Keyboard INPUT also uses the screen editor. A programme mixing free-form INPUT with a fixed character board must decide which part owns the cursor and when the screen is redrawn.</p>
+<h3>Beyond the default character display</h3>
+<p>The VIC-II supports more display modes and character-set locations, but BASIC V2 has no built-in bitmap drawing language. Bitmap modes need an explicit memory layout, control-register plan and pixel-to-byte mapping. These beginner examples retain the standard character display. Learn cell graphics and sprites first; do not borrow Dragon PSET, PMODE or DRAW statements or assume they exist on a C64.</p>
+<p>If colours or symbols look wrong, restore the default character mode with PRINT CHR$(142), clear the screen, and retry the smallest example in a fresh session. Check whether your bytes are PETSCII or screen codes and whether you wrote both screen and colour RAM.</p>
+</section>
+<section id="sprites">
+<h2>C64 sprite programming</h2>
+<h3>A sprite is a separate hardware object</h3>
+<p>The VIC-II can overlay eight sprites on the background. In standard single-colour mode, each sprite is 24 pixels wide and 21 pixels high, represented by three bytes per row: 63 bytes in total. A pointer selects a 64-byte-aligned block, leaving one byte unused by the image. Bit 7 of each data byte is the leftmost pixel in that group.</p>
+<p>Sprite coordinates are hardware display coordinates, not the zero-based 40×25 character grid. X is nine bits wide, with the high bit kept in a shared register; Y is eight bits. The examples use an X value below 256 so the high bit can remain clear. Experiment with visible positions gradually rather than assuming the coordinate origin is the top-left text cell.</p>
+<table>
+<thead><tr><th scope="col">Address</th><th scope="col">Use for sprite 0</th></tr></thead>
+<tbody>
+<tr><td>53248 / 53249 ($D000/$D001)</td><td>Low X byte and Y position.</td></tr>
+<tr><td>53264 ($D010)</td><td>High X bit: bit 0 belongs to sprite 0.</td></tr>
+<tr><td>53269 ($D015)</td><td>Enable mask: bit 0 shows sprite 0.</td></tr>
+<tr><td>53271 / 53277 ($D017/$D01D)</td><td>Vertical / horizontal expansion masks.</td></tr>
+<tr><td>53275 ($D01B)</td><td>Priority relative to background graphics.</td></tr>
+<tr><td>53276 ($D01C)</td><td>Multicolour-mode mask.</td></tr>
+<tr><td>53287 ($D027)</td><td>Sprite 0 colour.</td></tr>
+<tr><td>2040 ($07F8)</td><td>Sprite 0 pointer with the default screen location.</td></tr>
+</tbody></table>
+<h3>A complete single-colour sprite</h3>
+<p>This programme uses the normal cassette-buffer area at 832–895 ($0340–$037F), which is available for this exercise because the managed session uses PRG RAM injection and no cassette operations. Pointer 13 selects 13*64=832 within the unchanged default VIC bank. Keep that allocation together with the example’s no-cassette assumption.</p>
+<pre data-example="basic"><code>10 PRINT CHR$(147)
+20 POKE 53281,0
+30 FOR I=0 TO 20
+40 POKE 832+I*3,128
+50 POKE 833+I*3,24
+60 POKE 834+I*3,1
+70 NEXT I
+80 POKE 895,0
+90 POKE 2040,13
+100 POKE 53264,0
+110 POKE 53271,0:POKE 53277,0
+120 POKE 53275,0:POKE 53276,0
+130 POKE 53248,160:POKE 53249,120
+140 POKE 53287,7:POKE 53269,1
+150 PRINT "SPRITE DEMO - PRESS Q TO FINISH"
+160 GET K$:IF K$&lt;&gt;"Q" THEN 160
+170 POKE 53269,0
+180 END</code></pre>
+<p>Expected result: a yellow pattern of vertical stripes, with a thicker pair in the centre. Q hides it and returns to BASIC. Each loop writes one row’s three bytes; the data deliberately repeats a simple pattern so you can calculate each bit. The setup clears shared sprite-mode registers because this is a fresh, single-sprite demo. In a multi-sprite programme, preserve the other sprites’ bits with masks instead.</p>
+<h3>Design your own image</h3>
+<p>Draw a 24×21 grid on paper. For each eight-pixel group, add 128, 64, 32, 16, 8, 4, 2 and 1 for the pixels you want lit. Store three values per row. A data-driven version can READ those 63 values from DATA and POKE them into the same block. Check the item count before enabling the sprite so an OUT OF DATA error does not leave partly initialised graphics.</p>
+<p>The image pointer is not an arbitrary absolute address divided by 64 when the video bank changes: it is a block index within the selected 16 KiB VIC bank. This guide keeps the default mapping. Placing data at $C000 while keeping pointer 13 would not point to it. Do not change bank registers to make an unrelated listing fit the current source workflow.</p>
+<h3>Movement and multiple sprites</h3>
+<p>For movement, update low X and Y from bounded variables. When crossing X=255, split X into its low byte and the appropriate high-bit mask in $D010. Each sprite occupies its own bit in enable, expansion, multicolour and priority registers. Set one bit using OR and clear one using an AND mask that preserves the other seven bits.</p>
+<p>Multicolour sprite mode interprets pixel pairs and combines shared and per-sprite colours, reducing horizontal colour-detail resolution. It is a different data format from the single-colour example. Work through one original image and its expected bytes before switching modes.</p>
+<h3>Collision and cleanup</h3>
+<p>Registers $D01E and $D01F provide sprite/sprite and sprite/background collision masks. Their read behaviour clears latched collision information, so save a read result if several parts of the programme need it. Hardware overlap is only one input to game rules; it does not decide which object takes damage or whether a collision has already been handled.</p>
+<p>On a normal exit, disable sprites owned by the programme and restore changed modes if the caller expects them. If you interrupt the example before its final lines, the sprite can remain visible until you hide it or restart. A fresh Studio Run resets the session; it does not preserve a game’s score or object positions.</p>
+</section>
+<section id="sound">
+<h2>C64 sound programming</h2>
+<h3>Sound is a register programme</h3>
+<p>BASIC V2 has no SOUND statement. The C64 SID chip has three voices controlled through memory-mapped registers. Each voice has a frequency word, pulse-width fields, a waveform/control byte and envelope settings. A shared volume/filter register controls the overall mix. Begin with one voice and a simple waveform, then build towards multi-voice effects.</p>
+<table>
+<thead><tr><th scope="col">Voice 1 address</th><th scope="col">Purpose</th></tr></thead>
+<tbody>
+<tr><td>54272 / 54273 ($D400/$D401)</td><td>Frequency low and high bytes.</td></tr>
+<tr><td>54274 / 54275 ($D402/$D403)</td><td>Pulse width low byte and high nibble, relevant for pulse waveform.</td></tr>
+<tr><td>54276 ($D404)</td><td>Waveform/control byte, including the gate bit.</td></tr>
+<tr><td>54277 ($D405)</td><td>Attack high nibble, decay low nibble.</td></tr>
+<tr><td>54278 ($D406)</td><td>Sustain high nibble, release low nibble.</td></tr>
+<tr><td>54296 ($D418)</td><td>Master volume in the low nibble, with filter/voice-control bits above it.</td></tr>
+</tbody></table>
+<p>Voice 2 uses the same seven-register pattern starting at $D407 and voice 3 at $D40E. SID registers are not all readable mirrors of their last written values. Keep your intended sound state in variables rather than trying to recover it by PEEK from every write-only register.</p>
+<h3>Pitch and the PAL clock</h3>
+<p>A 16-bit frequency value controls the oscillator. Approximately, frequency in hertz equals the register value times the SID clock divided by 16777216. For the PAL C64 clock of about 985248 Hz, a register value near 7493 produces approximately 440 Hz. Split the integer into low byte F AND 255 and high byte INT(F/256). Different clock standards change the result, which is why this guide labels the PAL assumption.</p>
+<p>A pitch table can hold pairs of low/high bytes. Change pitch by writing both bytes in a deliberate order, accepting that there is a short intermediate state. Do not put a value above 255 into one byte because the overall frequency is larger; it is the two-byte word that represents the complete setting.</p>
+<h3>Waveform, gate and envelope</h3>
+<p>The usual waveform bits are triangle 16, sawtooth 32, pulse 64 and noise 128. Gate is bit 0. Triangle with gate on is therefore 17; clearing the gate while retaining triangle gives 16. Other control bits have specialised uses such as synchronisation, ring modulation and test. Avoid enabling them accidentally through an unexplained decimal constant.</p>
+<p>Attack, decay and release select rate settings; sustain selects a level. The rate nibbles are not millisecond values. Gate on starts the attack/decay/sustain progression and gate off starts release. Master volume zero silences the mix; a note can be configured correctly yet remain inaudible if volume is zero. Pulse waveform also needs a sensible non-extreme pulse width.</p>
+<pre data-example="basic"><code>10 FOR I=0 TO 24:POKE 54272+I,0:NEXT I
+20 POKE 54296,8
+30 POKE 54277,17:POKE 54278,129
+40 F=7493
+50 POKE 54272,F AND 255
+60 POKE 54273,INT(F/256)
+70 POKE 54276,17
+80 FOR T=1 TO 600:NEXT T
+90 POKE 54276,16
+100 FOR T=1 TO 300:NEXT T
+110 POKE 54296,0
+120 END</code></pre>
+<p>Expected result: one moderate-volume triangle tone, a release period and silence. The loop counts give an audible demonstration, not a calibrated duration. The initial loop resets the SID’s programmable register range for this fresh demonstration and would erase another programme’s active sound state. Avoid doing that in a larger programme that owns several independent voices.</p>
+<h3>Build a short effect</h3>
+<p>To make a rising effect, step a bounded frequency variable and update both frequency bytes while leaving gate on. To play separate notes, clear the gate, allow a release interval, choose the next frequency and start the gate again. Abrupt envelope restarts can have chip-specific behaviour; do not assume a sampled instrument model or perfect retrigger timing.</p>
+<p>For noise effects, select the noise bit with a deliberate gate value and keep the same volume/envelope discipline. Combined waveform behaviour and SID revisions can change the timbre. The current examples demonstrate register use; they do not claim identical sound across every SID implementation or emulator setting.</p>
+<h3>Silence on exit and diagnose methodically</h3>
+<p>Clear gates and return master volume to an appropriate value when the programme ends. If you interrupt before cleanup, enter POKE 54296,0 yourself at READY or stop the emulator. First check VICE audio output and host volume, then the master volume, waveform, gate, envelope and frequency. A live VICE process or successful PRG build does not establish audible output.</p>
+<p>Music timing should use a deliberate update cadence rather than unbounded busy loops. Advanced interrupt-driven playback needs careful register/stack preservation and ownership of the machine’s interrupt service. It is beyond these initial SYS-returning examples and must not be copied into a BASIC project without a compatible memory and lifecycle plan.</p>
+</section>
+<section id="kernal">
+<h2>Calling the C64 KERNAL</h2>
+<h3>Call a documented interface</h3>
+<p>The KERNAL is the C64’s operating-system ROM. Its jump table provides stable entry addresses for supported services, avoiding calls into arbitrary internal implementation locations. An entry address alone is not a complete interface: check required registers, flags, channel setup, results and changed state. These notes assume the normal C64 ROM mapping and the firmware revisions supported by Studio.</p>
+<p>In the restricted source format, call an entry with its numeric address, such as JSR $FFD2. The uppercase service name in this article explains that address; it is not automatically a predefined ca65 symbol. Do not paste assembler equates or include directives from another project into Studio’s single-source subset.</p>
+<table>
+<thead><tr><th scope="col">Entry</th><th scope="col">Inputs and result</th><th scope="col">State and use</th></tr></thead>
+<tbody>
+<tr><td>CHROUT $FFD2 / 65490</td><td>A contains one output character. The normal output channel is the screen.</td><td>Treat A and flags as changed. The documented normal call preserves X/Y, but preserve any value your wider channel/caller contract requires.</td></tr>
+<tr><td>GETIN $FFE4 / 65508</td><td>With keyboard input selected, A returns a queued character or zero if no character is ready.</td><td>Treat A, X, Y and flags as potentially changed. Normal interrupt keyboard scanning must remain available.</td></tr>
+<tr><td>PLOT $FFF0 / 65520</td><td>C clear: X=row 0–24, Y=column 0–39 to position the cursor. C set: return the current row in X and column in Y.</td><td>Treat A/X/Y and flags as changed. The register names do not match the usual horizontal-X coordinate convention.</td></tr>
+<tr><td>RDTIM $FFDE / 65502</td><td>Return the three-byte jiffy count with A high, X middle and Y low.</td><td>Consumes A/X/Y for results. The clock wraps and depends on normal system timing service.</td></tr>
+<tr><td>READST $FFB7 / 65463</td><td>Return the most recent I/O status byte in A.</td><td>Interpret bits for the relevant operation immediately; it is not a universal programme-success flag.</td></tr>
+<tr><td>CLRCHN $FFCC / 65484</td><td>Restore default input/output channels.</td><td>Treat A/X and flags as changed. It resets channel selection, not every open file or machine setting.</td></tr>
+</tbody></table>
+<h3>Output a short message</h3>
+<pre data-example="assembly"><code>.org $080D
+    lda #147
+    jsr $FFD2
+    ldx #0
+next_char:
+    lda message,x
+    beq finished
+    txa
+    pha
+    lda message,x
+    jsr $FFD2
+    pla
+    tax
+    inx
+    cpx #20
+    bne next_char
+finished:
+    lda #13
+    jsr $FFD2
+    rts
+message:
+    .byte "HELLO FROM ASSEMBLY",0</code></pre>
+<p>Expected result: the display clears, the message appears and BASIC resumes. The table has 19 characters and one zero terminator. The index limit of 20 prevents reading beyond the table even if the terminator is accidentally changed. Update that limit together with the table when editing the message. The loop saves X around CHROUT so the caller’s table state is explicit.</p>
+<p>Characters here are output bytes, so an uppercase ASCII string assembled by ca65 supplies the uppercase PETSCII letters used by this example. That is not a general Unicode-to-PETSCII conversion. Use explicit bytes for control characters and avoid assuming lowercase assembler strings or graphic symbols map the way a modern text editor displays them.</p>
+<h3>Place text with PLOT</h3>
+<pre data-example="assembly"><code>.org $080D
+    lda #147
+    jsr $FFD2
+    ldx #8
+    ldy #12
+    clc
+    jsr $FFF0
+    lda #65
+    jsr $FFD2
+    lda #13
+    jsr $FFD2
+    rts</code></pre>
+<p>Expected result: A is printed at row 8, column 12 before the return to BASIC. Carry clear requests positioning. Carry set would request readback instead. PLOT takes the row in X and the column in Y; assuming X is horizontal swaps the intended coordinates.</p>
+<h3>Keyboard polling</h3>
+<p>GETIN is a non-blocking keyboard-queue read under the default input configuration. Test A for zero and return to useful work when there is no input. Do not keep an index in X across the call unless you save it. Unlike a raw matrix scan, the queue is maintained by the normal KERNAL interrupt service. SEI followed by waiting for newly scanned keyboard input is therefore a poor default design.</p>
+<p>A robust interactive loop has a quit key and a state update, not just an endless wait for one exact byte. If you need a delay, a timer-driven update or a finite counter should still allow input handling. Studio Stop remains the recovery path when a machine-code error prevents normal input.</p>
+<h3>Service boundaries</h3>
+<p>KERNAL file routines still depend on a real device/channel setup. Their addresses do not override Studio’s disabled disk, filesystem, printer and remote-monitor settings. Do not call ROM initialisation routines or reset vectors as convenient substitutes for cleaning up only the state your programme changed.</p>
+<p>The reference manual contains a full KERNAL catalogue for further study. Before using a new service, write a small caller with defined inputs and visible output, verify the exact supported ROM contract, and keep its stack/register effects documented. An arbitrary ROM address found in a listing from another Commodore machine is not automatically a C64 API.</p>
+</section>
+<section id="basic-project">
+<h2>BASIC project: collect the stars</h2>
+<h3>What you will build</h3>
+<p>This original character-cell game combines input, bounded movement, state and screen output. Move the A character left and right with A and D. Collect the star five times, or press Q to finish early. It deliberately stays on one row so you can understand the complete update loop before adding vertical movement or obstacles.</p>
+<p>Create a BASIC project and replace the entire configured source with the listing. Save and Build, then Run with the configured VICE setup. Focus the emulator window before pressing keys. The player starts at column 5; the first star is at column 25. Both are on row 12 of the default screen.</p>
+<pre data-example="basic"><code>10 PRINT CHR$(147)
+20 POKE 53280,6:POKE 53281,0
+30 X=5:Y=12:TX=25:SC=0
+40 PRINT "A/D MOVE   Q QUIT   COLLECT FIVE STARS"
+50 GOSUB 1000
+60 GET K$:IF K$="" THEN 60
+70 IF K$="Q" THEN 300
+80 OX=X
+90 IF K$="A" THEN X=X-1
+100 IF K$="D" THEN X=X+1
+110 IF X&lt;1 THEN X=1
+120 IF X&gt;38 THEN X=38
+130 POKE 1024+40*Y+OX,32
+140 IF X&lt;&gt;TX THEN 180
+150 SC=SC+1
+160 TX=39-TX
+170 IF SC=5 THEN 300
+180 GOSUB 1000
+190 GOTO 60
+300 PRINT CHR$(19)
+310 PRINT "FINISHED - SCORE";SC;"                 "
+320 END
+1000 POKE 1024+40*Y+TX,42
+1010 POKE 55296+40*Y+TX,7
+1020 POKE 1024+40*Y+X,1
+1030 POKE 55296+40*Y+X,1
+1040 RETURN</code></pre>
+<h3>Separate state from presentation</h3>
+<p>X is the player column, Y is the fixed row, TX is the star column and SC is the score. These variables are authoritative; the screen is a presentation of them. OX remembers the old player position long enough to erase it. The drawing routine reads state and writes cells without changing the score.</p>
+<p>Lines 60–120 read input and constrain movement. Lines 130–170 erase the old cell and apply collision/scoring rules. The drawing routine paints the target and player at their updated positions. This order avoids leaving a trail and keeps a collision from incrementing the score more than once before the star moves.</p>
+<h3>Why the boundaries matter</h3>
+<p>The player is limited to columns 1–38, leaving a margin and preventing writes past the intended row. Unknown keys leave X unchanged. GET returns an empty string when idle; the loop handles that without calling ASC or changing state. The target alternates between 25 and 14, so collecting it moves it away from the player.</p>
+<p>END separates main execution from the GOSUB routine. Without it, normal fall-through would reach RETURN without a saved call. The subroutine writes both screen code and colour; setting only one can leave a correct symbol with an old, hard-to-see colour.</p>
+<h3>Check the complete journey</h3>
+<p>First press an unrelated key and confirm that the player does not move. Move left repeatedly and confirm it stays at column 1. Move right repeatedly and confirm it stays at 38. Collect the star: it should reappear at the other target column. Continue until the fifth collection; the top line should display FINISHED and score 5. Start a fresh Run and press Q before collecting anything; it should finish with score 0.</p>
+<p>These are runtime checks to perform in VICE. A successful BASIC encoding test cannot prove the screen positions, keyboard mapping or game rules. If a check fails, reduce the listing to one input or drawing operation, fix that observation, then restore the complete loop.</p>
+<h3>Extend it in small steps</h3>
+<p>First add a score display in a fixed area, taking care that PRINT does not scroll or overwrite the game row. Next add W/S movement with a stored previous Y and limits of rows 2–22. Finally choose a new star position using RND, rejecting the player’s current cell. Each addition should preserve the quit key, bounds and clean end state.</p>
+<p>For obstacles, store the board in an array and consult it before moving. Restore the old tile when erasing the player rather than always writing a space. For a sound effect, call a small bounded SID setup/cleanup routine when a star is collected; avoid a long blocking delay that makes keyboard controls feel unresponsive.</p>
+<p>Save a working source revision before each exercise. If using Git, make the commit yourself through the authorised source-control action. Rebuild on save restarts the game and loses its current score; turn it off when testing a longer running session.</p>
+</section>
+<section id="assembly-project">
+<h2>Assembly project: a text banner</h2>
+<h3>A visible programme with an explicit exit</h3>
+<p>This original exercise clears the screen, writes a coloured banner directly into screen RAM, and waits for Q before returning to BASIC. It uses two character representations deliberately: the banner table contains screen codes, while Q is read as a keyboard character through GETIN. The polling loop leaves the normal interrupt service enabled.</p>
+<pre data-example="assembly"><code>.org $080D
+    lda #147
+    jsr $FFD2
+    lda #0
+    sta $D021
+    ldx #0
+paint:
+    lda banner,x
+    sta $0597,x
+    lda #7
+    sta $D997,x
+    inx
+    cpx #9
+    bne paint
+poll:
+    jsr $FFE4
+    cmp #81
+    bne poll
+    lda #13
+    jsr $FFD2
+    rts
+banner:
+    .byte 3,54,52,32,19,20,21,4,25</code></pre>
+<p>Expected result: C64 STUDY in yellow on a black background, beginning at row 10, column 7. Q returns to READY. The banner base is $0400+10*40+7=$0597; the matching colour address is $D800+10*40+7=$D997. Nine table entries match the CPX #9 bound.</p>
+<h3>Follow one iteration</h3>
+<p>X initially selects banner byte zero, screen code 3 for C. STA $0597,X writes it to the first banner cell. Loading 7 and storing it to $D997,X sets that cell’s yellow colour. INX advances to the next item. CPX #9 sets the flags for BNE; the branch repeats until every index 0–8 has been used.</p>
+<p>The table follows RTS, so normal control cannot fall into it. Its bytes are still part of the PRG payload and are loaded with the instructions. A table label supplies an address, not the first table value. LDA banner,X reads the selected byte; LDA #&lt;banner would load only part of its address and produce a different result.</p>
+<h3>Input has its own lifetime</h3>
+<p>The paint loop completes before GETIN is first called, so no live X index is carried across that routine. GETIN returns zero when no key is ready; CMP #81 simply leaves the polling loop active for zero or any key other than Q. The example owns no borrowed zero-page pointer and makes no change to the stack pointer or IRQ vector.</p>
+<p>Waiting for Q is intentional and user-controlled. Studio Stop can always terminate the owned process if the programme is changed into a stuck loop. A fresh Run rebuilds and starts from a clean session. Do not mistake the Running label for proof that the banner reached the screen.</p>
+<h3>Inspect build and memory assumptions</h3>
+<p>The source begins at $080D and relies on Studio’s generated SYS loader. It uses only .org, documented instructions, a simple label and .byte. The display addresses assume the standard screen/VIC bank. There is no separate BASIC source to edit, no imported module and no custom linker configuration.</p>
+<p>If a copied banner displays odd symbols, compare each table byte with the intended screen code. Alphabetic screen codes 1–26 represent uppercase A–Z in the default mode; digits use their appropriate screen-code values, and 32 is a space. A quoted ASCII string is appropriate for the CHROUT example but is not a drop-in replacement for this direct screen-code table.</p>
+<h3>Verification checklist</h3>
+<p>Build with the configured compatible ca65/ld65 and confirm the PRG is current. Run it, verify the nine-character text, colour and position, then press an unrelated key and confirm it stays active. Press Q and confirm BASIC resumes. Run again and confirm the initial result is repeatable. If you change the table length, change and recheck the loop bound together.</p>
+<p>Assembly verification checks that the source is accepted and linked bytes are produced. The programme’s display/input checks are separate emulator observations. Studio currently exposes no source debugger, breakpoint view or register-step workflow for C64, so the tutorial does not depend on one.</p>
+<h3>Three useful exercises</h3>
+<p>Change the banner to another short word, calculating its screen codes and count. Then add a second row with its own table and bound. Finally let a key cycle the text colour using a stored byte restricted to 0–15. Keep Q as an exit, avoid carrying unsaved registers across KERNAL calls and leave the stack balanced.</p>
+<p>For a more general text routine, pass a pointer and length under a written calling convention and preserve any borrowed zero-page bytes. Test empty and maximum-length cases as well as the ordinary message. That is a useful next step after the fixed banner is understood; it is not a reason to add unsupported assembler macros or multiple source modules.</p>
+</section>
+<section id="tools">
+<h2>Installing tools and firmware</h2>
+<p>Download VICE 3.10 from the official VICE project. Choose the installation for your Mac or Linux host; the tested product baselines are Apple Silicon macOS 13+ and x86_64 Ubuntu LTS. Keep its complete installation and data files together. Studio disables coloured VICE logs with +logcolorize before model selection, avoiding the VICE 3.10 redirected-output failure without requiring a locally patched emulator. Select x64sc, not x128, xvic, x64 or the containing application folder. The selected executable must report x64sc (VICE 3.10) with -version.</p><p>Install cc65 2.19 from its official release or a package manager. On a Mac, Homebrew provides cc65: run brew install cc65 yourself, then check ca65 --version and ld65 --version. Both must report V2.18. Use which ca65 to locate it, commonly /opt/homebrew/bin/ca65 on Apple Silicon or /usr/local/bin/ca65 on Intel. Package manager versions may change; unsupported versions are rejected.</p><p>On Ubuntu, install a cc65 package whose ca65 and ld65 report V2.18, and select the actual executable paths. The tested package is cc65 2.19. Unsupported versions are rejected. VICE x64sc must report 3.10. Linux uses in-app Help; window focus and screen capture helpers are macOS-only.</p><p>In a macOS file chooser, Command-Shift-G opens Go to Folder so you can enter the executable's directory. For the official macOS GTK3 distribution, select its bin/x64sc terminal launcher and keep the complete distribution together. This launcher initialises the bundled libraries and resources. Selecting the inner VICE.app/Contents/Resources/bin/x64sc binary can pass its version check yet fail during managed startup. Do not rename another programme to bypass the version check.</p><p>In Systems &amp; Firmware, choose a folder containing your lawfully provisioned basic-901226-01.bin (8192 bytes), kernal-901227-03.bin (8192 bytes) and chargen-901225-01.bin (4096 bytes). They must be regular files without symlinks. Studio checks revision fingerprints and a SHA-256 digest of the staged set. No drive ROM is required by the PRG RAM-injection workflow.</p><p>ROM availability does not establish redistribution permission. Studio supplies no ROMs or commercial programmes and does not download or install tools. BASIC development works before emulator setup.</p>
+<h3>Select an executable, not just a product name</h3>
+<p>The Build Tools setting points to the actual ca65 file. Its sibling ld65 must come from the same compatible installation. A terminal that finds a different ca65 through PATH does not prove that Studio’s saved executable is the same one. Use the complete selected path when checking a confusing installation. Studio invokes its chosen file explicitly and does not use project-defined command hooks.</p>
+<p>Similarly, select the VICE x64sc executable itself. A downloaded archive, application folder, launcher for a different Commodore model or another x64 variant is not equivalent. Keep the distribution’s support data alongside the installation as required by VICE. If you move or replace it, select and validate the new location in Settings.</p>
+<h3>Version checks you run yourself</h3>
+<pre data-example="shell"><code>/tmp/cc65-2.19/bin/ca65 --version
+/tmp/cc65-2.19/bin/ld65 --version</code></pre>
+<p>These paths illustrate the local test installation used by the project; they are not a required install location and may not exist on your Mac. Replace them with the actual executable paths you selected. Both must identify V2.18 for the supported cc65 2.19 release. Run your selected x64sc with -version and check for VICE 3.10. Do not rename a different executable to satisfy the filename.</p>
+<p>The supported tool versions are part of the current adapter contract, not a recommendation to assume that today’s newest package-manager version is compatible. If Homebrew supplies another release, use an explicitly compatible installation or wait for a reviewed adapter update. Studio does not download, install or bundle either toolchain.</p>
+<h3>Firmware selection</h3>
+<p>Select the folder containing the exact three documented ROM revisions. The filename, length and revision checks are distinct from having permission to use the bytes. A differently named, padded or truncated file does not become a compatible ROM. Symlinks are rejected by the firmware selection boundary. Keep the original lawfully obtained files recoverable.</p>
+<p>No 1541 drive ROM is required for the managed PRG-injection workflow. Adding extra drive files does not enable a disk workflow. On Run, Studio validates and privately stages the selected set with a content digest check; source editing and BASIC building remain available before firmware is configured.</p>
+<h3>Work through setup failures in order</h3>
+<p>For an executable-not-found error, correct the selected path first. For an identity/version error, inspect the output from that exact executable. For a ROM mismatch, check the exact supported revision rather than the display name of the containing folder. For startup exit, verify the complete VICE installation after the earlier checks pass. Keep source errors separate from setup errors so you do not rewrite a correct programme to solve a missing tool.</p>
+<p>Do not put ROM data, provider keys or private paths into a shared screenshot or issue. An actionable setup report can state the application version, Mac architecture, selected tool identity/version and stable diagnostic without including the firmware bytes.</p>
+</section>
+<section id="emulator">
+<h2>Running in VICE</h2>
+<p>Save, then Run Project. Studio builds a fresh PRG, validates VICE and firmware again, and starts x64sc with the PAL C64 profile. Autostart injects the PRG into RAM. Keyboard input and sound use VICE's own window. A Running label establishes a live supervised process, not successful BASIC execution.</p><p>Stop cancels a pending build/start or terminates the owned emulator. Restart rebuilds and resets the programme. Exiting Studio also terminates its owned emulator. Sessions have a twelve-hour limit.</p><p>Launch uses private temporary files, default settings, disabled remote monitors, and disabled disk/filesystem/printer devices. No project directory is mounted. File-loading programmes, drive operations, cartridges and persistent emulator settings are outside this workflow.</p>
+<h3>Before pressing Run</h3>
+<p>Save or discard unsaved source, check the selected project and choose the exact C64 PAL target. For BASIC, Build can run without external tools. For assembly, validate ca65/ld65 first. Configure the VICE executable and supported firmware folder before expecting the emulator to start. Stop an existing session before changing those settings.</p>
+<h3>Observe the programme, not only the process</h3>
+<p>Bring VICE forward and inspect the output. A BASIC syntax error is shown by the C64 ROM after a structurally valid PRG has loaded. Assembly can assemble successfully and still branch into data or never return. Compare the screen, input and sound with the expected result printed below each guide example.</p>
+<p>Keyboard focus belongs to the external VICE window while you operate the C64. Typing into Studio’s editor changes source, not the emulated keyboard. A modern host key may map differently depending on the installed VICE build; use that installation’s settings for RUN/STOP and other C64-specific keys. Audio also depends on VICE and the host output device.</p>
+<h3>Save, rebuild and reset</h3>
+<p>Run builds again, so it does not trust an old PRG simply because one exists on disk. Restart rebuilds and resets programme state. Rebuild on save acts only after your explicit Save in an already-running session. It is helpful for short visual experiments but deliberately discards runtime variables and input progress.</p>
+<p>If you want to preserve a running observation while editing, turn Rebuild on save off and save the source as a future revision. The current session still contains its earlier programme. Be explicit about which revision you are observing when reporting a result.</p>
+<h3>Stop and recover</h3>
+<p>Studio Stop cancels pending work or terminates the owned emulator. Closing Studio also cleans up its owned session. A stopped process cannot be resumed with BASIC CONT. After a hang, fix the source and Run afresh; do not rely on a corrupted memory state to survive a restart.</p>
+<p>Private staged files exist for that supervised session and are cleaned up afterwards. The project directory is not mounted into the emulator. A programme that expects files, a printer, a cartridge or a remote monitor belongs to a different runtime workflow from this release.</p>
+</section>
+<section id="agent">
+<h2>Optional AI assistance</h2>
+<p>Configure your own provider in AI Providers. Credentials stay in the native Keychain boundary. Choose the active source, selection or saved project context explicitly before sending a request. Firmware and build outputs are excluded.</p><p>Review proposed changes before saving. Project changes may replace the configured source, README.md or tests/README.md; they cannot change c64.toml or add new source modules. Request-scoped YOLO permits only the configured source. AI has no terminal, Git, build or emulator authority.</p>
+<h3>Ask for an explanation tied to the actual source</h3>
+<p>Useful requests are concrete: explain why NEXT reports no matching FOR, show how the current loop bound relates to the table length, or check whether a snippet uses BASIC V2 rather than another dialect. Select the relevant source and diagnostic deliberately. Avoid sending a whole unrelated project when a small region answers the question.</p>
+<p>For generated examples, include the exact C64 PAL and BASIC V2 or NMOS ca65-subset requirement. Tell the assistant that assembly must begin at $080D, use one source file and return through RTS. A plausible-looking answer can still contain ELSE, .include, unsupported equates or an incorrect memory address; review it against the offline reference before saving.</p>
+<h3>Review the behaviour, not just the syntax</h3>
+<p>Check that an example has bounded array indices and loops, an intended quit or return path, and an explanation of every hardware address it writes. For assembly, inspect the stack balance and the distinction between screen codes and PETSCII. A suggested patch that assembles is not evidence of correct machine behaviour.</p>
+<p>Choose Build and Run yourself after reviewing the change. The Agent cannot inspect live C64 registers through an integrated debugger because that capability is not implemented. Give it your own observed result in words if you want help diagnosing the next step, without including firmware or credentials.</p>
+<h3>Privacy and source authority</h3>
+<p>Provider requests are optional and use the context you explicitly select. Credentials remain in product-scoped macOS Keychain or Linux Secret Service. Manual review is the default before patch saving; request-scoped YOLO is a separate opt-in source-save permission, not authority to execute the programme or alter the manifest. Keep that distinction clear when experimenting with hardware writes.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting and limitations</h2>
+<p>If Build fails, check line numbers and quoted strings for BASIC, or .org, supported instructions and operands for assembly. Check both ca65 and ld65 versions. A previous successful PRG can remain on disk, but Run always builds again and export requires a current revision and matching hash.</p><p>If VICE validation fails, check x64sc -version and select the actual executable. If startup exits, verify the complete VICE installation, all three ROM filenames and the selected PAL target. Stop and retry after correcting Settings. A ROM mismatch requires the documented revision, not a renamed or padded file.</p><p>If settings cannot load, reopen Settings and correct the stored configuration. If the project changed on disk, reopen it before saving. Export refuses existing destinations; choose a new filename. Mixed c64.toml, dragon.toml, vectrex.toml, spectrum.toml or zx81.toml roots are rejected.</p><p>Eightbit Studio 6502 supports macOS and Linux for Commodore 64 PAL. Eightbit Studio 6809 supports Dragon 32/64 and Vectrex; Eightbit Studio Z80 supports ZX81 1K/16K and Spectrum 16K/48K/128K UK/+2 UK on the same platforms. Windows is planned for all three products and these systems; no Windows application or runtime verification is claimed. Real hardware, integrated C64 debugging, other 6502 machines, D64/TAP/CRT import/export, bank switching and C compilation are outside the implemented scope.</p>
+<h3>Build succeeds, but BASIC fails</h3>
+<p>Studio tokenises BASIC and checks line, string and memory bounds; it does not emulate the BASIC interpreter or validate its complete runtime grammar. Read the message and line number in VICE. Check that the programme uses BASIC V2 forms, that DATA types match READ destinations and that every branch target exists. Use the dedicated error catalogue for cause/example/recovery guidance.</p>
+<h3>Assembly is rejected</h3>
+<p>D65A100 identifies source-policy failures such as an unsupported instruction/directive, invalid source characters or an incorrect .org. Check the single-source subset first. ca65 can then reject an operand, addressing mode, range or unresolved label. An uppercase label and lowercase reference may be different symbols; Studio does not rewrite label case for you.</p>
+<p>A relative branch that has become too far away needs a shorter branch path or an inverse branch around JMP. A .res operand must use a decimal count and optional decimal byte fill. Equates, included modules and custom linker segments from an external ca65 project are not accepted merely because ca65 itself knows them.</p>
+<h3>A correct-looking programme shows the wrong thing</h3>
+<table>
+<thead><tr><th scope="col">Observation</th><th scope="col">First check</th><th scope="col">Next step</th></tr></thead>
+<tbody>
+<tr><td>Unexpected glyphs</td><td>PETSCII versus screen codes and current character mode.</td><td>Try the smallest CHROUT or cell-writing example in a fresh default session.</td></tr>
+<tr><td>Correct character, wrong colour</td><td>Matching colour-RAM address and low-nibble value.</td><td>Calculate both addresses from the same row and column.</td></tr>
+<tr><td>Sprite absent</td><td>Enable bit, pointer block, bank assumption, visible coordinates and sprite data.</td><td>Use the unmodified single-sprite exercise before changing its allocation.</td></tr>
+<tr><td>No sound</td><td>Host/VICE audio, master volume, gate, waveform, frequency and envelope.</td><td>Use the bounded one-voice example and its cleanup sequence.</td></tr>
+<tr><td>Keyboard loop does nothing</td><td>VICE focus and whether normal interrupt scanning is still active.</td><td>Restore a fresh default session and test BASIC GET or KERNAL GETIN.</td></tr>
+<tr><td>Crash after RTS</td><td>Stack balance, entry convention and overwritten workspace.</td><td>Remove extra pushes, data fall-through or stack resets; restart before testing again.</td></tr>
+<tr><td>Works once, fails after edits</td><td>Old emulator state versus the newly saved source revision.</td><td>Use a fresh Run and repeat the exact same observation.</td></tr>
+</tbody></table>
+<h3>Keep evidence specific</h3>
+<p>Record the source revision, complete example, tool versions and what appeared in VICE. A successful build is an encoding/linking result. A Running badge is process supervision. A screenshot establishes only what was visible at that moment; audio and input need their own observations. Physical C64 behaviour, Intel Mac compatibility and signed public distribution remain separate checks.</p>
+<p>If you need to share a problem, reduce it to a small original programme with the same failure and include the stable diagnostic. Do not attach firmware bytes, private provider payloads or a commercial programme. Keep the working source before making experimental changes, and never repair a failed build by manually replacing generated output with an older successful file.</p>
+</section>
+<section id="references">
+<h2>References and provenance</h2>
+<h3>Independently written teaching material</h3>
+<p>This guide and its worked programmes are original project material. Historical manuals are used to check documented language behaviour, instruction semantics, hardware addresses and calling conventions. No firmware implementation, recovered BASIC ROM source or third-party emulator implementation was copied into the guide or the product.</p>
+<p>The C64 BASIC, hardware and KERNAL details were checked against the original Commodore reference manual for this expansion. The accepted executable source policy was checked against Studio’s BASIC encoder, NMOS validator and ADR 0046. Online ca65 and VICE documentation explains the external tools; the repository’s pinned version checks remain the implemented contract.</p>
+<h3>Commodore 64 Programmer’s Reference Guide (1982)</h3>
+<p><a href="https://csclub.uwaterloo.ca/~pbarfuss/C64_Programmers_Reference_Guide.pdf" target="_blank" rel="noreferrer">Open reference</a>. Commodore Business Machines’ original manual, hosted as a historical scan. Chapters 1–2 describe BASIC; chapters 3–4 cover graphics and sound; chapter 5 covers machine language and KERNAL; appendices cover memory, characters, errors and the 6510.</p>
+<h3>MOS MCS6500 Programming Manual (January 1976)</h3>
+<p><a href="https://www.bitsavers.org/components/mosTechnology/6500-50A_MCS6500pgmManJan76.pdf" target="_blank" rel="noreferrer">Open reference</a>. Original MOS Technology processor reference for further instruction/addressing study. Archival availability may vary; use the NMOS model, not a later CMOS replacement.</p>
+<h3>ca65 User’s Guide</h3>
+<p><a href="https://cc65.github.io/doc/ca65.html" target="_blank" rel="noreferrer">Open reference</a>. Official assembler syntax and instruction support. Studio accepts only its documented restricted subset, irrespective of additional ca65 features.</p>
+<h3>ld65 User’s Guide</h3>
+<p><a href="https://cc65.github.io/doc/ld65.html" target="_blank" rel="noreferrer">Open reference</a>. Official linker reference. Studio supplies its own fixed configuration; user linker scripts are not an exposed project feature.</p>
+<h3>VICE settings and resources</h3>
+<p><a href="https://vice-emu.sourceforge.io/vice_6.html" target="_blank" rel="noreferrer">Open reference</a>. Official VICE command-line/resource documentation. Studio’s fixed PAL x64sc session uses only the accepted lifecycle and device configuration.</p>
+<h3>VICE C64-specific notes</h3>
+<p><a href="https://vice-emu.sourceforge.io/vice_7.html" target="_blank" rel="noreferrer">Open reference</a>. Official machine-specific emulator documentation. External emulator features do not automatically become Studio capabilities.</p>
+<h3>Use references critically</h3>
+<p>The original C64 manual is a technical reference, not a current Studio installation guide, and historical publications can contain errors. Check related sections when a table conflicts with explanatory text. In particular, the 6510 port data-direction register is at $0000 and the port at $0001; do not reverse them because of a conflicting historical description.</p>
+<p>The processor chapter distinguishes NMOS from CMOS behaviour. Examples from 65C02 or 65816 manuals can include unsupported instructions and different decimal/interrupt details. Likewise, BASIC examples from a C128, Plus/4, Dragon or a modern BASIC may contain commands absent from C64 BASIC V2.</p>
+<h3>What is verified</h3>
+<p>Complete BASIC listings in this guide are checked by the native encoder. Complete assembly listings are checked by the native source policy and an opt-in compatible ca65/ld65 build. These checks establish encoding and assembly acceptance, not full BASIC runtime syntax or successful video, audio and input. Each tutorial states the expected observation separately so it can be tested in a real emulator session.</p>
+<p>The Help generator and product tests check article metadata, links, language coverage and searchable content. The same source generates the in-app pages and macOS Help Book resources. Keep edits in the Commodore-owned source guide and manifest rather than changing a generated page that will be overwritten.</p>
+<h3>Distribution and firmware</h3>
+<p>Public availability of a manual or firmware image does not grant permission to redistribute it. The product ships the independently written guide and original examples, with links to references. It supplies no Commodore ROM bytes or commercial programmes. VICE and cc65 remain separately installed tools behind the accepted process boundary.</p>
+</section>
+</main></body>
+</html>

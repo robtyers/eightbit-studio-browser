@@ -110,7 +110,7 @@ dependencies = [
 
 [[package]]
 name = "eightbit-acorn-core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-source-core",
  "eightbit-targets",
@@ -119,16 +119,19 @@ dependencies = [
 
 [[package]]
 name = "eightbit-browser"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-acorn-core",
  "eightbit-commodore-core",
  "eightbit-dragon-basic-core",
+ "eightbit-dragon-emulator",
  "eightbit-dragon-media",
  "eightbit-dragon-mobile",
  "eightbit-dragon-project",
+ "eightbit-m6809-core",
  "eightbit-source-core",
  "eightbit-spectrum-core",
+ "eightbit-vectrex-emulator",
  "eightbit-zx81-core",
  "hex",
  "serde",
@@ -142,16 +145,27 @@ dependencies = [
 
 [[package]]
 name = "eightbit-commodore-core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
+ "eightbit-commodore-machine",
  "eightbit-source-core",
  "eightbit-targets",
+ "serde",
  "serde_json",
 ]
 
 [[package]]
+name = "eightbit-commodore-machine"
+version = "0.5.3"
+dependencies = [
+ "eightbit-mos6502-core",
+ "sha2",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "eightbit-dragon-basic-core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-dragon-targets",
  "hex",
@@ -163,8 +177,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "eightbit-dragon-emulator"
+version = "0.5.3"
+dependencies = [
+ "eightbit-dragon-basic-core",
+ "eightbit-dragon-media",
+ "eightbit-m6809-core",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "eightbit-dragon-media"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-dragon-basic-core",
  "eightbit-dragon-targets",
@@ -177,7 +204,7 @@ dependencies = [
 
 [[package]]
 name = "eightbit-dragon-mobile"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-dragon-basic-core",
  "eightbit-dragon-media",
@@ -190,7 +217,7 @@ dependencies = [
 
 [[package]]
 name = "eightbit-dragon-project"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-dragon-targets",
  "serde",
@@ -201,25 +228,34 @@ dependencies = [
 
 [[package]]
 name = "eightbit-dragon-targets"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-targets",
 ]
 
 [[package]]
+name = "eightbit-m6809-core"
+version = "0.5.3"
+
+[[package]]
+name = "eightbit-mos6502-core"
+version = "0.5.3"
+
+[[package]]
 name = "eightbit-sinclair-basic"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-source-core",
 ]
 
 [[package]]
 name = "eightbit-source-core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-targets",
  "hex",
  "serde",
+ "serde_json",
  "sha2",
  "thiserror",
  "toml",
@@ -227,30 +263,69 @@ dependencies = [
 
 [[package]]
 name = "eightbit-spectrum-core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-sinclair-basic",
  "eightbit-source-core",
+ "eightbit-spectrum-emulator",
  "eightbit-targets",
+ "eightbit-z80-core",
+ "serde",
+ "serde_json",
  "tempfile",
 ]
 
 [[package]]
+name = "eightbit-spectrum-emulator"
+version = "0.5.3"
+dependencies = [
+ "eightbit-z80-core",
+ "sha2",
+]
+
+[[package]]
 name = "eightbit-targets"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "serde",
  "thiserror",
 ]
 
 [[package]]
+name = "eightbit-vectrex-emulator"
+version = "0.5.3"
+dependencies = [
+ "eightbit-m6809-core",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "toml",
+]
+
+[[package]]
+name = "eightbit-z80-core"
+version = "0.5.3"
+
+[[package]]
 name = "eightbit-zx81-core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "eightbit-sinclair-basic",
  "eightbit-source-core",
  "eightbit-targets",
+ "eightbit-z80-core",
+ "eightbit-zx81-emulator",
+ "sha2",
  "tempfile",
+]
+
+[[package]]
+name = "eightbit-zx81-emulator"
+version = "0.5.3"
+dependencies = [
+ "eightbit-z80-core",
+ "sha2",
 ]
 
 [[package]]

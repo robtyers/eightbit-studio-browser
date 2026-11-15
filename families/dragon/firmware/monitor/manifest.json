@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "eightbit-dragon32-monitor-0.1",
+  "licence": "Apache-2.0",
+  "bytes": 16384,
+  "sourceSha256": "9096dc095569b374212310f65c03f3f935f23751e39ac80a0915395970850336",
+  "romSha256": "676b9ed97528b8af1c30b235438a03367f98c00007e3de452b29bf093a3555e9"
+}

@@ -13,7 +13,13 @@ pub use cartridge::{
     CARTRIDGE_BASE, CartridgeAssembly, CartridgeError, MAX_CARTRIDGE_BYTES,
     create_program_cartridge, validate_cartridge,
 };
+mod transport;
 mod wav;
+
+pub use transport::{
+    CassetteTransport, CassetteTransportFile, MAX_TRANSPORT_BLOCKS, MAX_TRANSPORT_BYTES,
+    MAX_TRANSPORT_FILES, read_cassette_transport,
+};
 
 pub use inspect::{
     BasicMediaFormat, BasicMediaInspection, DiskFormat, DiskInspection, ImportProvenance,
@@ -22,7 +28,8 @@ pub use inspect::{
 };
 pub use wav::{
     DecodedWavCassette, MAX_WAV_BYTES, WavCassetteMetadata, WavError, decode_wav_cassette,
-    encode_cassette_wav, encode_pcm_wav_mono,
+    decode_wav_cassette_transport, encode_cassette_transport_wav, encode_cassette_wav,
+    encode_pcm_wav_mono,
 };
 
 use serde::Serialize;
@@ -57,6 +64,22 @@ pub struct TokenisedBasicCassette {
     pub blocks: Vec<CassetteBlockInfo>,
 }
 
+/// Checked ASCII/gapped BASIC transport. Text remains in its original wire form;
+/// source recovery and project language validation belong to media inspection.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct AsciiBasicCassette {
+    /// Trimmed Dragon filename.
+    pub filename: String,
+    /// Concatenated ASCII bytes, including original CR/LF and any unfinished tail.
+    pub text: Vec<u8>,
+    /// Number of data blocks.
+    pub data_blocks: usize,
+    /// Preserved filename-block fields.
+    pub metadata: CassetteMetadata,
+    /// Ordered, checksum-validated blocks.
+    pub blocks: Vec<CassetteBlockInfo>,
+}
+
 /// Metadata and payload recovered from one binary machine-code cassette file.
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct MachineCodeCassette {
@@ -82,9 +105,9 @@ pub struct MachineCodeCassette {
 pub struct CassetteMetadata {
     /// File-type byte (`0` for BASIC in the supported variant).
     pub file_type: u8,
-    /// ASCII/tokenised byte (`0` for tokenised in the supported variant).
+    /// ASCII/tokenised byte (`0` tokenised/binary, `$FF` ASCII BASIC).
     pub ascii_flag: u8,
-    /// Gap-mode byte (`0` for ungapped in the supported variant).
+    /// Gap-mode byte (`0` ungapped, `$FF` gapped ASCII BASIC).
     pub gaps_flag: u8,
     /// Execution address followed by load address, both big-endian.
     pub address_bytes: [u8; 4],
@@ -181,6 +204,92 @@ pub enum CassetteError {
     /// Filename block does not describe the supported binary machine-code variant.
     #[error("DSM1012: cassette is not an ungapped binary machine-code file")]
     UnsupportedMachineCodeFileType,
+    /// Filename block does not describe the supported ASCII/gapped BASIC variant.
+    #[error("DSM1013: cassette is not a gapped ASCII BASIC file")]
+    UnsupportedAsciiBasicFileType,
+    /// Text cannot pass through the legacy bounded line-input area.
+    #[error("DSM1014: invalid cassette ASCII at payload byte {offset}: {reason}")]
+    InvalidAsciiBasic {
+        /// Offset in the concatenated text payload.
+        offset: usize,
+        /// Bounded, content-free explanation.
+        reason: &'static str,
+    },
+    /// A volatile transport image exceeds its allocation bounds.
+    #[error("DSM1015: cassette transport exceeds its byte, file or block limit")]
+    TransportLimit,
+    /// The transport cannot supply the requested physical block gap.
+    #[error("DSM1016: gapped cassette needs leader padding after byte {offset}")]
+    MissingGapPadding {
+        /// End of the preceding checked block.
+        offset: usize,
+    },
+    /// Unsupported filename flags at the transport boundary.
+    #[error("DSM1017: cassette transport has unsupported filename flags")]
+    UnsupportedTransport,
+}
+
+/// Encode listing text as ASCII/gapped BASIC, with a leading CR and CR-terminated
+/// lines. LF and CR/LF source endings are normalised without changing line text.
+/// This validates transport bounds, not the BASIC language or project contract.
+pub fn create_ascii_basic(filename: &str, listing: &str) -> Result<Vec<u8>, CassetteError> {
+    if listing.len() > MAX_CASSETTE_BYTES.saturating_sub(2) {
+        return Err(CassetteError::TooLarge);
+    }
+    let filename = normalise_filename(filename)?;
+    let mut text = Vec::with_capacity(listing.len() + 2);
+    text.push(b'\r');
+    let mut previous = 0;
+    for byte in listing.bytes() {
+        if byte != b'\n' || previous != b'\r' {
+            text.push(if byte == b'\n' { b'\r' } else { byte });
+        }
+        previous = byte;
+    }
+    if text.last() != Some(&b'\r') {
+        text.push(b'\r');
+    }
+    validate_ascii_text(&text)?;
+    let mut header = [0_u8; FILENAME_BLOCK_LENGTH];
+    header[..8].copy_from_slice(&filename);
+    header[9] = 0xff;
+    header[10] = 0xff;
+    create_cassette_blocks(&header, &text)
+}
+
+/// Validate one standalone ASCII/gapped BASIC cassette, retaining exact text.
+pub fn read_ascii_basic(bytes: &[u8]) -> Result<AsciiBasicCassette, CassetteError> {
+    let parsed = read_cassette_file(bytes, ExpectedFile::AsciiBasic, true)?;
+    validate_ascii_text(&parsed.program)?;
+    Ok(AsciiBasicCassette {
+        filename: parsed.filename,
+        text: parsed.program,
+        data_blocks: parsed.data_blocks,
+        metadata: parsed.metadata,
+        blocks: parsed.blocks,
+    })
+}
+
+fn validate_ascii_text(text: &[u8]) -> Result<(), CassetteError> {
+    let mut line_bytes = 0;
+    for (offset, byte) in text.iter().copied().enumerate() {
+        match byte {
+            b'\r' => line_bytes = 0,
+            b'\n' => (),
+            32..=126 if line_bytes < 251 => line_bytes += 1,
+            _ => {
+                return Err(CassetteError::InvalidAsciiBasic {
+                    offset,
+                    reason: if matches!(byte, 32..=126) {
+                        "line exceeds 251 bytes"
+                    } else {
+                        "expected printable ASCII, CR or LF"
+                    },
+                });
+            }
+        }
+    }
+    Ok(())
 }
 
 /// Create a tokenised BASIC cassette with checked blocks and a 15-byte header.
@@ -291,6 +400,7 @@ pub fn read_machine_code(bytes: &[u8]) -> Result<MachineCodeCassette, CassetteEr
 #[derive(Debug, Clone, Copy)]
 enum ExpectedFile {
     TokenisedBasic,
+    AsciiBasic,
     MachineCode,
 }
 
@@ -330,11 +440,15 @@ fn read_cassette_file(
                 && first.data[9] == BINARY_FLAG
                 && first.data[10] == NO_GAPS_FLAG
         }
+        ExpectedFile::AsciiBasic => {
+            first.data[8] == BASIC_FILE_TYPE && first.data[9] == 0xff && first.data[10] == 0xff
+        }
     };
     if !supported {
         return Err(match expected_file {
             ExpectedFile::TokenisedBasic => CassetteError::UnsupportedFileType,
             ExpectedFile::MachineCode => CassetteError::UnsupportedMachineCodeFileType,
+            ExpectedFile::AsciiBasic => CassetteError::UnsupportedAsciiBasicFileType,
         });
     }
     let filename = String::from_utf8_lossy(&first.data[..8])
@@ -404,6 +518,11 @@ fn read_cassette_file(
 /// weakening the strict public cassette readers' trailing-data rule.
 pub(crate) fn supported_cassette_prefix_len(bytes: &[u8]) -> Option<usize> {
     if let Ok(parsed) = read_cassette_file(bytes, ExpectedFile::TokenisedBasic, false) {
+        return Some(parsed.consumed);
+    }
+    if let Ok(parsed) = read_cassette_file(bytes, ExpectedFile::AsciiBasic, false)
+        && validate_ascii_text(&parsed.program).is_ok()
+    {
         return Some(parsed.consumed);
     }
     let parsed = read_cassette_file(bytes, ExpectedFile::MachineCode, false).ok()?;

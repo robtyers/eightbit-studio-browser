@@ -118,6 +118,24 @@ fn basic_prg_links_tokens_literals_and_data() {
         basic::compile("10 PRINT1\n").unwrap()
     );
 }
+
+#[test]
+fn original_guest_front_end_fixture_preserves_the_existing_prg_contract() {
+    let source = include_str!("../tests/fixtures/original-front-end.bas");
+    let hex = include_str!("../tests/fixtures/original-front-end.hex").trim();
+    let expected: Vec<_> = (0..hex.len())
+        .step_by(2)
+        .map(|index| u8::from_str_radix(&hex[index..index + 2], 16).unwrap())
+        .collect();
+    assert_eq!(basic::compile(source).unwrap(), expected);
+    assert_eq!(basic::decompile(&expected).unwrap(), source);
+    let words = include_str!("../tests/fixtures/basic-v2-keywords.txt");
+    assert_eq!(words.lines().count(), 76);
+    for (index, word) in words.lines().enumerate() {
+        let prg = basic::compile(&format!("10 {word}\n")).unwrap();
+        assert_eq!(prg[6], 0x80 + u8::try_from(index).unwrap(), "{word}");
+    }
+}
 #[test]
 #[allow(clippy::format_collect)] // Bounded generated fixture.
 fn hostile_and_boundary_basic() {
@@ -562,4 +580,281 @@ fn real_vice_managed_run_stop_and_restart() {
         Session::build_and_start(&ENGINE, &project.root, &settings, &AtomicBool::new(true))
             .is_err()
     );
+}
+
+const ACCEPTANCE_BASIC: &str = include_str!("../tests/fixtures/acceptance.bas");
+const ACCEPTANCE_ASSEMBLY: &str = include_str!("../tests/fixtures/acceptance.asm");
+
+#[test]
+fn original_acceptance_sources_use_supported_project_contracts() {
+    let bytes = basic::compile(ACCEPTANCE_BASIC).unwrap();
+    assert_eq!(&bytes[..2], &[1, 8]);
+    assert!(bytes.windows(18).any(|part| part == b"C64 BASELINE READY"));
+    assert_eq!(bytes, basic::compile(ACCEPTANCE_BASIC).unwrap());
+    eightbit_mos6502_toolchain::validate(ACCEPTANCE_ASSEMBLY, 0x080d).unwrap();
+}
+
+#[cfg(unix)]
+#[test]
+#[ignore = "Requires EIGHTBIT_CA65, EIGHTBIT_VICE, EIGHTBIT_C64_ROMS, EIGHTBIT_C64_ROM_SHA256 and a display"]
+fn real_c64_acceptance_build_export_and_recovery() {
+    use eightbit_source::runtime::{Session, Settings};
+    let roms = std::path::PathBuf::from(
+        std::env::var_os("EIGHTBIT_C64_ROMS").expect("explicit firmware folder"),
+    );
+    let expected = std::env::var("EIGHTBIT_C64_ROM_SHA256").expect("explicit firmware SHA-256");
+    assert_eq!(expected.len(), 64, "SHA-256 required");
+    assert!(expected.bytes().all(|byte| byte.is_ascii_hexdigit()));
+    assert_eq!(
+        vice::validate_firmware(&roms, &PROFILES[0]).unwrap(),
+        expected.to_ascii_lowercase(),
+        "Firmware identity must be checked before execution"
+    );
+    let mut settings = Settings::empty();
+    settings.emulator = Some(
+        std::env::var_os("EIGHTBIT_VICE")
+            .expect("explicit VICE path")
+            .into(),
+    );
+    settings.assembler = Some(
+        std::env::var_os("EIGHTBIT_CA65")
+            .expect("explicit ca65 path")
+            .into(),
+    );
+    settings.roms.insert("c64-pal".into(), roms);
+    let settings = settings.validate(&ENGINE, &AtomicBool::new(false)).unwrap();
+    let parent = tempfile::tempdir().unwrap();
+    for (template, source, invalid) in [
+        ("basic", ACCEPTANCE_BASIC, "10 PRINT\"UNCLOSED\n"),
+        ("assembly", ACCEPTANCE_ASSEMBLY, ".org $080D\nlda #999\n"),
+    ] {
+        let project = ENGINE
+            .create(parent.path(), template, "commodore", "c64-pal", template)
+            .unwrap();
+        let project = ENGINE
+            .save(&project.root, &project.revision, source)
+            .unwrap();
+        let built = ENGINE
+            .build(
+                &project.root,
+                settings.assembler.as_deref(),
+                &AtomicBool::new(false),
+            )
+            .unwrap();
+        let bytes = ENGINE
+            .fresh_media(&project.root, &built.revision, &built.sha256)
+            .unwrap();
+        let exported = parent.path().join(format!("{template}.prg"));
+        ENGINE
+            .export(&project.root, &built.revision, &built.sha256, &exported)
+            .unwrap();
+        assert_eq!(fs::read(&exported).unwrap(), bytes);
+        assert!(
+            ENGINE
+                .export(&project.root, &built.revision, &built.sha256, &exported)
+                .is_err()
+        );
+        let repeated = ENGINE
+            .build(
+                &project.root,
+                settings.assembler.as_deref(),
+                &AtomicBool::new(false),
+            )
+            .unwrap();
+        assert_eq!(repeated.sha256, built.sha256);
+        assert!(
+            Session::build_and_start(&ENGINE, &project.root, &settings, &AtomicBool::new(true))
+                .is_err()
+        );
+
+        let bad = ENGINE
+            .save(&project.root, &project.revision, invalid)
+            .unwrap();
+        assert!(
+            Session::build_and_start(&ENGINE, &bad.root, &settings, &AtomicBool::new(false))
+                .is_err()
+        );
+        assert_eq!(fs::read(project.root.join(&built.media)).unwrap(), bytes);
+        assert!(
+            ENGINE
+                .fresh_media(&project.root, &built.revision, &built.sha256)
+                .is_err()
+        );
+        assert!(
+            ENGINE
+                .export(
+                    &project.root,
+                    &built.revision,
+                    &built.sha256,
+                    &parent.path().join(format!("stale-{template}.prg"))
+                )
+                .is_err()
+        );
+
+        let corrected = ENGINE.save(&bad.root, &bad.revision, source).unwrap();
+        let mut session =
+            Session::build_and_start(&ENGINE, &corrected.root, &settings, &AtomicBool::new(false))
+                .unwrap();
+        std::thread::sleep(std::time::Duration::from_secs(3));
+        assert_eq!(session.status().unwrap().state, "running");
+        session.stop();
+        assert_eq!(session.status().unwrap().state, "exited");
+    }
+}
+
+#[cfg(unix)]
+#[test]
+#[ignore = "Requires the explicit C64 real-tool variables and a new absolute EIGHTBIT_C64_CAPTURE_DIR"]
+fn real_c64_exported_video_keyboard_and_pcm() {
+    use std::path::PathBuf;
+    let executable = PathBuf::from(std::env::var_os("EIGHTBIT_VICE").expect("explicit VICE path"));
+    let assembler = PathBuf::from(std::env::var_os("EIGHTBIT_CA65").expect("explicit ca65 path"));
+    let roms = PathBuf::from(std::env::var_os("EIGHTBIT_C64_ROMS").expect("explicit ROM folder"));
+    let expected = std::env::var("EIGHTBIT_C64_ROM_SHA256").expect("explicit firmware SHA-256");
+    assert_eq!(expected.len(), 64);
+    assert!(expected.bytes().all(|byte| byte.is_ascii_hexdigit()));
+    assert_eq!(
+        vice::validate_firmware(&roms, &PROFILES[0]).unwrap(),
+        expected.to_ascii_lowercase()
+    );
+    vice::probe(&executable, &AtomicBool::new(false)).unwrap();
+    eightbit_mos6502_toolchain::probe(&assembler, &AtomicBool::new(false)).unwrap();
+    let captures = PathBuf::from(
+        std::env::var_os("EIGHTBIT_C64_CAPTURE_DIR").expect("explicit new capture folder"),
+    );
+    assert!(captures.is_absolute());
+    // An explicit new folder retains only original PRGs, framebuffer images and PCM.
+    // Reference firmware is staged privately by the existing adapter and then removed.
+    fs::create_dir(&captures).expect("capture folder must not already exist");
+    let parent = tempfile::tempdir().unwrap();
+    for (name, template, source, cycles, key) in [
+        ("basic-active", "basic", ACCEPTANCE_BASIC, "7000000", false),
+        ("basic-after-q", "basic", ACCEPTANCE_BASIC, "14000000", true),
+        (
+            "assembly",
+            "assembly",
+            ACCEPTANCE_ASSEMBLY,
+            "7000000",
+            false,
+        ),
+    ] {
+        let project = ENGINE
+            .create(parent.path(), name, "commodore", "c64-pal", template)
+            .unwrap();
+        let project = ENGINE
+            .save(&project.root, &project.revision, source)
+            .unwrap();
+        let built = ENGINE
+            .build(&project.root, Some(&assembler), &AtomicBool::new(false))
+            .unwrap();
+        let exported = captures.join(format!("{name}.prg"));
+        ENGINE
+            .export(&project.root, &built.revision, &built.sha256, &exported)
+            .unwrap();
+        let staging = tempfile::tempdir().unwrap();
+        let (mut arguments, _) =
+            vice::prepare_run(&PROFILES[0], &roms, staging.path(), &exported).unwrap();
+        let image = captures.join(format!("{name}.png"));
+        let audio = captures.join(format!("{name}.wav"));
+        arguments.extend([
+            "-limitcycles".into(),
+            cycles.into(),
+            "-exitscreenshot".into(),
+            image.to_str().unwrap().into(),
+            "-sounddev".into(),
+            "wav".into(),
+            "-soundarg".into(),
+            audio.to_str().unwrap().into(),
+            "-soundrate".into(),
+            "44100".into(),
+        ]);
+        if key {
+            arguments.extend([
+                "-keybuf".into(),
+                "q".into(),
+                "-keybuf-delay".into(),
+                "8000000".into(),
+            ]);
+        }
+        let output =
+            eightbit_process::Process::spawn_display(&executable, &arguments, staging.path(), true)
+                .unwrap()
+                .wait(
+                    std::time::Duration::from_secs(40),
+                    &AtomicBool::new(false),
+                    256 * 1024,
+                )
+                .unwrap();
+        let log = format!(
+            "{}\n{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+        // VICE deliberately returns 1 for its documented cycle-limit exit.
+        assert_eq!(
+            output.status.code(),
+            Some(1),
+            "{name}: unexpected capture exit"
+        );
+        assert!(
+            log.contains("cycle limit reached"),
+            "{name}: no bounded-cycle completion"
+        );
+        assert!(
+            log.contains("AUTOSTART: Done."),
+            "{name}: exported PRG did not autostart"
+        );
+        let png = eightbit_source::read_file(&image, 1024 * 1024).unwrap();
+        assert!(png.len() >= 24, "{name}: complete PNG header required");
+        assert_eq!(&png[..8], b"\x89PNG\r\n\x1a\n");
+        assert_eq!(u32::from_be_bytes(png[16..20].try_into().unwrap()), 384);
+        assert_eq!(u32::from_be_bytes(png[20..24].try_into().unwrap()), 272);
+        let wav = eightbit_source::read_file(&audio, 4 * 1024 * 1024).unwrap();
+        assert!(
+            wav.len() > 88_244,
+            "{name}: at least one second of PCM required"
+        );
+        assert_eq!(&wav[..4], b"RIFF");
+        assert_eq!(&wav[8..12], b"WAVE");
+        assert_eq!(&wav[12..16], b"fmt ");
+        assert_eq!(u16::from_le_bytes(wav[20..22].try_into().unwrap()), 1);
+        assert_eq!(u16::from_le_bytes(wav[22..24].try_into().unwrap()), 1);
+        assert_eq!(u32::from_le_bytes(wav[24..28].try_into().unwrap()), 44100);
+        assert_eq!(u16::from_le_bytes(wav[34..36].try_into().unwrap()), 16);
+        assert_eq!(&wav[36..40], b"data");
+        let peak = |bytes: &[u8]| {
+            bytes
+                .chunks_exact(2)
+                .map(|sample| i32::from(i16::from_le_bytes([sample[0], sample[1]])).unsigned_abs())
+                .max()
+                .unwrap_or(0)
+        };
+        if name == "basic-active" {
+            // Ignore startup transients: the final second must contain the requested
+            // PAL triangle tone, not merely some non-zero samples during boot.
+            let tail = &wav[wav.len() - 88_200..];
+            assert!(peak(tail) > 1000, "SID exercise must sustain PCM");
+            let samples = tail
+                .chunks_exact(2)
+                .map(|sample| i16::from_le_bytes([sample[0], sample[1]]))
+                .collect::<Vec<_>>();
+            let crossings = samples
+                .windows(2)
+                .filter(|pair| pair[0] <= 0 && pair[1] > 0)
+                .count();
+            assert!(
+                (430..=450).contains(&crossings),
+                "Expected approximately 440 Hz SID output, observed {crossings} positive crossings in one second"
+            );
+        } else if name == "basic-after-q" {
+            assert!(
+                peak(&wav[44..]) > 1000,
+                "input case must first play the tone"
+            );
+            assert!(
+                peak(&wav[wav.len() - 88_200..]) < 100,
+                "Q must silence SID for the final second"
+            );
+        }
+    }
 }

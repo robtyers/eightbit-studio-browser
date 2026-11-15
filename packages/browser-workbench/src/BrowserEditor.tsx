@@ -1,3 +1,4 @@
+import { originalSpectrumTarget } from "@eightbitstudio/workbench/services/monitorFrame";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { highlights, type BrowserEngine, type Highlight } from "./contracts";
 const NO_HIGHLIGHTS: Highlight[] = [];
@@ -31,6 +32,6 @@ export function BrowserEditor({ source, basic, busy, engine, inputRef, onChange,
   }, [source, inputRef]);
   return <div className={`editor-host browser-editor${spans.length ? " browser-editor-highlighted" : ""}`}>
     <div className="browser-editor-mirror" aria-hidden="true"><pre ref={mirror}>{content}</pre></div>
-    <textarea ref={inputRef} aria-label={basic ? `${label} BASIC source` : "Recovered 6809 assembly source"} spellCheck={false} autoCapitalize="off" autoCorrect="off" value={source} onChange={(event) => onChange(event.currentTarget.value)} onCompositionStart={() => setComposing(true)} onCompositionEnd={() => setComposing(false)} onScroll={(event) => { if (mirror.current) mirror.current.style.transform = `translate(${-event.currentTarget.scrollLeft}px, ${-event.currentTarget.scrollTop}px)`; }} />
+    <textarea ref={inputRef} aria-label={basic ? `${label} BASIC source` : `${originalSpectrumTarget(target) ? "Z80" : "6809"} assembly source`} spellCheck={false} autoCapitalize="off" autoCorrect="off" value={source} onChange={(event) => onChange(event.currentTarget.value)} onCompositionStart={() => setComposing(true)} onCompositionEnd={() => setComposing(false)} onScroll={(event) => { if (mirror.current) mirror.current.style.transform = `translate(${-event.currentTarget.scrollLeft}px, ${-event.currentTarget.scrollTop}px)`; }} />
   </div>;
 }

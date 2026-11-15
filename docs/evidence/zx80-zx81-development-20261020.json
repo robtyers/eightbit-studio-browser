@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-20",
+  "status": "partial-implementation",
+  "defaultRuntimeAdmitted": false,
+  "scope": "Original ZX80/ZX81 digital hardware, original guest cassette firmware, portable media and assembly groundwork",
+  "firmware": {
+    "zx80": {
+      "schemaVersion": 1,
+      "id": "eightbit-zx80-original-dev-1",
+      "status": "hardware-development",
+      "licence": "Apache-2.0",
+      "bytes": 16384,
+      "sha256": "4229066a94be8c09455401529ae20e6a333da52ac7c14422a12aacc1fd7f25d7",
+      "sourceSha256": "ad573600f004f5f9d62ef5711858806a25f01a6f554ba8f9fa7b89c9440028b2",
+      "builderSha256": "e93133ae82a7b33dc1baf538f0fb5de253101edc4f7d27dbdcf149a3123cd9c6",
+      "assemblerSha256": "babd8bd80f1febee9bd4c396c39a2bda33bdb1ff06cf7c63180b559246f9febe",
+      "commonBytes": 8192,
+      "pageBytes": 8192,
+      "pages": 1
+    },
+    "zx81": {
+      "schemaVersion": 1,
+      "id": "eightbit-zx81-original-dev-1",
+      "status": "hardware-development",
+      "licence": "Apache-2.0",
+      "bytes": 16384,
+      "sha256": "fe8c280d1e925635802ec856915c7775ab89f8e2f9f01c33c4dd5e060709c6d4",
+      "sourceSha256": "507f3ab14769ed7ecfde4120b7879b18c9b9a5f7d11102ef81c3128109e39b58",
+      "builderSha256": "e93133ae82a7b33dc1baf538f0fb5de253101edc4f7d27dbdcf149a3123cd9c6",
+      "assemblerSha256": "babd8bd80f1febee9bd4c396c39a2bda33bdb1ff06cf7c63180b559246f9febe",
+      "commonBytes": 8192,
+      "pageBytes": 8192,
+      "pages": 1
+    }
+  },
+  "modelsTested": [
+    "zx80-1k",
+    "zx80-16k",
+    "zx81-1k",
+    "zx81-16k"
+  ],
+  "ordinaryChecks": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p eightbit-z80-core -p eightbit-sinclair-basic -p eightbit-zx81-core -p eightbit-zx81-emulator -p eightbit-spectrum-core -p eightbit-spectrum-emulator",
+      "result": "passed before the final portable assembly API addition",
+      "passed": 186,
+      "ignored": 10
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p eightbit-zx81-emulator --test original",
+      "result": "passed",
+      "tests": 2
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p eightbit-zx81-emulator --test media",
+      "result": "passed",
+      "tests": 4
+    },
+    {
+      "command": "node scripts/verify-architecture.mjs",
+      "result": "passed"
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p eightbit-zx81-core -p eightbit-sinclair-basic --lib",
+      "result": "passed on final source",
+      "passed": 11
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy -p eightbit-zx81-emulator -p eightbit-zx81-core -p eightbit-z80-core -p eightbit-sinclair-basic --all-targets -- -D warnings",
+      "result": "passed on final source"
+    },
+    {
+      "command": "cargo fmt -p eightbit-z80-core -p eightbit-sinclair-basic -p eightbit-zx81-core -p eightbit-zx81-emulator -p eightbit-spectrum-emulator --check",
+      "result": "passed"
+    }
+  ],
+  "optionalReferenceChecks": [
+    {
+      "command": "EIGHTBIT_ZX80_ROM=<local-input> EIGHTBIT_ZX81_ROM=<local-input> CARGO_INCREMENTAL=0 cargo test -p eightbit-zx81-emulator --test reference -- --ignored --nocapture",
+      "result": "passed",
+      "tests": 3,
+      "observations": "Boot/refresh video; standard SAVE signal recovery/PCM export; generated O/P EAR loading in both RAM sizes"
+    },
+    {
+      "command": "EIGHTBIT_ZX80_ROM=<local-input> CARGO_INCREMENTAL=0 cargo test -p eightbit-zx81-core --test cassette_reference -- --ignored --nocapture",
+      "result": "passed",
+      "tests": 1,
+      "observations": "Stock-ROM load and execution of original in-place decoder; exact decoded bytes for 118-byte and every-byte 256-byte payloads in both RAM sizes"
+    }
+  ],
+  "fullGate": {
+    "command": "CARGO_INCREMENTAL=0 ./scripts/check.sh",
+    "result": "failed",
+    "reason": "Concurrent Dragon 64 change: source-workbench retention test missing firmware/basic64/compatibility.rom"
+  },
+  "workspaceFormat": {
+    "command": "cargo fmt --all --check",
+    "result": "failed",
+    "reason": "Concurrent Dragon 64 browser-core changes outside this scope"
+  },
+  "remaining": [
+    "Complete guest BASIC and line editor/INPUT",
+    "Native variables, arrays, strings and graphics commands",
+    "Public ROM calls and SLOW/FAST execution",
+    "Full error/break recovery",
+    "Source-bound debugger and default desktop/browser integration",
+    "Native/WASM parity and workbench/package qualification"
+  ],
+  "physicalHardware": "not performed",
+  "packagedApplications": "not performed",
+  "publicRelease": "not performed",
+  "committedOrPushed": false,
+  "verificationConstraint": "The low-disk interruption is resolved: the approved generated Rust incremental cache is absent. Larger verification has not yet been rerun.",
+  "cacheCleanup": {
+    "approved": true,
+    "target": "target/debug/incremental",
+    "absent": true,
+    "freeGiBAtVerification": 2.03,
+    "observedRemoval": "The cache became absent before the guarded deletion ran; no broader deletion was performed.",
+    "retainedSourceRomAndEvidencePresent": true
+  }
+}
